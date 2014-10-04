@@ -1,0 +1,117 @@
+#: templates/CRM/Memberships/Page/MembershipPayments.hlp
+msgid ""
+"The mapping parameter defines the association between financial type and "
+"membership type. The  financial type can only be matched to exactly one "
+"membership. The expected format is as follows:<br/><br/>\"&lt;"
+"financial_type_id&gt;:&lt;membership_type_id&gt;\"<br/><br/>e.g. \"2:1\" "
+"meaning \"contributions of financial type 2 will be associated with "
+"memberships of type 1\". If you have more that one association, provide this "
+"as a comma separated string of the above, e.g. \"2:1,4:2\"."
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.hlp
+msgid ""
+"Multiple financial types can be associated with on membership type, but not "
+"vice versa."
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.hlp
+msgid "The mapping parameter is stored as a setting for your convenience."
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.hlp
+msgid ""
+"If you select this, contributions that are already associated with a "
+"membership will be revised if they do not comply with the mapping provided. "
+"However, only contributions with a financial type that is inlcuded in the "
+"mapping will be touched."
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.hlp
+msgid "<strong>Use with caution!</strong>"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "Synchronization Options"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "Mapping Rule"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "Help"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "Rebuild Mapping"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "Synchronize"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "Results of this run"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "contributions have been newly assigned to memberships"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "Contribution"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "Date"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "Contributor"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "view membership"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "The following contributions could not be assigned:"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "contributions with no active membership"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "contributions with ambiguous memberships"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.hlp
+msgid ""
+"If you select this, the start date of the memberships will be adjusted to "
+"accomodate payments within a certain time range."
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.hlp
+msgid ""
+"If a membership payment is recorded this number of days before the current "
+"starting date, the stating date will be adjusted to the payment's received "
+"date."
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "Adjust Memberships"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "Adjust start date"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "Adjust Start"
+msgstr ""
+
+#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+msgid "days"
+msgstr ""

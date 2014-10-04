@@ -2,7 +2,7 @@
 <extension key="org.project60.membership" type="module">
   <file>membership</file>
   <name>Membership</name>
-  <description>CiviCRM extension to facilitate the "European" membership concept</description>
+  <description>Project60 extension make CiviMember more flexible.</description>
   <license>AGPLv3</license>
   <maintainer>
     <author>B. Endres</author>

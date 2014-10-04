@@ -1,0 +1,29 @@
+{*-------------------------------------------------------+
+| Project 60 - Membership Extension                      |
+| Copyright (C) 2013-2014 SYSTOPIA                       |
+| Author: B. Endres (endres -at- systopia.de)            |
+| http://www.systopia.de/                                |
++--------------------------------------------------------+
+| This program is released as free software under the    |
+| Affero GPL license. You can redistribute it and/or     |
+| modify it under the terms of this license which you    |
+| can read by viewing the included agpl.txt or online    |
+| at www.gnu.org/licenses/agpl.html. Removal of this     |
+| copyright header is strictly prohibited without        |
+| written permission from the original author(s).        |
++-------------------------------------------------------*}
+
+
+{htxt id='id-rebuild'}
+    <p>{ts}If you select this, contributions that are already associated with a membership will be revised if they do not comply with the mapping provided. However, only contributions with a financial type that is inlcuded in the mapping will be touched.{/ts}</p>
+    <p>{ts}<strong>Use with caution!</strong>{/ts}</p>
+{/htxt}
+
+{htxt id='id-adjust'}
+    <p>{ts}If you select this, the start date of the memberships will be adjusted to accomodate payments within a certain time range.{/ts}</p>
+    <p>{ts}<strong>Use with caution!</strong>{/ts}</p>
+{/htxt}
+
+{htxt id='id-rangeback'}
+    <p>{ts}If a membership payment is recorded this number of days before the current starting date, the stating date will be adjusted to the payment's received date.{/ts}</p>
+{/htxt}

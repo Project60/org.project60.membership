@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/membership/payments</path>
+    <page_callback>CRM_Membership_Page_MembershipPayments</page_callback>
+    <title>Membership Payment Synchronisation</title>
+    <access_arguments>access CiviContribute</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/admin/setting/membership</path>
+    <page_callback>CRM_Admin_Form_Setting_MembershipExtension</page_callback>
+    <title>Project60 Membership Extension</title>
+    <desc>Configuration for Project60s extension for making memberships more flexible</desc>
+    <access_arguments>administer CiviCRM</access_arguments>
+    <adminGroup>CiviMember</adminGroup>
+    <icon>admin/small/online_contribution_pages.png</icon>
+  </item>
+</menu>

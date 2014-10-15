@@ -42,7 +42,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
           ),
         ),
       'membership_fee_override' => array(
-        'title' => ts('Manual membership fee'),
+        'title' => ts('Annual membership fee override'),
         'type' => 'money',
         'default' => 0,
       ),
@@ -52,6 +52,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
         'default' => '1 YEAR',
         'options' => array(
           '1 YEAR' => ts('one year'),
+          '2 YEAR' => ts('two years'),
           '6 MONTH' => ts('half a year'),
           '3 MONTH' => ts('quarter'),
           '2 MONTH' => ts('two months'),
@@ -188,24 +189,45 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
    * returns SQL term representing the expected membership fee / year
    */
   function getExpectedAmount() {
-    // TODO: implement
-    return "100.00";
+    $expected_amount = 0.0;
+    if (empty($this->_params['membership_fee'])) {
+      $expected_amount_source = 'type'; 
+    } else {
+      $expected_amount_source = $this->_params['membership_fee'];
+    }
+
+    switch ($expected_amount_source) {
+      case 'spec':
+        // 'spec' means, the amount was specified in the override
+        if (!empty($this->_params['membership_fee_override'])) {
+          $expected_amount = (float) $this->_params['membership_fee_override'];
+        }
+        break;
+      
+      default:
+      case 'type':
+        // 'type' means, the minumum amount as specified by the membership type is expected
+        $expected_amount = '`civicrm_membership_type`.`minimum_fee`';
+        break;
+    }
+
+    return $expected_amount;
   }
 
   /**
    * returns SQL term representing the actually received membership fee
    */
   function getReceivedAmount() {
-    // TODO: implement
-    return "100.00 * RAND()";
+    return "SUM(mem_contribution_civireport.total_amount)";
   }
 
   /**
    * returns SQL term representing the first date of membership payment
    */
   function getCheckPeriodFrom() {
-    // TODO: read from options
-    return "NOW() - INTERVAL 1 YEAR";
+    $check_period = $this->_params['check_period'];
+    $check_grace = $this->_params['check_grace'].' DAY';
+    return "NOW() - INTERVAL $check_period - INTERVAL $check_grace";
   }
 
 
@@ -245,7 +267,6 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
               $calculation = "(($expected_amount) - ($received_amount))";
               $select[] = "$calculation as {$tableName}_{$fieldName}";
             } elseif ($fieldName=='total_amount') {
-              // TODO: make it SUM(IF(receive_date > min_date))
               $select[] = "SUM({$field['dbAlias']}) as {$tableName}_{$fieldName}";
             } else {
               $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
@@ -257,10 +278,11 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
       }
     }
 
-    $this->_select = "SELECT " . implode(', ', $select) . " ";    
+    $this->_select = "SELECT " . implode(', ', $select) . " ";
   }
 
   function from() {
+    $payment_minimum_date = $this->getCheckPeriodFrom();
     $this->_from = "
          FROM  civicrm_membership {$this->_aliases['civicrm_membership']} {$this->_aclFrom}
                INNER JOIN civicrm_contact {$this->_aliases['civicrm_contact']}
@@ -271,8 +293,12 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
                              {$this->_aliases['civicrm_membership']}.status_id 
                LEFT  JOIN civicrm_membership_payment
                           ON {$this->_aliases['civicrm_membership']}.id = civicrm_membership_payment.membership_id 
+               LEFT  JOIN civicrm_membership_type
+                          ON {$this->_aliases['civicrm_membership']}.membership_type_id = civicrm_membership_type.id 
                LEFT  JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']}
-                          ON {$this->_aliases['civicrm_contribution']}.id = civicrm_membership_payment.contribution_id ";
+                          ON {$this->_aliases['civicrm_contribution']}.id = civicrm_membership_payment.contribution_id
+                          AND {$this->_aliases['civicrm_contribution']}.receive_date >= ($payment_minimum_date)
+                           ";
   }
 
   function where() {
@@ -307,6 +333,8 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
       }
     }
 
+    // $clauses[] = '(civicrm_membership_membership_dues > 0.0)';
+
     if (empty($clauses)) {
       $this->_where = "WHERE ( 1 ) ";
     }
@@ -317,8 +345,6 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
     if ($this->_aclWhere) {
       $this->_where .= " AND {$this->_aclWhere} ";
     }
-
-    error_log($this->_select);
   }
 
   function groupBy() {
@@ -345,12 +371,21 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
     $this->endPostProcess($rows);
   }
 
+
+
   function alterDisplay(&$rows) {
     // custom code to alter rows
     $entryFound = FALSE;
     $checkList = array();
     foreach ($rows as $rowNum => $row) {
 
+      // HACK: remove zero or negtive debts
+      //  reason: depends on the SUM (i.e. multiple lines), subquery needed
+      if ($row['civicrm_membership_membership_dues'] <= 0) {
+        unset($rows[$rowNum]);
+        continue;
+      }
+      
       if (!empty($this->_noRepeats) && $this->_outputMode != 'csv') {
         // not repeat contact display names if it matches with the one
         // in previous row

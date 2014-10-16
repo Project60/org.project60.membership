@@ -39,7 +39,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
         'options' => array(
           'type' => ts('minimum fee'),
           'spec' => ts('manually specified (see right)'),
-          ),
+          ) + $this->getSuitableMembershipFeeCustomFields(),
         ),
       'membership_fee_override' => array(
         'title' => ts('Annual membership fee override'),
@@ -51,6 +51,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
         'type' => 'select',
         'default' => '1 YEAR',
         'options' => array(
+          '100 YEAR' => ts('century'),
           '1 YEAR' => ts('one year'),
           '2 YEAR' => ts('two years'),
           '6 MONTH' => ts('half a year'),
@@ -204,10 +205,14 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
         }
         break;
       
-      default:
       case 'type':
         // 'type' means, the minumum amount as specified by the membership type is expected
         $expected_amount = '`civicrm_membership_type`.`minimum_fee`';
+        break;
+
+      default:
+        // the others are custom fields
+        $expected_amount = $this->_params['membership_fee'];
         break;
     }
 
@@ -228,6 +233,29 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
     $check_period = $this->_params['check_period'];
     $check_grace = $this->_params['check_grace'].' DAY';
     return "NOW() - INTERVAL $check_period - INTERVAL $check_grace";
+  }
+
+  /**
+   * looks for custom fields that could potentially hold a membership fee
+   *  i.e. CustomGroups for memberships with a monetary type
+   *
+   * @return an array of SQL specifiers like `civicrm_value_test_01`.`my_fee_23`
+   *           mapped to a display name
+   */
+  function getSuitableMembershipFeeCustomFields() {
+    $suitable_fields = array();
+    $gsearch = civicrm_api3('CustomGroup', 'get', array('extends'=>'Membership'));
+    if ($gsearch['count'] > 0) {
+      foreach ($gsearch['values'] as $potential_group_id => $potential_group) {
+        $fsearch = civicrm_api3('CustomField', 'get', array('data_type'=>'Money','custom_group_id'=>$potential_group_id));
+        foreach ($fsearch['values'] as $field_id => $field) {
+          $sql_term = '`' . $potential_group['table_name'] . '`.`' . $field['column_name'] . '`';
+          $display = $potential_group['title'] . ' :: ' . $field['label'];
+          $suitable_fields[$sql_term] = $display;
+        }
+      }
+    }
+    return $suitable_fields;
   }
 
 
@@ -299,6 +327,13 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
                           ON {$this->_aliases['civicrm_contribution']}.id = civicrm_membership_payment.contribution_id
                           AND {$this->_aliases['civicrm_contribution']}.receive_date >= ($payment_minimum_date)
                            ";
+
+    // join custom fields if necessary
+    $membership_source = $this->_params['membership_fee'];
+    if ($membership_source != 'spec' && $membership_source != 'type') {
+      $components = explode('.', $membership_source);
+      $this->_from .= " LEFT JOIN " . $components[0] . " ON {$this->_aliases['civicrm_membership']}.id = " . $components[0] . ".`entity_id`";
+    }
   }
 
   function where() {

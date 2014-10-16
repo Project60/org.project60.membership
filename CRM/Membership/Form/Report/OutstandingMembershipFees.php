@@ -16,6 +16,13 @@
 
 require_once 'CRM/Report/Form.php';
 
+/*
+TODO:
+ - memberships that do not span the whole range, exclude?
+ - add links to memberships
+ - format dues as money
+ */
+
 /**
  * This report will identify memberships that are behind on paying their membersip fees
  */
@@ -51,7 +58,6 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
         'type' => 'select',
         'default' => '1 YEAR',
         'options' => array(
-          '100 YEAR' => ts('century'),
           '1 YEAR' => ts('one year'),
           '2 YEAR' => ts('two years'),
           '6 MONTH' => ts('half a year'),
@@ -120,7 +126,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
             'title' => ts('Contact Name'),
             'required' => TRUE,
             'default' => TRUE,
-            'no_repeat' => TRUE,
+            'no_repeat' => FALSE,
           ),
           'id' => array(
             'no_display' => TRUE,
@@ -169,15 +175,6 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
             'default' => TRUE,
           ),
         ),
-        'filters' => array(
-          'contribution_status_id' => array(
-            'title' => ts('Payment Contribution Status'),
-            'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-            'options' => CRM_Contribute_PseudoConstant::contributionStatus(),
-            'default' => array(1),
-            'type' => CRM_Utils_Type::T_INT,
-          ),
-        ),
         'grouping' => 'contribution-fields',
       ),
     );
@@ -190,7 +187,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
    * returns SQL term representing the expected membership fee / year
    */
   function getExpectedAmount() {
-    $expected_amount = 0.0;
+    $expected_amount = '0.00';
     if (empty($this->_params['membership_fee'])) {
       $expected_amount_source = 'type'; 
     } else {
@@ -217,13 +214,6 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
     }
 
     return $expected_amount;
-  }
-
-  /**
-   * returns SQL term representing the actually received membership fee
-   */
-  function getReceivedAmount() {
-    return "SUM(mem_contribution_civireport.total_amount)";
   }
 
   /**
@@ -290,10 +280,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
           ) {
             if ($fieldName=='membership_dues') {
               // 'dues' is a calculated field
-              $expected_amount = $this->getExpectedAmount();
-              $received_amount = $this->getReceivedAmount();
-              $calculation = "(($expected_amount) - ($received_amount))";
-              $select[] = "$calculation as {$tableName}_{$fieldName}";
+              $select[] = $this->getExpectedAmount() . " as {$tableName}_{$fieldName}";
             } elseif ($fieldName=='total_amount') {
               $select[] = "SUM({$field['dbAlias']}) as {$tableName}_{$fieldName}";
             } else {
@@ -326,6 +313,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
                LEFT  JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']}
                           ON {$this->_aliases['civicrm_contribution']}.id = civicrm_membership_payment.contribution_id
                           AND {$this->_aliases['civicrm_contribution']}.receive_date >= ($payment_minimum_date)
+                          AND {$this->_aliases['civicrm_contribution']}.contribution_status_id = 1
                            ";
 
     // join custom fields if necessary
@@ -368,8 +356,6 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
       }
     }
 
-    // $clauses[] = '(civicrm_membership_membership_dues > 0.0)';
-
     if (empty($clauses)) {
       $this->_where = "WHERE ( 1 ) ";
     }
@@ -388,10 +374,10 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
 
   function orderBy() {
     $this->_orderBy = " ORDER BY civicrm_membership_membership_dues DESC";
+    //error_log($this->_select . ' ' . $this->_from . ' ' . $this->_where . ' ' . $this->_groupBy . ' ' . $this->_orderBy);
   }
 
   function postProcess() {
-
     $this->beginPostProcess();
 
     // get the acl clauses built before we assemble the query
@@ -409,14 +395,30 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
 
 
   function alterDisplay(&$rows) {
+    $norm_period = strtotime('1 year', 0);
+    $this_period = strtotime($this->_params['check_period'], 0);
+    $period_factor = $this_period / $norm_period;
+
     // custom code to alter rows
     $entryFound = FALSE;
     $checkList = array();
     foreach ($rows as $rowNum => $row) {
 
-      // HACK: remove zero or negtive debts
+      // treat missing entries as zero
+      if (empty($row['civicrm_membership_membership_dues'])) {
+        $rows[$rowNum]['civicrm_membership_membership_dues'] = '0.00';
+      }
+      if (empty($row['civicrm_contribution_total_amount'])) {
+        $rows[$rowNum]['civicrm_contribution_total_amount'] = '0.00';
+      }
+
+      // calculate membership dues (currenty, membership_dues only contains the annual fee)
+      $rows[$rowNum]['civicrm_membership_membership_dues'] = sprintf("%01.2f", 
+        ($rows[$rowNum]['civicrm_membership_membership_dues'] * $period_factor) - $row['civicrm_contribution_total_amount']);
+
+      // filter out zero or negtive debts
       //  reason: depends on the SUM (i.e. multiple lines), subquery needed
-      if ($row['civicrm_membership_membership_dues'] <= 0) {
+      if ($rows[$rowNum]['civicrm_membership_membership_dues'] <= 0) {
         unset($rows[$rowNum]);
         continue;
       }

@@ -2,15 +2,15 @@
 <extension key="org.project60.membership" type="module">
   <file>membership</file>
   <name>Membership</name>
-  <description>Project60 extension make CiviMember more flexible.</description>
+  <description>Project60 extension to make CiviMember more flexible.</description>
   <license>AGPLv3</license>
   <maintainer>
     <author>B. Endres</author>
     <email>info@systopia.de</email>
   </maintainer>
   <releaseDate></releaseDate>
-  <version>1.0</version>
-  <develStage>alpha</develStage>
+  <version>0.1</version>
+  <develStage>development</develStage>
   <compatibility>
     <ver>4.4</ver>
     <ver>4.5</ver>

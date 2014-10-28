@@ -11,103 +11,243 @@ msgstr ""
 "X-Poedit-Language: German\n"
 "X-Poedit-Country: GERMANY\n"
 
-#: templates/CRM/Memberships/Page/MembershipPayments.hlp
-msgid "The mapping parameter defines the association between financial type and membership type. The  financial type can only be matched to exactly one membership. The expected format is as follows:<br/><br/>\"&lt;financial_type_id&gt;:&lt;membership_type_id&gt;\"<br/><br/>e.g. \"2:1\" meaning \"contributions of financial type 2 will be associated with memberships of type 1\". If you have more that one association, provide this as a comma separated string of the above, e.g. \"2:1,4:2\"."
-msgstr "Der 'mapping'-Parameter definiert die Zuordnung von Zuwendungsart zu Mitgliedstyp. Jede Zuwendungsart kann immer nur einem Mitgliedstypen zugeordnet werden. Das Format ist wie folgt:<br/><br/>\"&lt;financial_type_id&gt;:&lt;membership_type_id&gt;\"<br/><br/>also z.B. \"2:1\" heißt \"Zuwendungen vom Zuwendungstyp 2 werden Mitgliedschaften mit Mitgliedschaftstyp 1 zugeordnet\". Falls es mehrere Zuordnungen gibt, können diese als Komma-separierter String angegeben werden, also z.B. \"2:1,4:2\"."
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.mgd.php
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Outstanding Membership Fees"
+msgstr "Ausstehende Mitgliedsbeiträge"
 
-#: templates/CRM/Memberships/Page/MembershipPayments.hlp
-msgid "Multiple financial types can be associated with on membership type, but not vice versa."
-msgstr "Es können mehrere Zuwendungsarten einem Mitgliedschaftstypen zugeordnet werden, aber nicht umgekehrt."
+#: /CRM/Admin/Form/Setting/MembershipExtension.php
+msgid "Configuration - Project60 Membership Extension"
+msgstr "Konfiguration der Mitgliedschafts-Extension"
 
-#: templates/CRM/Memberships/Page/MembershipPayments.hlp
-msgid "The mapping parameter is stored as a setting for your convenience."
-msgstr "Diese Einstellung wird im System gespeichert."
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.mgd.php
+msgid "Will identify memberships that are behind on paying their membersip fees (org.project60.membership)"
+msgstr "Listet alle Mitgliedschaften auf, die bei den Mitgliedsbeiträgen im Zahlungsverzug sind  (org.project60.membership)"
 
-#: templates/CRM/Memberships/Page/MembershipPayments.hlp
-msgid "If you select this, contributions that are already associated with a membership will be revised if they do not comply with the mapping provided. However, only contributions with a financial type that is inlcuded in the mapping will be touched."
-msgstr "Wenn dieser Parameter gesetzt ist werden auch Zuwendungen, die bereits einer Mitgliedschaft zugeordnet sind, neu zugeordnet. Dies gilt allerdings nur für Zuwendungen mit einer Zuwendungsart die im 'mapping' angegeben wurde."
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Annual membership fee"
+msgstr "Jährlicher Mitgliedsbeitrag"
 
-#: templates/CRM/Memberships/Page/MembershipPayments.hlp
-msgid "<strong>Use with caution!</strong>"
-msgstr "<strong>Achtung! Bitte mit Bedacht verwenden.</strong>"
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "minimum fee of membership type"
+msgstr "Mindestbeitrag des Mitgliedstypen"
 
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
-msgid "Synchronization Options"
-msgstr "Synchronisierungseinstellungen"
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "manually specified (see right =>)"
+msgstr "wie rechts definiert (siehe dort =>)"
 
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
-msgid "Mapping Rule"
-msgstr "Zuordnungsregel"
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Custom annual membership fee"
+msgstr "Jährlicher Mitgliedsbeitrag"
 
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Check horizon"
+msgstr "Kontrollzeitraum"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "one year"
+msgstr "1 Jahr"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "two years"
+msgstr "2 Jahre"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "half a year"
+msgstr "Halbjahr"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "quarter"
+msgstr "Vierteljahr"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "two months"
+msgstr "2 Monate"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "one month"
+msgstr "1 Monat"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Grace period in days"
+msgstr "Toleranzzeit in Tagen"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Money Owed"
+msgstr "Ausstehender Betrag"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Membership ID"
+msgstr "Mitgliedschafts ID"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Membership Type"
+msgstr "Mitgliedschaftstyp"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Start Date"
+msgstr ""
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Join Date"
+msgstr ""
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Membership Owner ID"
+msgstr "Kontakt ID des Mitglieds"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Membership Types"
+msgstr "Mitgliedschaftstypen"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Contact Name"
+msgstr "Kontakt Name"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Status"
+msgstr ""
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Membership Fees Received"
+msgstr "Erhaltene Mitgliedsbeiträge"
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Please enter a valid amount."
+msgstr "Bitte geben Sie einen gültigen Betrag ein."
+
+#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "View Contact Summary for this Contact."
+msgstr "Kontakt anzeigen"
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "General Settings"
+msgstr "Allgemeine Einstellungen"
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Payment Synchronisation Tool"
+msgstr "Mitgliedschaftsbeitrags-Zuordnung"
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Financial Type Mapping"
+msgstr "Zuwendungsarten"
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Creditor Contact"
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
 msgid "Help"
 msgstr "Hilfe"
 
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
-msgid "Rebuild Mapping"
-msgstr "überschreiben"
+#: templates/CRM/Membership/Page/MembershipPayments.hlp
+msgid "If you select this, contributions that are already associated with a membership will be revised if they do not comply with the mapping provided. However, only contributions with a financial type that is inlcuded in the mapping will be touched."
+msgstr "Wenn dieser Parameter gesetzt ist werden auch Zuwendungen, die bereits einer Mitgliedschaft zugeordnet sind, neu zugeordnet. Dies gilt allerdings nur für Zuwendungen mit einer Zuwendungsart die im 'mapping' angegeben wurde."
 
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
-msgid "Synchronize"
-msgstr "Synchronisieren"
+#: templates/CRM/Membership/Page/MembershipPayments.hlp
+msgid "<strong>Use with caution!</strong>"
+msgstr "<strong>Achtung! Bitte mit Bedacht verwenden.</strong>"
 
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
-msgid "Results of this run"
-msgstr "Ergebnisse dieses Synchronisationslaufs"
-
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
-msgid "contributions have been newly assigned to memberships"
-msgstr "Zuwendungen wurden neu zugeordnet"
-
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
-msgid "Contribution"
-msgstr ""
-
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
-msgid "Date"
-msgstr ""
-
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
-msgid "Contributor"
-msgstr ""
-
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
-msgid "view membership"
-msgstr "Mitgliedschaft ansehen"
-
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
-msgid "The following contributions could not be assigned:"
-msgstr "Die folgenden Zuwendungen konnten nicht zugeordnet werden:"
-
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
-msgid "contributions with no active membership"
-msgstr "Zuwendungen ohne aktive Mitgliedschaft"
-
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
-msgid "contributions with ambiguous memberships"
-msgstr "Zuwendungen mit nicht eindeutiger Mitgliedschaft"
-
-#: templates/CRM/Memberships/Page/MembershipPayments.hlp
+#: templates/CRM/Membership/Page/MembershipPayments.hlp
 msgid "If you select this, the start date of the memberships will be adjusted to accomodate payments within a certain time range."
 msgstr "Wenn dieser Parameter gesetzt ist, wird der Zeitraum der Mitgliedschaft angepasst, wenn Zahlungen in dem angegebenen Zeitraum gefunden werden."
 
-#: templates/CRM/Memberships/Page/MembershipPayments.hlp
+#: templates/CRM/Membership/Page/MembershipPayments.hlp
 msgid "If a membership payment is recorded this number of days before the current starting date, the stating date will be adjusted to the payment's received date."
 msgstr "Falls eine Beitragszahlung innerhalb der hier angegebenen Anzahl von Tagen vor dem Startdatum der Mitgliedschaft gefunden wird, so wird das Start- und das Beitrittsdatum der Mitgliedschaft auf das Eingangsdatum der Beitragszahlung ausgeweitet."
 
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
+msgid "Synchronization Options"
+msgstr "Synchronisierungseinstellungen"
+
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
+msgid "Rebuild Mapping"
+msgstr "überschreiben"
+
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
 msgid "Adjust Memberships"
 msgstr "Mitgliedschaft anpassen"
 
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
 msgid "Adjust start date"
 msgstr "Startdatum anpassen"
 
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
 msgid "Adjust Start"
 msgstr "Startdatum anpassen"
 
-#: templates/CRM/Memberships/Page/MembershipPayments.tpl
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
 msgid "days"
 msgstr "Tage"
 
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
+msgid "Synchronize"
+msgstr "Synchronisieren"
+
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
+msgid "Results of this run"
+msgstr "Ergebnisse dieses Synchronisationslaufs"
+
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
+msgid "contributions have been newly assigned to memberships"
+msgstr "Zuwendungen wurden neu zugeordnet"
+
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
+msgid "Contribution"
+msgstr ""
+
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
+msgid "Date"
+msgstr ""
+
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
+msgid "Contributor"
+msgstr ""
+
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
+msgid "view membership"
+msgstr "Mitgliedschaft ansehen"
+
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
+msgid "The following contributions could not be assigned:"
+msgstr "Die folgenden Zuwendungen konnten nicht zugeordnet werden:"
+
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
+msgid "contributions with no active membership"
+msgstr "Zuwendungen ohne aktive Mitgliedschaft"
+
+#: templates/CRM/Membership/Page/MembershipPayments.tpl
+msgid "contributions with ambiguous memberships"
+msgstr "Zuwendungen mit nicht eindeutiger Mitgliedschaft"
+
+#~ msgid ""
+#~ "The mapping parameter defines the association between financial type and "
+#~ "membership type. The  financial type can only be matched to exactly one "
+#~ "membership. The expected format is as follows:<br/><br/>\"&lt;"
+#~ "financial_type_id&gt;:&lt;membership_type_id&gt;\"<br/><br/>e.g. \"2:1\" "
+#~ "meaning \"contributions of financial type 2 will be associated with "
+#~ "memberships of type 1\". If you have more that one association, provide "
+#~ "this as a comma separated string of the above, e.g. \"2:1,4:2\"."
+#~ msgstr ""
+#~ "Der 'mapping'-Parameter definiert die Zuordnung von Zuwendungsart zu "
+#~ "Mitgliedstyp. Jede Zuwendungsart kann immer nur einem Mitgliedstypen "
+#~ "zugeordnet werden. Das Format ist wie folgt:<br/><br/>\"&lt;"
+#~ "financial_type_id&gt;:&lt;membership_type_id&gt;\"<br/><br/>also z.B. "
+#~ "\"2:1\" heißt \"Zuwendungen vom Zuwendungstyp 2 werden Mitgliedschaften "
+#~ "mit Mitgliedschaftstyp 1 zugeordnet\". Falls es mehrere Zuordnungen gibt, "
+#~ "können diese als Komma-separierter String angegeben werden, also z.B. "
+#~ "\"2:1,4:2\"."
+
+#~ msgid ""
+#~ "Multiple financial types can be associated with on membership type, but "
+#~ "not vice versa."
+#~ msgstr ""
+#~ "Es können mehrere Zuwendungsarten einem Mitgliedschaftstypen zugeordnet "
+#~ "werden, aber nicht umgekehrt."
+
+#~ msgid "The mapping parameter is stored as a setting for your convenience."
+#~ msgstr "Diese Einstellung wird im System gespeichert."
+
+#~ msgid "Mapping Rule"
+#~ msgstr "Zuordnungsregel"

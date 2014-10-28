@@ -44,12 +44,12 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
         'type' => 'select',
         'default' => 'spec',
         'options' => array(
-          'type' => ts('minimum fee'),
-          'spec' => ts('manually specified (see right)'),
+          'type' => ts('minimum fee of membership type'),
+          'spec' => ts('manually specified (see right =>)'),
           ) + $this->getSuitableMembershipFeeCustomFields(),
         ),
       'membership_fee_override' => array(
-        'title' => ts('Annual membership fee override'),
+        'title' => ts('Custom annual membership fee'),
         'type' => 'money',
         'default' => 0,
       ),
@@ -73,8 +73,6 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
         ),
     );
 
-
-
     $this->_columns = array(
       'civicrm_membership' => array(
         'dao' => 'CRM_Member_DAO_Membership',
@@ -87,13 +85,17 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
           'membership_id' => array(
             'title' => ts('Membership ID'),
             'no_display' => TRUE,
-            'required' => FALSE,
+            'required' => TRUE,
             'no_repeat' => FALSE,
           ),
           'membership_type_id' => array(
             'title' => ts('Membership Type'),
             'required' => TRUE,
             'no_repeat' => TRUE,
+          ),
+          'start_date' => array(
+            'title' => ts('Start Date'),
+            'required' => TRUE,
           ),
           'join_date' => array(
             'title' => ts('Join Date'),
@@ -102,6 +104,11 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
         ),
         'filters' => array(
           'join_date' => array(
+            'title' => ts("Join Date"),
+            'operatorType' => CRM_Report_Form::OP_DATE,
+          ),
+          'start_date' => array(
+            'title' => ts("Start Date"),
             'operatorType' => CRM_Report_Form::OP_DATE,
           ),
           'owner_membership_id' => array(
@@ -161,6 +168,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
             'type' => CRM_Utils_Type::T_INT,
             'operatorType' => CRM_Report_Form::OP_MULTISELECT,
             'options' => CRM_Member_PseudoConstant::membershipStatus(NULL, NULL, 'label'),
+            'default' => array(1,2,3),
           ),
         ),
         'grouping' => 'member-fields',
@@ -180,6 +188,17 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
     );
     $this->_groupFilter = TRUE;
     $this->_tagFilter = TRUE;
+
+    // if you calculate these, they are calculated on a 'by second' basis and end up crooked
+    $this->period_factors = array(
+          '1 YEAR' => 1.0,
+          '2 YEAR' => 0.5,
+          '6 MONTH' => 2.0,
+          '3 MONTH' => 4.0,
+          '2 MONTH' => 6.0,
+          '1 MONTH' => 12.0,
+      );
+
     parent::__construct();
   }
 
@@ -395,14 +414,21 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
 
 
   function alterDisplay(&$rows) {
-    $norm_period = strtotime('1 year', 0);
-    $this_period = strtotime($this->_params['check_period'], 0);
-    $period_factor = $this_period / $norm_period;
+    $check_period = $this->_params['check_period'];
+    $check_period_seconds = strtotime($check_period) - strtotime('now');
 
     // custom code to alter rows
     $entryFound = FALSE;
     $checkList = array();
     foreach ($rows as $rowNum => $row) {
+      // adjust accumulated contributions by time factor
+      $membership_age = strtotime('now') - strtotime($row['civicrm_membership_start_date']);
+      if ($membership_age < $check_period_seconds) {
+        // this membership is younger than the check period
+        $period_factor = strtotime('1 year') / $membership_age;
+      } else {
+        $period_factor = $this->period_factors[$check_period];
+      }
 
       // treat missing entries as zero
       if (empty($row['civicrm_membership_membership_dues'])) {
@@ -414,7 +440,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
 
       // calculate membership dues (currenty, membership_dues only contains the annual fee)
       $rows[$rowNum]['civicrm_membership_membership_dues'] = sprintf("%01.2f", 
-        ($rows[$rowNum]['civicrm_membership_membership_dues'] * $period_factor) - $row['civicrm_contribution_total_amount']);
+        ($rows[$rowNum]['civicrm_membership_membership_dues'] / $period_factor) - $row['civicrm_contribution_total_amount']);
 
       // filter out zero or negtive debts
       //  reason: depends on the SUM (i.e. multiple lines), subquery needed
@@ -443,7 +469,13 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
 
       if (array_key_exists('civicrm_membership_membership_type_id', $row)) {
         if ($value = $row['civicrm_membership_membership_type_id']) {
-          $rows[$rowNum]['civicrm_membership_membership_type_id'] = CRM_Member_PseudoConstant::membershipType($value, FALSE);
+          // write the type name instead of the ID
+          $membershipTypeField = CRM_Member_PseudoConstant::membershipType($value, FALSE);
+
+          // also link it to the membership view
+          $url = CRM_Utils_System::url("civicrm/contact/view/membership", "action=view&reset=1&cid={$row['civicrm_contact_id']}&id={$row['civicrm_membership_membership_id']}");
+          $membershipTypeField = "<a href='$url'>" . $membershipTypeField . "</a>";
+          $rows[$rowNum]['civicrm_membership_membership_type_id'] = $membershipTypeField;
         }
         $entryFound = TRUE;
       }

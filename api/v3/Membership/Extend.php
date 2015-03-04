@@ -34,6 +34,14 @@
  *                        DEFAULT is 1
  */
 function civicrm_api3_membership_extend($params) {
+  $now = strtotime("now");
+  $stats = array(
+    'memberships_checked'      => 0,
+    'memberships_extended'     => 0,
+    'memberships_irregular'    => 0,
+    'irregular_membership_ids' => '',
+    );
+
   // 0. Sanitize parameters
   $membership_type_ids   = _mebership_extend_helper_extract_intlist($params['membership_type_ids']);
   if (empty($membership_type_ids)) {
@@ -55,11 +63,15 @@ function civicrm_api3_membership_extend($params) {
 
 
 
+
+
   // 1. identify and load all memberships
   $memberships = array();
   $find_memberships_sql = "
   SELECT 
     civicrm_membership.id                      AS membership_id,
+    civicrm_membership.start_date              AS start_date,
+    civicrm_membership.end_date                AS end_date,
     civicrm_membership_type.minimum_fee        AS minimum_fee,
     civicrm_membership_type.duration_unit      AS p_unit,
     civicrm_membership_type.duration_interval  AS p_interval
@@ -67,33 +79,99 @@ function civicrm_api3_membership_extend($params) {
   LEFT JOIN civicrm_membership_type ON civicrm_membership_type.id = civicrm_membership.membership_type_id
   WHERE $membership_clause
     AND civicrm_membership.status_id IN ($membership_status_ids)
-    AND (civicrm_membership.is_override = NULL OR civicrm_membership.is_override = 0)
+    AND (civicrm_membership.is_override IS NULL OR civicrm_membership.is_override = 0)
     AND civicrm_membership.end_date < (NOW() + INTERVAL $look_ahead DAY);
   ";
   error_log($find_memberships_sql);
   $membership_query = CRM_Core_DAO::executeQuery($find_memberships_sql);
   while ($membership_query->fetch()) {
-    $memberships[$membership_query->id] = array();
-    CRM_Core_DAO::storeValues($membership_query, $memberships[$membership_query->id]);
+    $memberships[$membership_query->membership_id] = array(
+      'id'           => $membership_query->membership_id,
+      'minimum_fee'  => $membership_query->membership_id,
+      'p_unit'       => $membership_query->p_unit,
+      'p_interval'   => $membership_query->p_interval,
+      'end_date'     => $membership_query->end_date,
+      'start_date'   => $membership_query->start_date);
   }
+  $stats['memberships_checked'] = count($memberships);
 
+  error_log(print_r($memberships,1));
 
-
-  // 2. gather payment information
   foreach ($memberships as $membership_id => $membership) {
     error_log(print_r($membership,1));
+
+    // 2. gather payment information
     
-    # code...
+    $yearly_fee       = $membership['minimum_fee'];
+    $payment_unit     = $membership['p_unit'];
+    $payment_interval = $membership['p_interval'];
+    $precision        = 7 * 24 * 60 * 60;
+
+    // TODO: custom field/value override
+
+    // 3. load all payments
+    $payment_query_sql = "
+    SELECT
+      civicrm_contribution.id           AS contribution_id,
+      civicrm_contribution.receive_date AS contribution_date,
+      civicrm_contribution.total_amount AS contribution_amount,
+      civicrm_contribution.currency     AS contribution_currency
+    FROM civicrm_contribution
+    LEFT JOIN civicrm_membership_payment ON civicrm_membership_payment.contribution_id = civicrm_contribution.id
+    WHERE  civicrm_membership_payment.membership_id = $membership_id
+      AND  civicrm_contribution.contribution_status_id = 1
+    ORDER BY contribution_date ASC
+    ;";
+    error_log($payment_query_sql);
+    $membership_payments = array();
+    $payment_query = CRM_Core_DAO::executeQuery($payment_query_sql);
+    while ($payment_query->fetch()) {
+      $membership_payments[] = array(
+        'id'                    => $payment_query->contribution_id,
+        'contribution_date'     => $payment_query->contribution_date,
+        'contribution_amount'   => $payment_query->contribution_amount,
+        'contribution_currency' => $payment_query->contribution_currency);
+    }
+
+    error_log(print_r($membership_payments,1));
+    
+    // 4. iterate through all extepected membership payments
+    $date = strtotime($membership['start_date']);
+    foreach ($membership_payments as $payment_id => $payment) {
+      // see if the payment matches the date
+      error_log('Expected: ' . date('Y-m-d', $date));
+      error_log('Payment:  ' . date('Y-m-d', strtotime($payment['contribution_date'])));
+      $date_diff = abs($date - strtotime($payment['contribution_date']));
+
+      if ($date_diff < $precision) {
+        // this payment checks out, advance to next cycle
+        $date = strtotime("+$payment_interval $payment_unit", $date);
+      } else {
+        // this payment has NOT been made => exit
+        break;
+      }
+    }
+
+    $end_date = strtotime($membership['end_date']);
+    if ($end_date < $date) {
+      // here's something we can extend...
+      error_log("EXTEND TO: " . date('Y-m-d', $date));
+      $update = array(
+          'id'        => $membership_id,
+          'end_date'  => date('Ymdhis', $date));
+
+      if (!empty($params['change_status'])) {
+        // add a status update:
+        if ($date > $now) {
+          $update['status_id'] = 3; // TODO: lookup: current
+        }
+      }
+      civicrm_api3('Membership', 'create', $update);
+      $stats['memberships_extended'] += 1;
+    }
   }
 
-
-  // 3. load all payments
-
-  // 4. map payments to membership
-
-  // 5. adjust end_date and status
-
-  return $results;
+  return civicrm_api3_create_success($stats);
 }
 
 function _civicrm_api3_membership_extend_spec(&$params) {

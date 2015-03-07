@@ -20,18 +20,24 @@
  * not go back beyond the last payment 
  * 
  * @param membership_type_ids      only check memberships with the given membership types
- *                        default is ALL
- * @param precision     date range in which to accept membership payments
- *                        payments within <precision> days of the expected
- *                        will be accepted.
- *                        default is 7
- * @param status_ids    define the membership status IDs that will be considered. 
- *                        DEFAULT is 1,2,3 (new, current, grace)
- * @param look_ahead    only check memberships with an end_date up to look_ahead 
- *                        days in the future. This value can be negative.
- *                        DEFAULT is 14
- * @param change_status if "1" update the membership status when extending the membership
- *                        DEFAULT is 1
+ *                           default is ALL
+ * @param precision        date range in which to accept membership payments
+ *                           payments within <precision> days of the expected
+ *                           will be accepted.
+ *                           default is 7
+ * @param status_ids       define the membership status IDs that will be considered. 
+ *                           DEFAULT is 1,2,3 (new, current, grace)
+ * @param look_ahead       only check memberships with an end_date up to look_ahead 
+ *                           days in the future. This value can be negative.
+ *                           DEFAULT is 14
+ * @param custom_fee       if set, this should be a custom field of the membership
+ *                           containing a yearly(!) fee override. If not set or not present with
+ *                           one particular membership, the default will still be used
+ * @param custom_interval  if set, this should be a custom field of the membership
+ *                           containing a payemnt interval override
+ * @param change_status    if "1" update the membership status when extending the membership
+ *                           DEFAULT is 1
+ * @param test_run         if "1" no actual changes are performed. DEFAULT is 0
  */
 function civicrm_api3_membership_extend($params) {
   $now = strtotime("now");
@@ -39,7 +45,8 @@ function civicrm_api3_membership_extend($params) {
     'memberships_checked'      => 0,
     'memberships_extended'     => 0,
     'memberships_irregular'    => 0,
-    'irregular_membership_ids' => '',
+    'extended_membership_ids'  => array(),
+    'irregular_membership_ids' => array(),
     );
 
   // 0. Sanitize parameters
@@ -60,6 +67,14 @@ function civicrm_api3_membership_extend($params) {
   } else {
     $look_ahead = 14;
   }
+
+  $contribution_status_completed = (int) CRM_Core_OptionGroup::getValue('contribution_status', 'Completed', 'name', 'String', 'value');
+  if (!$contribution_status_completed) {
+    return civicrm_api3_create_error("Cannot find contribution status 'Completed'.");
+  }
+
+  $membership_status_current = civicrm_api3('MembershipStatus', 'getsingle', array('name' => 'Current'));
+  $membership_status_current_id = $membership_status_current['id'];
 
 
 
@@ -82,12 +97,11 @@ function civicrm_api3_membership_extend($params) {
     AND (civicrm_membership.is_override IS NULL OR civicrm_membership.is_override = 0)
     AND civicrm_membership.end_date < (NOW() + INTERVAL $look_ahead DAY);
   ";
-  error_log($find_memberships_sql);
   $membership_query = CRM_Core_DAO::executeQuery($find_memberships_sql);
   while ($membership_query->fetch()) {
     $memberships[$membership_query->membership_id] = array(
       'id'           => $membership_query->membership_id,
-      'minimum_fee'  => $membership_query->membership_id,
+      'minimum_fee'  => $membership_query->minimum_fee,
       'p_unit'       => $membership_query->p_unit,
       'p_interval'   => $membership_query->p_interval,
       'end_date'     => $membership_query->end_date,
@@ -95,19 +109,42 @@ function civicrm_api3_membership_extend($params) {
   }
   $stats['memberships_checked'] = count($memberships);
 
-  error_log(print_r($memberships,1));
-
   foreach ($memberships as $membership_id => $membership) {
-    error_log(print_r($membership,1));
 
     // 2. gather payment information
     
-    $yearly_fee       = $membership['minimum_fee'];
-    $payment_unit     = $membership['p_unit'];
-    $payment_interval = $membership['p_interval'];
-    $precision        = 7 * 24 * 60 * 60;
+    $expected_payment_amount    = $membership['minimum_fee'];
+    $payment_unit               = $membership['p_unit'];
+    $payment_interval           = $membership['p_interval'];
+    $precision                  = $params['precision'] * (24 * 60 * 60);
 
-    // TODO: custom field/value override
+    if (!empty($params['custom_fee']) || !empty($params['custom_interval'])) {
+      // custom field/value override
+      $membership_data = civicrm_api3('Membership', 'getsingle', array('id' => $membership_id));
+
+      if (!empty($params['custom_interval']) && !empty($membership_data[$params['custom_interval']])) {
+        $payment_interval = $membership_data[$params['custom_interval']];
+        $payment_unit     = 'month';
+      }
+
+      if (!empty($params['custom_fee']) && !empty($membership_data[$params['custom_fee']])) {
+        $expected_payment_amount = $membership_data[$params['custom_fee']];
+        error_log($expected_payment_amount);
+        $expected_payment_amount = CRM_Utils_Rule::cleanMoney($expected_payment_amount);
+        error_log($expected_payment_amount);
+        //error_log(sprintf("MONEY: RAW '%s%' CLEAN: '%s'", $params['custom_fee'], $expected_payment_amount));
+
+        // this is interpreted as a YEARLY fee, needs to be broken down to individual payments
+        if ($payment_unit == 'month') {
+          $expected_payment_amount = (float) $expected_payment_amount * 12.0 / (float) $payment_interval;
+        } elseif ($payment_unit == 'year') {
+          $expected_payment_amount = (float) $expected_payment_amount * (float) $payment_interval;
+        } elseif ($payment_unit == 'week') {
+          $expected_payment_amount = (float) $expected_payment_amount * 52.3 / (float) $payment_interval;
+        }
+        error_log(sprintf("EXPECTED: '%s'", $expected_payment_amount));
+      }
+    }
 
     // 3. load all payments
     $payment_query_sql = "
@@ -119,10 +156,9 @@ function civicrm_api3_membership_extend($params) {
     FROM civicrm_contribution
     LEFT JOIN civicrm_membership_payment ON civicrm_membership_payment.contribution_id = civicrm_contribution.id
     WHERE  civicrm_membership_payment.membership_id = $membership_id
-      AND  civicrm_contribution.contribution_status_id = 1
+      AND  civicrm_contribution.contribution_status_id = $contribution_status_completed
     ORDER BY contribution_date ASC
     ;";
-    error_log($payment_query_sql);
     $membership_payments = array();
     $payment_query = CRM_Core_DAO::executeQuery($payment_query_sql);
     while ($payment_query->fetch()) {
@@ -133,29 +169,33 @@ function civicrm_api3_membership_extend($params) {
         'contribution_currency' => $payment_query->contribution_currency);
     }
 
-    error_log(print_r($membership_payments,1));
-    
-    // 4. iterate through all extepected membership payments
+    // 4. iterate through all expected membership payments
     $date = strtotime($membership['start_date']);
     foreach ($membership_payments as $payment_id => $payment) {
       // see if the payment matches the date
-      error_log('Expected: ' . date('Y-m-d', $date));
-      error_log('Payment:  ' . date('Y-m-d', strtotime($payment['contribution_date'])));
+      // error_log('Expected: ' . date('Y-m-d', $date));
+      // error_log('Payment:  ' . date('Y-m-d', strtotime($payment['contribution_date'])));
       $date_diff = abs($date - strtotime($payment['contribution_date']));
 
-      if ($date_diff < $precision) {
+      if (($date_diff < $precision) &&  ($payment['contribution_amount']+1.0 >= $expected_payment_amount)) {
         // this payment checks out, advance to next cycle
         $date = strtotime("+$payment_interval $payment_unit", $date);
       } else {
-        // this payment has NOT been made => exit
+        // this is an odd payment => exit
+        error_log("KOMISCH: $membership_id");
+        error_log("EXPECTED $expected_payment_amount ON ". date('Y-m-d', $date));
+        error_log("FOUND    {$payment['contribution_amount']} ON ". $payment['contribution_date']);
+        $stats['irregular_membership_ids'][] = $membership_id;
         break;
       }
     }
 
+    // finally, go back one day since we want to use this as end_date (last day of membership)
+    $date = strtotime("-1 day", $date);
     $end_date = strtotime($membership['end_date']);
     if ($end_date < $date) {
       // here's something we can extend...
-      error_log("EXTEND TO: " . date('Y-m-d', $date));
+      // error_log("EXTEND TO: " . date('Y-m-d', $date));
       $update = array(
           'id'        => $membership_id,
           'end_date'  => date('Ymdhis', $date));
@@ -163,13 +203,22 @@ function civicrm_api3_membership_extend($params) {
       if (!empty($params['change_status'])) {
         // add a status update:
         if ($date > $now) {
-          $update['status_id'] = 3; // TODO: lookup: current
+          $update['status_id'] = $membership_status_current_id;
         }
       }
-      civicrm_api3('Membership', 'create', $update);
+
+      // execute the update
+      if (empty($params['test_run'])) {
+        civicrm_api3('Membership', 'create', $update);        
+      }
+
       $stats['memberships_extended'] += 1;
+      $stats['extended_membership_ids'][] = $membership_id;
     }
   }
+  
+  $stats['memberships_irregular'] = count($stats['irregular_membership_ids']);
+  if (!empty($params['test_run'])) $stats['test_run'] = 1;
 
   return civicrm_api3_create_success($stats);
 }

@@ -33,6 +33,9 @@
  * @param custom_fee       if set, this should be a custom field of the membership
  *                           containing a yearly(!) fee override. If not set or not present with
  *                           one particular membership, the default will still be used
+ * @param horizon          if set, this represents the backward horizon in days 
+ *                           in which to check the membership payment, 
+ *                           e.g. "365" will only check the last year
  * @param custom_interval  if set, this should be a custom field of the membership
  *                           containing a payemnt interval override
  * @param change_status    if "1" update the membership status when extending the membership
@@ -66,6 +69,13 @@ function civicrm_api3_membership_extend($params) {
     $look_ahead = (int) $params['look_ahead'];
   } else {
     $look_ahead = 14;
+  }
+
+  if (isset($params['horizon']) && !empty($params['horizon'])) {
+    $horizon_days = (int) $params['horizon'];
+    $horizon = strtotime("-$horizon_days days");
+  } else {
+    $horizon = NULL;
   }
 
   $contribution_status_completed = (int) CRM_Core_OptionGroup::getValue('contribution_status', 'Completed', 'name', 'String', 'value');
@@ -112,7 +122,6 @@ function civicrm_api3_membership_extend($params) {
   foreach ($memberships as $membership_id => $membership) {
 
     // 2. gather payment information
-    
     $expected_payment_amount    = $membership['minimum_fee'];
     $payment_unit               = $membership['p_unit'];
     $payment_interval           = $membership['p_interval'];
@@ -129,10 +138,7 @@ function civicrm_api3_membership_extend($params) {
 
       if (!empty($params['custom_fee']) && !empty($membership_data[$params['custom_fee']])) {
         $expected_payment_amount = $membership_data[$params['custom_fee']];
-        error_log($expected_payment_amount);
         $expected_payment_amount = CRM_Utils_Rule::cleanMoney($expected_payment_amount);
-        error_log($expected_payment_amount);
-        //error_log(sprintf("MONEY: RAW '%s%' CLEAN: '%s'", $params['custom_fee'], $expected_payment_amount));
 
         // this is interpreted as a YEARLY fee, needs to be broken down to individual payments
         if ($payment_unit == 'month') {
@@ -157,7 +163,7 @@ function civicrm_api3_membership_extend($params) {
     LEFT JOIN civicrm_membership_payment ON civicrm_membership_payment.contribution_id = civicrm_contribution.id
     WHERE  civicrm_membership_payment.membership_id = $membership_id
       AND  civicrm_contribution.contribution_status_id = $contribution_status_completed
-    ORDER BY contribution_date ASC
+    ORDER BY contribution_date DESC
     ;";
     $membership_payments = array();
     $payment_query = CRM_Core_DAO::executeQuery($payment_query_sql);
@@ -169,33 +175,53 @@ function civicrm_api3_membership_extend($params) {
         'contribution_currency' => $payment_query->contribution_currency);
     }
 
-    // 4. iterate through all expected membership payments
+    // 4. find the starting time
+    $membership_bad = FALSE;
     $date = strtotime($membership['start_date']);
-    foreach ($membership_payments as $payment_id => $payment) {
-      // see if the payment matches the date
-      // error_log('Expected: ' . date('Y-m-d', $date));
-      // error_log('Payment:  ' . date('Y-m-d', strtotime($payment['contribution_date'])));
-      $date_diff = abs($date - strtotime($payment['contribution_date']));
-
-      if (($date_diff < $precision) &&  ($payment['contribution_amount']+1.0 >= $expected_payment_amount)) {
-        // this payment checks out, advance to next cycle
+    if ($horizon) {
+      while ($date < $horizon) {
         $date = strtotime("+$payment_interval $payment_unit", $date);
-      } else {
-        // this is an odd payment => exit
+      }
+      error_log("Starting with date " . date('Y-m-d', $date));
+    }
+
+    // 5. try to find a payment for each payemnt date
+    $today = strtotime("now + $look_ahead days");
+    while ($date < $today) {
+      // find and add all payments around this date
+      $contribution_sum = 0.0;
+      foreach ($membership_payments as $payment_id => $payment) {
+        $date_diff = abs($date - strtotime($payment['contribution_date']));
+        if ($date_diff < $precision) {
+          $contribution_sum += $payment['contribution_amount'];
+          if ($contribution_sum >= $expected_payment_amount) {
+            // we've reached the expected amount, stop looking
+            break;
+          }
+        }
+      }
+
+      if ($contribution_sum < $expected_payment_amount) {
+        // this due date has no (or not enough payments)
         error_log("KOMISCH: $membership_id");
         error_log("EXPECTED $expected_payment_amount ON ". date('Y-m-d', $date));
-        error_log("FOUND    {$payment['contribution_amount']} ON ". $payment['contribution_date']);
         $stats['irregular_membership_ids'][] = $membership_id;
+        // this is a bad membership => exit
+        $membership_bad = TRUE;
         break;
+      
+      } else {
+        // everything checks out => advance to next due date
+        $date = strtotime("+$payment_interval $payment_unit", $date);
       }
     }
 
     // finally, go back one day since we want to use this as end_date (last day of membership)
     $date = strtotime("-1 day", $date);
     $end_date = strtotime($membership['end_date']);
-    if ($end_date < $date) {
+    if ($end_date < $date && !$membership_bad) {
       // here's something we can extend...
-      // error_log("EXTEND TO: " . date('Y-m-d', $date));
+      error_log("EXTEND [$membership_id] TO: " . date('Y-m-d', $date));
       $update = array(
           'id'        => $membership_id,
           'end_date'  => date('Ymdhis', $date));
@@ -209,7 +235,7 @@ function civicrm_api3_membership_extend($params) {
 
       // execute the update
       if (empty($params['test_run'])) {
-        civicrm_api3('Membership', 'create', $update);        
+        civicrm_api3('Membership', 'create', $update);
       }
 
       $stats['memberships_extended'] += 1;
@@ -234,6 +260,8 @@ function _civicrm_api3_membership_extend_spec(&$params) {
                                 'api.default' => "14");
   $params['change_status'] = array('title' => "Update the membership status when extending the membership. Default is '1' (yes)",
                                 'api.default' => "1");
+  $params['horizon'] = array('title' => "if set, this represents the backward horizon in days in which to check the membership payment, e.g. '365' will only check the last year",
+                                'api.default' => "");
 }
 
 

@@ -1,7 +1,7 @@
 <?php
 /*-------------------------------------------------------+
 | Project 60 - Membership Extension                      |
-| Copyright (C) 2013-2014 SYSTOPIA                       |
+| Copyright (C) 2013-2015 SYSTOPIA                       |
 | Author: B. Endres (endres -at- systopia.de)            |
 | http://www.systopia.de/                                |
 +--------------------------------------------------------+
@@ -19,32 +19,11 @@ require_once 'CRM/Core/Page.php';
 class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
 
   function run() {
-    // load/store process mapping parameter:
-    if (empty($_REQUEST['mapping'])) {
-      // not given => load from settings
-      $mapping = CRM_Core_BAO_Setting::getItem('Membership Payments', 'sync_mapping');
-
-    } else {
-      // given => store to settings
-      $mapping = $_REQUEST['mapping'];
-      CRM_Core_BAO_Setting::setItem($mapping, 'Membership Payments', 'sync_mapping');
-    }
+    $mapping = CRM_Membership_Settings::getSyncMapping();
     $this->assign('mapping', $mapping);
 
-    // load/store rangeback parameter
-    if (empty($_REQUEST['rangeback'])) {
-      // not given => load from settings
-      $rangeback = CRM_Core_BAO_Setting::getItem('Membership Payments', 'sync_rangeback');
-      if (empty($rangeback) && $rangeback!='0') $rangeback = "400";
-
-    } else {
-      // given => store to settings
-      $rangeback = $_REQUEST['rangeback'];
-      CRM_Core_BAO_Setting::setItem($rangeback, 'Membership Payments', 'sync_rangeback');
-    }
+    $rangeback = CRM_Membership_Settings::getSyncRange();
     $this->assign('rangeback', $rangeback);
-
-
 
     // if parameter RUN is set, execute and compile list
     if (isset($_REQUEST['run'])) {

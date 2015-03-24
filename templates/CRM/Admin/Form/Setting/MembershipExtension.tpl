@@ -1,6 +1,6 @@
 {*-------------------------------------------------------+
 | Project 60 - Membership Extension                      |
-| Copyright (C) 2013-2014 SYSTOPIA                       |
+| Copyright (C) 2013-2015 SYSTOPIA                       |
 | Author: B. Endres (endres -at- systopia.de)            |
 | http://www.systopia.de/                                |
 +--------------------------------------------------------+
@@ -19,25 +19,33 @@
   </div>
   <div class="crm-accordion-body">
      <div class="crm-block crm-form-block crm-form-title-here-form-block">
-       TODO
-
+       {ts}General Options{/ts}
      </div>
    </div>
 </div>
 
-<div class="crm-accordion-wrapper coll apsed" id="synchronization">
+<div class="crm-accordion-wrapper collapsed" id="synchronization">
   <div class="crm-accordion-header">
     {ts}Payment Synchronisation Tool{/ts}
   </div>
   <div class="crm-accordion-body">
     <div class="crm-block crm-form-block crm-form-title-here-form-block">
-      <h3>{ts}Financial Type Mapping{/ts} <a onclick='CRM.help("{ts}Creditor Contact{/ts}", {literal}{"id":"id-contact","file":"CRM\/Admin\/Form\/Setting\/SepaSettings"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon">&nbsp;</a></h3>
+      <h3>{ts}Time Horizon{/ts} <a onclick='CRM.help("{ts}Time Horizon{/ts}", {literal}{"id":"id-sync-range","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon">&nbsp;</a></h3>
       <table>
-{foreach from=$membership_types item=membership_name key=membership_id}
-        {capture assign=itemid}syncmap_{$membership_id}{/capture}
+        <tr>
+          <td>{$form.sync_range.label}</td>
+          <td>{$form.sync_range.html}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="crm-block crm-form-block crm-form-title-here-form-block">
+      <h3>{ts}Financial Type Mapping{/ts} <a onclick='CRM.help("{ts}Financial Type Mapping{/ts}", {literal}{"id":"id-sync-range","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon">&nbsp;</a></h3>
+      <table>
+{foreach from=$financial_types item=financial_type_name key=financial_type_id}
+        {capture assign=itemid}syncmap_{$financial_type_id}{/capture}
         <tr>
           <td>{$form.$itemid.label}</td>
-          <td>{$form.$itemid.html}</td>
+          <td id="syncmap_item">{$form.$itemid.html}</td>
         </tr>
 {/foreach}
       </table>
@@ -45,8 +53,25 @@
   </div>
 </div>
 
-{literal}
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div> 
+
+
 <script type="text/javascript">
-  cj().crmAccordions();
+var syncmap_values = {$sync_mapping};
+{literal}
+
+// set the current values
+var items = cj("#syncmap_item > select");
+for (var i = 0; i < items.length; i++) {
+  var item_id = parseInt(items[i].id.substr(8));
+  if (syncmap_values[item_id]) {
+    cj(items[i]).val(syncmap_values[item_id]);
+  } else {
+    cj(items[i]).val(0);
+  }
+};
+
+// activate accordion code
+cj().crmAccordions();
 </script>
 {/literal}

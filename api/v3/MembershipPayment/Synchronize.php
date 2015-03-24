@@ -1,7 +1,7 @@
 <?php
 /*-------------------------------------------------------+
 | Project 60 - Membership Extension                      |
-| Copyright (C) 2013-2014 SYSTOPIA                       |
+| Copyright (C) 2013-2015 SYSTOPIA                       |
 | Author: B. Endres (endres -at- systopia.de)            |
 | http://www.systopia.de/                                |
 +--------------------------------------------------------+
@@ -21,41 +21,22 @@
  * It requires the mapping {[financial_type_id] => [membership_type_id]}
  * as an input, but this mapping should usually be very static.
  *
- * @param mapping  a comma separated string of <financial_type_id>:<membership_type_id> mappings
+ * @param mapping  a comma separated string of <financial_type_id>:<membership_type_id> mappings,
+ *                    defaults to system setting 
  * @param rebuild  if set to true or 1, the ill assigend contributions with the given financial type
  *                   will be detached from the membership and rematched wrt the given matching. 
  *					 USE WITH CAUTION!
  */
 function civicrm_api3_membership_payment_synchronize($params) {
-  // create mapping from membership types
-  $_mapping = array();
-  try {
-    $membership_types = civicrm_api3('MembershipType', 'get', array('is_active'=>1));
-  } catch (Exception $e) {
-    return civicrm_api3_create_error("Couldn't read membership types.");
-  }
-
-  foreach ($membership_types['values'] as $membership_type_id => $membership_type) {
-    $membership_financial_type_id = $membership_type['financial_type_id'];
-    if (isset($_mapping[$membership_financial_type_id])) {
-      // there's at least two memberships for the same financial type
-      $_mapping[$membership_financial_type_id] = 'AMBIGUOUS';
-      error_log("org.project60.membership: ambiguous financial_type detected. At least membership [$membership_type_id] will be ignored.");
-    } else {
-      $_mapping[$membership_financial_type_id] = $membership_type_id;
-    }
-  }
-
-  // delete ambiguous mapping entries
-  foreach ($_mapping as $financial_type_id => $membership_type_id) {
-    if ($membership_type_id != 'AMBIGUOUS') {
-      $mapping[$financial_type_id] = $membership_type_id;
-    }
+  if (empty($params['mapping'])) {
+    $mapping = CRM_Membership_Settings::getSyncMapping();
+  } else {
+    $mapping = CRM_Membership_Settings::_string2syncmap($params['mapping']);
   }
 
   // NEXT: read the 'rangeback' parameter
   if (empty($params['rangeback'])) {
-  	$rangeback = 0;	
+  	$rangeback = (int) CRM_Membership_Settings::getSyncRange();
   } else {
   	$rangeback = (int) $params['rangeback'];
   }

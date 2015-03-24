@@ -31,7 +31,11 @@ function civicrm_api3_membership_payment_synchronize($params) {
   if (empty($params['mapping'])) {
     $mapping = CRM_Membership_Settings::getSyncMapping();
   } else {
-    $mapping = CRM_Membership_Settings::_string2syncmap($params['mapping']);
+    if (is_array($params['mapping'])) {
+      $mapping = $params['mapping'];
+    } else {
+      $mapping = CRM_Membership_Settings::_string2syncmap($params['mapping']);
+    }
   }
 
   // NEXT: read the 'rangeback' parameter

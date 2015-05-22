@@ -58,6 +58,16 @@ class CRM_Membership_Settings {
     return (int) CRM_Core_BAO_Setting::getItem('Membership Payments', 'sync_rangeback');
   }
 
+  /**
+   * get the sync range property (number of days)
+   * which describes how far back the membership<->payment mapping should be performed
+   *
+   * default is 32 (days)
+   * @return int
+   */
+  public static function getSyncGracePeriod() {
+    return (int) CRM_Core_BAO_Setting::getItem('Membership Payments', 'synce_graceperiod');
+  }
 
   /**
    * set the syncmap property
@@ -78,14 +88,25 @@ class CRM_Membership_Settings {
   }
 
   /**
-   * get the sync range property (number of days)
+   * set the sync range property (number of days)
    * which describes how far back the membership<->payment mapping should be performed
    *
    * default is 400 (days)
-   * @return int
+   * @return $range int
    */
   public static function setSyncRange($range) {
     CRM_Core_BAO_Setting::setItem($range, 'Membership Payments', 'sync_rangeback');
+  }
+
+  /**
+   * set the sync range property (number of days)
+   * which describes how far back the membership<->payment mapping should be performed
+   *
+   * default is 32 (days)
+   * @return $range int
+   */
+  public static function setSyncGracePeriod($value) {
+    CRM_Core_BAO_Setting::setItem($value, 'Membership Payments', 'synce_graceperiod');
   }
 
 

@@ -45,6 +45,13 @@ function civicrm_api3_membership_payment_synchronize($params) {
   	$rangeback = (int) $params['rangeback'];
   }
 
+  // NEXT: read the 'gracedays' parameter
+  if (empty($params['gracedays'])) {
+    $gracedays = (int) CRM_Membership_Settings::getSyncGracePeriod();
+  } else {
+    $gracedays = (int) $params['gracedays'];
+  }
+
   foreach ($mapping as $financial_type_id => $membership_type_id) {
   	if (!is_numeric($financial_type_id) || !is_numeric($membership_type_id))
   		return civicrm_api3_create_error("The parameter 'mapping' should contain only IDs.");
@@ -69,7 +76,7 @@ function civicrm_api3_membership_payment_synchronize($params) {
   // start synchronization
   $results = array('mapped'=>array(), 'no_membership' => array(), 'ambibiguous'=>array(), 'errors'=>array());
   foreach ($mapping as $financial_type_id => $membership_type_id) {
-  	$new_results = _membership_payment_synchronize($financial_type_id, $membership_type_id, $rangeback);
+  	$new_results = _membership_payment_synchronize($financial_type_id, $membership_type_id, $rangeback, $gracedays);
   	foreach ($new_results as $key => $new_values)
   		$results[$key] += $new_values;
   }
@@ -77,11 +84,16 @@ function civicrm_api3_membership_payment_synchronize($params) {
   $null = NULL;
   return civicrm_api3_create_success(array_keys($results['mapped']), $params, $null, $null, $null, 
   	array('no_membership'=>$results['no_membership'], 'ambibiguous'=>$results['ambibiguous'], 'errors'=>$results['errors']));
-  }
+}
 
 
 
-  function _membership_payment_synchronize($financial_type_id, $membership_type_id, $rangeback = 0) {
+/**
+ * this function will execute the synchronization 
+ *   for ONE financial_type_id => membership_type_id mapping
+ */
+function _membership_payment_synchronize($financial_type_id, $membership_type_id, $rangeback=0, $gracedays=0) {
+  error_log("org.project60.membership - query financial type $financial_type_id on memebership type $membership_type_id");
   $results = array('mapped'=>array(), 'no_membership' => array(), 'ambibiguous'=>array(), 'errors'=>array());
   $contribution_receive_date = array();
   $membership_start_date = array();
@@ -91,7 +103,7 @@ function civicrm_api3_membership_payment_synchronize($params) {
   // first: find all contributions that are not yet connected to a membership
   $find_new_payments_sql = "
   SELECT
-  	civicrm_contribution.id    			AS contribution_id,
+  	civicrm_contribution.id    			    AS contribution_id,
   	civicrm_contribution.contact_id     AS contact_id,
   	civicrm_contribution.receive_date   AS contribution_date
   FROM
@@ -110,6 +122,7 @@ function civicrm_api3_membership_payment_synchronize($params) {
   	$date = date('Ymdhis', strtotime($new_payments->contribution_date));
 
   	// now, try to find a valid membership
+    // TODO: optimize by building a membership list in memory instead of individual queries?
   	$find_corresponding_membership_sql = "
   	SELECT
   		id         AS membership_id,
@@ -122,7 +135,7 @@ function civicrm_api3_membership_payment_synchronize($params) {
   		contact_id = $contact_id
   	AND membership_type_id = $membership_type_id
   	AND ((start_date <= (DATE('$date') + INTERVAL $rangeback DAY)) OR (join_date <= (DATE('$date') + INTERVAL $rangeback DAY)))
-  	AND ((end_date > DATE('$date')) OR (end_date IS NULL))
+  	AND ((end_date   >  (DATE('$date') - INTERVAL $gracedays DAY)) OR (end_date IS NULL))
   	GROUP BY
   		civicrm_membership.contact_id;
   	";

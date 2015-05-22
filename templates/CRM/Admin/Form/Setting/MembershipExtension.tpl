@@ -36,6 +36,10 @@
           <td>{$form.sync_range.label}</td>
           <td>{$form.sync_range.html}</td>
         </tr>
+        <tr>
+          <td>{$form.grace_period.label}</td>
+          <td>{$form.grace_period.html}</td>
+        </tr>
       </table>
     </div>
     <div class="crm-block crm-form-block crm-form-title-here-form-block">

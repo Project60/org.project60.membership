@@ -39,6 +39,18 @@ return array(
     'is_domain' => 1,
     'is_contact' => 0,
     'description' => 'membership <-> payment time horizon',
-    'help_text' => 'This mapping of membership_type_id to contribution_type_id will be used when synchronizing memberships with payments.',
+    'help_text' => 'Defines how far back in time the algorithm will look.',
+  ),
+  'synce_graceperiod' => array(
+    'group_name' => 'Membership Payments',
+    'group' => 'org.project60',
+    'name' => 'synce_graceperiod',
+    'type' => 'Integer',
+    'default' => 32,
+    'add' => '4.4',
+    'is_domain' => 1,
+    'is_contact' => 0,
+    'description' => 'membership <-> payment grace period',
+    'help_text' => 'Defines within which period a payment will still be assigned to a running-out membership.',
   )
  );

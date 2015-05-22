@@ -42,6 +42,10 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $sync_range = CRM_Membership_Settings::getSyncRange();
     $this->assign("sync_range", $sync_range);
 
+    // get grace_period
+    $grace_period = CRM_Membership_Settings::getSyncGracePeriod();
+    $this->assign("grace_period", $grace_period);
+
     // add elements
     foreach ($financial_types as $financial_type_id => $financial_type_name) {
       $this->addElement('select',
@@ -54,6 +58,10 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
                       "sync_range", 
                       ts("Backward horizon (in days)"),
                       array('value' => $sync_range));
+    $this->addElement('text',
+                      "grace_period", 
+                      ts("Grace Period (in days)"),
+                      array('value' => $grace_period));
 
     parent::buildQuickForm();
   }
@@ -77,5 +85,8 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
     // set the range
     CRM_Membership_Settings::setSyncRange($values['sync_range']);
+
+    // set the grace period
+    CRM_Membership_Settings::setSyncGracePeriod($values['grace_period']);
   }
 }

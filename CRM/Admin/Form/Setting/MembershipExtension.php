@@ -26,7 +26,8 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
     // load membership types
     $membership_types = CRM_Member_BAO_MembershipType::getMembershipTypes(FALSE);
-    $membership_types = array_merge(array(0 => ts('Not membership related')), $membership_types);
+    $membership_types[0] = ts('Not membership related');
+
     $this->assign("membership_types", $membership_types);
 
     // load financial types

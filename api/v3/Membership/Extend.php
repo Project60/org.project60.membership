@@ -21,10 +21,12 @@
  * 
  * @param membership_type_ids      only check memberships with the given membership types
  *                           default is ALL
- * @param precision        date range in which to accept membership payments
- *                           payments within <precision> days of the expected
- *                           will be accepted.
- *                           default is 7
+ * @param precision        precision in which to accept membership payments
+ *                           a value of '1.0' means 100% of the cycle period, i.e. 
+ *                           only payments on the exact date will be accepted. 
+ *                           a precision of 0.9 (90%) would allow for monthly payments
+ *                           to be off by up to 3 days (10% of 31 days).
+ *                           DEFAULT is 0.8  
  * @param status_ids       define the membership status IDs that will be considered. 
  *                           DEFAULT is 1,2,3 (new, current, grace)
  * @param look_ahead       only check memberships with an end_date up to look_ahead 
@@ -141,7 +143,8 @@ function civicrm_api3_membership_extend($params) {
     $expected_payment_amount    = (float) $membership['minimum_fee'];
     $payment_unit               = $membership['p_unit'];
     $payment_interval           = (int) $membership['p_interval'];
-    $precision                  = $params['precision'] * (24 * 60 * 60);
+    $max_deviation              = ((float) strtotime("$payment_interval $payment_unit", 0)) * ((float) (1.0-min(1.0, (float) $params['precision'])));
+    error_log("accepted deviation is $max_deviation, in days: ".($max_deviation/60/60/24));
 
     if (!empty($params['custom_fee']) || !empty($params['custom_interval'])) {
       // custom field/value override
@@ -208,7 +211,7 @@ function civicrm_api3_membership_extend($params) {
       $contribution_sum = 0.0;
       foreach ($membership_payments as $index => $payment) {
         $date_diff = abs($date - strtotime($payment['contribution_date']));
-        if ($date_diff < $precision) {
+        if ($date_diff < $max_deviation) {
           $contribution_sum += $payment['contribution_amount'];
           error_log("found contribution [{$payment['id']}]... sum is now $contribution_sum");
           unset($membership_payments[$index]); // remove from list
@@ -272,8 +275,8 @@ function civicrm_api3_membership_extend($params) {
 function _civicrm_api3_membership_extend_spec(&$params) {
   $params['type_ids'] =  array('title' => "Check memberships with the given membership types. DEFAULT is ALL",
                                 'api.default' => "");
-  $params['precision'] =  array('title' => "Membership payments within <precision> days of the expected date will be accepted. DEFAULT is 7.",
-                                'api.default' => "7");
+  $params['precision'] =  array('title' => "precision in which to accept membership payments a value of '1.0' means 100% of the cycle period, i.e. only payments on the exact date will be accepted. A precision of 0.9 (90%) would allow for monthly payments to be off by up to 3 days (10% of 31 days).",
+                                'api.default' => "0.8");
   $params['status_ids'] = array('title' => "Defines the membership status IDs that will be considered. DEFAULT is 1,2,3 (new, current, grace)",
                                 'api.default' => "1,2,3");
   $params['look_ahead'] = array('title' => "Only check memberships with an end_date up to look_ahead days in the future. This value can be negative. DEFAULT is 14.",

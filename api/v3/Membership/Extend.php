@@ -143,8 +143,6 @@ function civicrm_api3_membership_extend($params) {
     $expected_payment_amount    = (float) $membership['minimum_fee'];
     $payment_unit               = $membership['p_unit'];
     $payment_interval           = (int) $membership['p_interval'];
-    $max_deviation              = ((float) strtotime("$payment_interval $payment_unit", 0)) * ((float) (1.0-min(1.0, (float) $params['precision'])));
-    error_log("accepted deviation is $max_deviation, in days: ".($max_deviation/60/60/24));
 
     if (!empty($params['custom_fee']) || !empty($params['custom_interval'])) {
       // custom field/value override
@@ -161,15 +159,19 @@ function civicrm_api3_membership_extend($params) {
 
         // this is interpreted as a YEARLY fee, needs to be broken down to individual payments
         if ($payment_unit == 'month') {
-          $expected_payment_amount = (float) $expected_payment_amount * 12.0 / (float) $payment_interval;
+          $expected_payment_amount = ((float) $expected_payment_amount) / 12.0 * (float) $payment_interval;
         } elseif ($payment_unit == 'year') {
-          $expected_payment_amount = (float) $expected_payment_amount * (float) $payment_interval;
+          $expected_payment_amount = ((float) $expected_payment_amount) * (float) $payment_interval;
         } elseif ($payment_unit == 'week') {
-          $expected_payment_amount = (float) $expected_payment_amount * 52.3 / (float) $payment_interval;
+          $expected_payment_amount = ((float) $expected_payment_amount) / 53 * (float) $payment_interval;
         }
         error_log(sprintf("EXPECTED: '%s'", $expected_payment_amount));
       }
     }
+
+    // calculate max_deviation based on precision
+    $max_deviation              = ((float) strtotime("$payment_interval $payment_unit", 0)) * ((float) (1.0-min(1.0, (float) $params['precision'])));
+    error_log("accepted deviation is $max_deviation, in days: ".($max_deviation/60/60/24));
 
     // 3. load all payments
     $payment_query_sql = "

@@ -1,112 +1,168 @@
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.mgd.php
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
-msgid "Outstanding Membership Fees"
+# Copyright CiviCRM LLC (c) 2004-2015
+# This file is distributed under the same license as the CiviCRM package.
+# If you contribute heavily to a translation and deem your work copyrightable,
+# make sure you license it to CiviCRM LLC under Academic Free License 3.0.
+msgid ""
 msgstr ""
+"Project-Id-Version: org.project60.memberships\n"
+"POT-Creation-Date: 2015-09-23 15:41+0200\n"
+"Language-Team: CiviCRM Translators <civicrm-translators@lists.civicrm.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 
-#: /CRM/Admin/Form/Setting/MembershipExtension.php
+#: CRM/Admin/Form/Setting/MembershipExtension.php
 msgid "Configuration - Project60 Membership Extension"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.mgd.php
+#: CRM/Admin/Form/Setting/MembershipExtension.php
+msgid "Not membership related"
+msgstr ""
+
+#: CRM/Admin/Form/Setting/MembershipExtension.php
+msgid "Backward horizon (in days)"
+msgstr ""
+
+#: CRM/Admin/Form/Setting/MembershipExtension.php
+msgid "Grace Period (in days)"
+msgstr ""
+
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.mgd.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+msgid "Outstanding Membership Fees"
+msgstr ""
+
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.mgd.php
 msgid ""
 "Will identify memberships that are behind on paying their membersip fees "
 "(org.project60.membership)"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Annual membership fee"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "minimum fee of membership type"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "manually specified (see right =>)"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Custom annual membership fee"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Check horizon"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "one year"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "two years"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "half a year"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "quarter"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "two months"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "one month"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Grace period in days"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Money Owed"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Membership ID"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Membership Type"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Start Date"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Join Date"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Membership Owner ID"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Membership Types"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Contact Name"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Status"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Membership Fees Received"
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Please enter a valid amount."
 msgstr ""
 
-#: /CRM/Membership/Form/Report/OutstandingMembershipFees.php
+#: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "View Contact Summary for this Contact."
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid ""
+"If a membership payment is received within this number of days before the "
+"current starting date, the start and the join date will be extended to the "
+"payment's received date."
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid ""
+"Membership payments will be accepted up to this amount of days after the "
+"current end date."
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid ""
+"In order to associate contributions with expired memberships, you will first "
+"have to manually extend those memberships."
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid ""
+"Here you can decide which contribution types should be associated with which "
+"membership types."
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid ""
+"One contribution type can currently only be mapped to one membership type, "
+"so you would need one contribution type per membership type."
 msgstr ""
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
@@ -114,15 +170,19 @@ msgid "General Settings"
 msgstr ""
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "General Options"
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "Payment Synchronisation Tool"
 msgstr ""
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
-msgid "Financial Type Mapping"
+msgid "Time Horizon"
 msgstr ""
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
-msgid "Creditor Contact"
+msgid "Backward Horizon"
 msgstr ""
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
@@ -130,16 +190,12 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: templates/CRM/Membership/Page/MembershipPayments.hlp
-msgid ""
-"If you select this, contributions that are already associated with a "
-"membership will be revised if they do not comply with the mapping provided. "
-"However, only contributions with a financial type that is inlcuded in the "
-"mapping will be touched."
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Forward Horizon"
 msgstr ""
 
-#: templates/CRM/Membership/Page/MembershipPayments.hlp
-msgid "<strong>Use with caution!</strong>"
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Financial Type Mapping"
 msgstr ""
 
 #: templates/CRM/Membership/Page/MembershipPayments.hlp
@@ -149,10 +205,7 @@ msgid ""
 msgstr ""
 
 #: templates/CRM/Membership/Page/MembershipPayments.hlp
-msgid ""
-"If a membership payment is recorded this number of days before the current "
-"starting date, the stating date will be adjusted to the payment's received "
-"date."
+msgid "<strong>Use with caution!</strong>"
 msgstr ""
 
 #: templates/CRM/Membership/Page/MembershipPayments.tpl
@@ -164,19 +217,7 @@ msgid "Rebuild Mapping"
 msgstr ""
 
 #: templates/CRM/Membership/Page/MembershipPayments.tpl
-msgid "Adjust Memberships"
-msgstr ""
-
-#: templates/CRM/Membership/Page/MembershipPayments.tpl
-msgid "Adjust start date"
-msgstr ""
-
-#: templates/CRM/Membership/Page/MembershipPayments.tpl
-msgid "Adjust Start"
-msgstr ""
-
-#: templates/CRM/Membership/Page/MembershipPayments.tpl
-msgid "days"
+msgid "Find more settings the payment synchronisation <a href=\"%1\">here</a>."
 msgstr ""
 
 #: templates/CRM/Membership/Page/MembershipPayments.tpl

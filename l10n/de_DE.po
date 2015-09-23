@@ -199,7 +199,7 @@ msgstr "Synchronisierungseinstellungen"
 
 #: templates/CRM/Membership/Page/MembershipPayments.tpl
 msgid "Rebuild Mapping"
-msgstr "überschreiben"
+msgstr "Zuordnung Zurücksetzen"
 
 #: templates/CRM/Membership/Page/MembershipPayments.tpl
 msgid "Find more settings the payment synchronisation <a href=\"%1\">here</a>."

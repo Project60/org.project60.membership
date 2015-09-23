@@ -165,13 +165,13 @@ function civicrm_api3_membership_extend($params) {
         } elseif ($payment_unit == 'week') {
           $expected_payment_amount = ((float) $expected_payment_amount) / 53 * (float) $payment_interval;
         }
-        error_log(sprintf("EXPECTED: '%s'", $expected_payment_amount));
+        // error_log(sprintf("EXPECTED: '%s'", $expected_payment_amount));
       }
     }
 
     // calculate max_deviation based on precision
     $max_deviation              = ((float) strtotime("$payment_interval $payment_unit", 0)) * ((float) (1.0-min(1.0, (float) $params['precision'])));
-    error_log("accepted deviation is $max_deviation, in days: ".($max_deviation/60/60/24));
+    // error_log("accepted deviation is $max_deviation, in days: ".($max_deviation/60/60/24));
 
     // 3. load all payments
     $payment_query_sql = "
@@ -203,19 +203,19 @@ function civicrm_api3_membership_extend($params) {
         $date = strtotime("+$payment_interval $payment_unit", $date);
       }
     }
-    error_log("Starting with date " . date('Y-m-d', $date));
+    // error_log("Starting with date " . date('Y-m-d', $date));
 
     // 5. try to find a payment for each payemnt date
     $today = strtotime("now + $look_ahead days");
     while ($date < $today) {
-      error_log("Checking date " . date('Y-m-d', $date));
+      // error_log("Checking date " . date('Y-m-d', $date));
       // find and add all payments around this date
       $contribution_sum = 0.0;
       foreach ($membership_payments as $index => $payment) {
         $date_diff = abs($date - strtotime($payment['contribution_date']));
         if ($date_diff < $max_deviation) {
           $contribution_sum += $payment['contribution_amount'];
-          error_log("found contribution [{$payment['id']}]... sum is now $contribution_sum");
+          // error_log("found contribution [{$payment['id']}]... sum is now $contribution_sum");
           unset($membership_payments[$index]); // remove from list
           if ($contribution_sum >= $expected_payment_amount) {
             // we've reached the expected amount, stop looking
@@ -226,14 +226,14 @@ function civicrm_api3_membership_extend($params) {
 
       if ($contribution_sum < $expected_payment_amount) {
         // this due date has no (or not enough payments)
-        error_log("EXPECTED $expected_payment_amount FOR membership [$membership_id] NOT FOUND ON ". date('Y-m-d', $date));
+        // error_log("EXPECTED $expected_payment_amount FOR membership [$membership_id] NOT FOUND ON ". date('Y-m-d', $date));
         $stats['irregular_membership_ids'][] = $membership_id;
         // no payment found for this time, so this would have to be the (new) end_date
         break;
       
       } else {
         // everything checks out => advance to next due date
-        error_log("sum is enough, moving on...");
+        // error_log("sum is enough, moving on...");
         $date = strtotime("+$payment_interval $payment_unit", $date);
       }
     }
@@ -243,7 +243,7 @@ function civicrm_api3_membership_extend($params) {
     $end_date = strtotime($membership['end_date']);
     if ($end_date < $date) {
       // here's something we can extend...
-      error_log("EXTEND membership [$membership_id] TO: " . date('Y-m-d', $date));
+      // error_log("EXTEND membership [$membership_id] TO: " . date('Y-m-d', $date));
       $update = array(
           'id'        => $membership_id,
           'end_date'  => date('Ymdhis', $date));
@@ -263,7 +263,7 @@ function civicrm_api3_membership_extend($params) {
       $stats['memberships_extended'] += 1;
       $stats['extended_membership_ids'][] = $membership_id;
     } else {
-      error_log("NOT EXTENDED: membership [$membership_id] end_date >= " . date('Y-m-d', $date));
+      // error_log("NOT EXTENDED: membership [$membership_id] end_date >= " . date('Y-m-d', $date));
     }
 
   } // END OUTER (MEMBERSHIP-ID) LOOP

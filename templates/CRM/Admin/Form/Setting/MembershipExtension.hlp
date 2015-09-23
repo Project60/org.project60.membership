@@ -13,3 +13,17 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
 
+
+{htxt id='id-sync-range'}
+  <p>{ts}If a membership payment is received within this number of days before the current starting date, the start and the join date will be extended to the payment's received date.{/ts}</p>
+{/htxt}
+
+{htxt id='id-grace-period'}
+  <p>{ts}Membership payments will be accepted up to this amount of days after the current end date.{/ts}</p>
+  <p>{ts}In order to associate contributions with expired memberships, you will first have to manually extend those memberships.{/ts}</p>
+{/htxt}
+
+{htxt id='id-mapping'}
+  <p>{ts}Here you can decide which contribution types should be associated with which membership types.{/ts}</p>
+  <p>{ts}One contribution type can currently only be mapped to one membership type, so you would need one contribution type per membership type.{/ts}</p>
+{/htxt}

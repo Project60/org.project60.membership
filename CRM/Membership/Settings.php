@@ -160,7 +160,7 @@ class CRM_Membership_Settings {
   /**
    * extracts the default syncmapString from the membership types
    */
-  protected function _getDefaultSyncmap() {
+  protected static function _getDefaultSyncmap() {
     $mapping = array();
     $membership_types = civicrm_api3('MembershipType', 'get', 
        array('is_active' => 1, 'option.limit' => 9999));
@@ -179,7 +179,6 @@ class CRM_Membership_Settings {
     } else {
       error_log("org.project60.membership: Cannot read membership types - ".$membership_types['error_message']);
     }
-    error_log(print_r($mapping,1));
     return $mapping;
   }
 }

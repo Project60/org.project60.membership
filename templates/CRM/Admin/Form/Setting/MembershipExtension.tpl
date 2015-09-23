@@ -13,7 +13,7 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
 
-<div class="crm-accordion-wrapper" id="synchronization">
+<!--div class="crm-accordion-wrapper" id="general">
   <div class="crm-accordion-header">
     {ts}General Settings{/ts}
   </div>
@@ -22,28 +22,28 @@
        {ts}General Options{/ts}
      </div>
    </div>
-</div>
+</div-->
 
-<div class="crm-accordion-wrapper collapsed" id="synchronization">
+<div class="crm-accordion-wrapper" id="synchronization">
   <div class="crm-accordion-header">
     {ts}Payment Synchronisation Tool{/ts}
   </div>
   <div class="crm-accordion-body">
     <div class="crm-block crm-form-block crm-form-title-here-form-block">
-      <h3>{ts}Time Horizon{/ts} <a onclick='CRM.help("{ts}Time Horizon{/ts}", {literal}{"id":"id-sync-range","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon">&nbsp;</a></h3>
+      <h3>{ts}Time Horizon{/ts}</h3>
       <table>
         <tr>
-          <td>{$form.sync_range.label}</td>
+          <td>{$form.sync_range.label}&nbsp;<a onclick='CRM.help("{ts}Backward Horizon{/ts}", {literal}{"id":"id-sync-range","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.sync_range.html}</td>
         </tr>
         <tr>
-          <td>{$form.grace_period.label}</td>
+          <td>{$form.grace_period.label}&nbsp;<a onclick='CRM.help("{ts}Forward Horizon{/ts}", {literal}{"id":"id-grace-period","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.grace_period.html}</td>
         </tr>
       </table>
     </div>
     <div class="crm-block crm-form-block crm-form-title-here-form-block">
-      <h3>{ts}Financial Type Mapping{/ts} <a onclick='CRM.help("{ts}Financial Type Mapping{/ts}", {literal}{"id":"id-sync-range","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon">&nbsp;</a></h3>
+      <h3>{ts}Financial Type Mapping{/ts}&nbsp;<a onclick='CRM.help("{ts}Financial Type Mapping{/ts}", {literal}{"id":"id-mapping","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon">&nbsp;</a></h3>
       <table>
 {foreach from=$financial_types item=financial_type_name key=financial_type_id}
         {capture assign=itemid}syncmap_{$financial_type_id}{/capture}

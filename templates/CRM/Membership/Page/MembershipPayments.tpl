@@ -25,28 +25,15 @@
 			
 			<div class="crm-section">
 				<div class="label"><label for="rebuild">{ts}Rebuild Mapping{/ts}</label>
-				<a onclick='CRM.help("{ts}Rebuild Mapping{/ts}", {literal}{"id":"id-rebuild","file":"CRM\/Memberships\/Page\/MembershipPayments"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon">&nbsp;</a>
+				<a onclick='CRM.help("{ts}Rebuild Mapping{/ts}", {literal}{"id":"id-rebuild","file":"CRM\/Membership\/Page\/MembershipPayments"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon">&nbsp;</a>
 				</div>
 				<div class="content"><input type="checkbox" value="1" name="rebuild" id="rebuild" {if $smarty.request.rebuild}checked{/if}></div>
 				<div class="clear"></div>
 			</div>
-
-			<div class="crm-section">
-				<div class="label"><label for="adjust">{ts}Adjust Memberships{/ts}</label>
-				<a onclick='CRM.help("{ts}Adjust Memberships{/ts}", {literal}{"id":"id-adjust","file":"CRM\/Memberships\/Page\/MembershipPayments"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon">&nbsp;</a>
-				</div>
-				<div class="content"><input type="checkbox" value="1" name="adjust" id="adjust" {if $smarty.request.adjust}checked{/if}></div>
-				<div class="clear"></div>
-			</div>
-
-			<div class="crm-section" {if not $smarty.request.adjust}hidden="1"{/if}>
-				<div class="label"><label for="rangeback">{ts}Adjust start date{/ts}</label>
-				<a onclick='CRM.help("{ts}Adjust Start{/ts}", {literal}{"id":"id-rangeback","file":"CRM\/Memberships\/Page\/MembershipPayments"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon">&nbsp;</a>
-				</div>
-				<div class="content"><input type="text" value="{$rangeback}" size="4" name="rangeback" id="rangeback">&nbsp;{ts}days{/ts}</div>
-				<div class="clear"></div>
-			</div>
-
+      <div class="crm-section">
+        {capture assign=settingsURL}{crmURL p='civicrm/admin/setting/membership' q="reset=1"}{/capture}
+        <p>{ts 1=$settingsURL}Find more settings the payment synchronisation <a href="%1">here</a>.{/ts}</p>
+      </div>
 		</div>
 	</div>
 	</div>

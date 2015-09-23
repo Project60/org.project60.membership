@@ -93,7 +93,6 @@ function civicrm_api3_membership_payment_synchronize($params) {
  *   for ONE financial_type_id => membership_type_id mapping
  */
 function _membership_payment_synchronize($financial_type_id, $membership_type_id, $rangeback=0, $gracedays=0) {
-  error_log("org.project60.membership - query financial type $financial_type_id on memebership type $membership_type_id");
   $results = array('mapped'=>array(), 'no_membership' => array(), 'ambibiguous'=>array(), 'errors'=>array());
   $contribution_receive_date = array();
   $membership_start_date = array();

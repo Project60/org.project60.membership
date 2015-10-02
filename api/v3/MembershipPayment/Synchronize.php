@@ -18,25 +18,12 @@
  * this job will connect all payments of a certain financial_type with the
  * corresponding membership.
  *
- * It requires the mapping {[financial_type_id] => [membership_type_id]}
- * as an input, but this mapping should usually be very static.
- *
- * @param mapping  a comma separated string of <financial_type_id>:<membership_type_id> mappings,
- *                    defaults to system setting 
  * @param rebuild  if set to true or 1, the ill assigend contributions with the given financial type
  *                   will be detached from the membership and rematched wrt the given matching. 
  *					 USE WITH CAUTION!
  */
 function civicrm_api3_membership_payment_synchronize($params) {
-  if (empty($params['mapping'])) {
-    $mapping = CRM_Membership_Settings::getSyncMapping();
-  } else {
-    if (is_array($params['mapping'])) {
-      $mapping = $params['mapping'];
-    } else {
-      $mapping = CRM_Membership_Settings::_string2syncmap($params['mapping']);
-    }
-  }
+  $mapping = CRM_Membership_Settings::getSyncMapping();
 
   // NEXT: read the 'rangeback' parameter
   if (empty($params['rangeback'])) {
@@ -52,14 +39,18 @@ function civicrm_api3_membership_payment_synchronize($params) {
     $gracedays = (int) $params['gracedays'];
   }
 
-  foreach ($mapping as $financial_type_id => $membership_type_id) {
-  	if (!is_numeric($financial_type_id) || !is_numeric($membership_type_id))
-  		return civicrm_api3_create_error("The parameter 'mapping' should contain only IDs.");
+  foreach ($mapping as $financial_type_id => $membership_type_ids) {
+    foreach ($membership_type_ids as $membership_type_id) {
+      if (!is_numeric($financial_type_id) || !is_numeric($membership_type_id))
+        return civicrm_api3_create_error("The parameter 'mapping' should contain only IDs.");
+    }
   }
 
   // if required, detach all ill assigned memberships for the given financial types first
   if (!empty($params['rebuild']) && ($params['rebuild']==1 || strtolower($params['rebuild'])=='true')) {
-  	foreach ($mapping as $financial_type_id => $membership_type_id) {
+  	foreach ($mapping as $financial_type_id => $membership_type_ids) {
+      if (empty($membership_type_ids)) continue;
+      $membership_type_id_list = implode(',', $membership_type_ids);
   		$remove_bad_assignments_sql = "
   			DELETE civicrm_membership_payment
   			FROM civicrm_membership_payment
@@ -68,22 +59,23 @@ function civicrm_api3_membership_payment_synchronize($params) {
   			WHERE
   			 civicrm_contribution.financial_type_id = $financial_type_id
   			AND
-  			 civicrm_membership.membership_type_id <> $membership_type_id;";
+  			 civicrm_membership.membership_type_id NOT IN ($membership_type_id_list);";
   		CRM_Core_DAO::singleValueQuery($remove_bad_assignments_sql);
   	}
   } 
 
   // start synchronization
-  $results = array('mapped'=>array(), 'no_membership' => array(), 'ambibiguous'=>array(), 'errors'=>array());
-  foreach ($mapping as $financial_type_id => $membership_type_id) {
-  	$new_results = _membership_payment_synchronize($financial_type_id, $membership_type_id, $rangeback, $gracedays);
+  $results = array('mapped'=>array(), 'no_membership' => array(), 'ambiguous'=>array(), 'errors'=>array());
+  foreach ($mapping as $financial_type_id => $membership_type_ids) {
+    if (empty($membership_type_ids)) continue;
+  	$new_results = _membership_payment_synchronize($financial_type_id, $membership_type_ids, $rangeback, $gracedays);
   	foreach ($new_results as $key => $new_values)
   		$results[$key] += $new_values;
   }
 
   $null = NULL;
   return civicrm_api3_create_success(array_keys($results['mapped']), $params, $null, $null, $null, 
-  	array('no_membership'=>$results['no_membership'], 'ambibiguous'=>$results['ambibiguous'], 'errors'=>$results['errors']));
+  	array('no_membership'=>$results['no_membership'], 'ambiguous'=>$results['ambiguous'], 'errors'=>$results['errors']));
 }
 
 
@@ -92,8 +84,9 @@ function civicrm_api3_membership_payment_synchronize($params) {
  * this function will execute the synchronization 
  *   for ONE financial_type_id => membership_type_id mapping
  */
-function _membership_payment_synchronize($financial_type_id, $membership_type_id, $rangeback=0, $gracedays=0) {
-  $results = array('mapped'=>array(), 'no_membership' => array(), 'ambibiguous'=>array(), 'errors'=>array());
+function _membership_payment_synchronize($financial_type_id, $membership_type_ids, $rangeback=0, $gracedays=0) {
+  $results = array('mapped'=>array(), 'no_membership' => array(), 'ambiguous'=>array(), 'errors'=>array());
+  $membership_type_id_list = implode(',', $membership_type_ids);
   $contribution_receive_date = array();
   $membership_start_date = array();
   $membership_join_date = array();
@@ -132,7 +125,7 @@ function _membership_payment_synchronize($financial_type_id, $membership_type_id
   		civicrm_membership
   	WHERE
   		contact_id = $contact_id
-  	AND membership_type_id = $membership_type_id
+  	AND membership_type_id IN ($membership_type_id_list)
   	AND ((start_date <= (DATE('$date') + INTERVAL $rangeback DAY)) OR (join_date <= (DATE('$date') + INTERVAL $rangeback DAY)))
   	AND ((end_date   >  (DATE('$date') - INTERVAL $gracedays DAY)) OR (end_date IS NULL))
   	GROUP BY
@@ -152,7 +145,7 @@ function _membership_payment_synchronize($financial_type_id, $membership_type_id
   			date('Ymdhis', strtotime($corresponding_membership->membership_join_date));
   	} else {
   		// MEMBERSHIP AMBIGUOUS
-  		$results['ambibiguous'][] = $contribution_id;
+  		$results['ambiguous'][] = $contribution_id;
   	}
   }
   $new_payments->free();

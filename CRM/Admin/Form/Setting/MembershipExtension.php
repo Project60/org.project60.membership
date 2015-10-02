@@ -26,7 +26,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
     // load membership types
     $membership_types = CRM_Member_BAO_MembershipType::getMembershipTypes(FALSE);
-    $membership_types[0] = ts('Not membership related');
+    // $membership_types[0] = ts('Not membership related');
 
     $this->assign("membership_types", $membership_types);
 
@@ -48,10 +48,11 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
     // add elements
     foreach ($financial_types as $financial_type_id => $financial_type_name) {
-      $this->addElement('select',
-                        "syncmap_$financial_type_id", 
+      $this->addElement('select', 
+                        "syncmap_$financial_type_id",
                         $financial_type_name, 
-                        $membership_types);
+                        $membership_types,
+                        array('multiple' => "multiple", 'class' => 'crm-select2'));
     }
 
     $this->addElement('text',
@@ -76,7 +77,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $sync_mapping = array();
     foreach ($values as $key => $value) {
       $key_prefix = substr($key, 0, 7);
-      if ($key_prefix == 'syncmap' && !empty($value)) {
+      if ($key_prefix == 'syncmap') {
         $key_id = substr($key, 8);
         $sync_mapping[$key_id] = $value;
       }

@@ -74,7 +74,7 @@ function civicrm_api3_membership_payment_synchronize($params) {
   } 
 
   // start synchronization
-  $results = array('mapped'=>array(), 'no_membership' => array(), 'ambibiguous'=>array(), 'errors'=>array());
+  $results = array('mapped'=>array(), 'no_membership' => array(), 'ambiguous'=>array(), 'errors'=>array());
   foreach ($mapping as $financial_type_id => $membership_type_id) {
   	$new_results = _membership_payment_synchronize($financial_type_id, $membership_type_id, $rangeback, $gracedays);
   	foreach ($new_results as $key => $new_values)
@@ -83,7 +83,7 @@ function civicrm_api3_membership_payment_synchronize($params) {
 
   $null = NULL;
   return civicrm_api3_create_success(array_keys($results['mapped']), $params, $null, $null, $null, 
-  	array('no_membership'=>$results['no_membership'], 'ambibiguous'=>$results['ambibiguous'], 'errors'=>$results['errors']));
+  	array('no_membership'=>$results['no_membership'], 'ambiguous'=>$results['ambiguous'], 'errors'=>$results['errors']));
 }
 
 
@@ -93,7 +93,7 @@ function civicrm_api3_membership_payment_synchronize($params) {
  *   for ONE financial_type_id => membership_type_id mapping
  */
 function _membership_payment_synchronize($financial_type_id, $membership_type_id, $rangeback=0, $gracedays=0) {
-  $results = array('mapped'=>array(), 'no_membership' => array(), 'ambibiguous'=>array(), 'errors'=>array());
+  $results = array('mapped'=>array(), 'no_membership' => array(), 'ambiguous'=>array(), 'errors'=>array());
   $contribution_receive_date = array();
   $membership_start_date = array();
   $membership_join_date = array();
@@ -152,7 +152,7 @@ function _membership_payment_synchronize($financial_type_id, $membership_type_id
   			date('Ymdhis', strtotime($corresponding_membership->membership_join_date));
   	} else {
   		// MEMBERSHIP AMBIGUOUS
-  		$results['ambibiguous'][] = $contribution_id;
+  		$results['ambiguous'][] = $contribution_id;
   	}
   }
   $new_payments->free();

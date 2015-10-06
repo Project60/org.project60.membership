@@ -45,7 +45,7 @@ class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
       // gather the data to display
       $this->getData($result['values'],        'mapped', true);
       $this->getData($result['no_membership'], 'no_membership');
-      $this->getData($result['ambibiguous'],   'ambibiguous');
+      $this->getData($result['ambiguous'],     'ambiguous');
       $this->assign('executed', true);
     }
 

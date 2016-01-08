@@ -23,25 +23,13 @@ class CRM_Membership_Settings {
    * get the syncmap property
    * default is the mapping that is defined by the membership_types' financial type id
    *
-   * @return array([financial_type_id] => [membership_type_id])
+   * @return array([financial_type_id] => array(membership_type_id))
    */
   public static function getSyncMapping() {
-    $mapping_string = CRM_Membership_Settings::getSyncMappingString();    
-    return CRM_Membership_Settings::_string2syncmap($mapping_string);
-  }
-
-  /**
-   * get the syncmap property in string form
-   * default is the mapping that is defined by the membership_types' financial type id
-   *
-   * @return string with comma separated <financial_type_id>:<membership_type_id> tuples, 
-   *            e.g. 10:4,2:2
-   */
-  public static function getSyncMappingString() {
-    $mapping = CRM_Core_BAO_Setting::getItem('Membership Payments', 'sync_mapping');
+    $mapping_json = CRM_Core_BAO_Setting::getItem('Membership Payments', 'sync_mapping');
+    $mapping = json_decode($mapping_json, TRUE);
     if (empty($mapping)) {
-      $default = CRM_Membership_Settings::_getDefaultSyncmap();
-      return CRM_Membership_Settings::_symcmap2string($default);
+      return CRM_Membership_Settings::_getDefaultSyncmap();
     } else {
       return $mapping;
     }
@@ -71,20 +59,10 @@ class CRM_Membership_Settings {
 
   /**
    * set the syncmap property
-   * @param $syncmap array([financial_type_id] => [membership_type_id])
+   * @param $syncmap array([financial_type_id] => array(membership_type_ids))
    */
   public static function setSyncMapping($syncmap) {
-    $newString = CRM_Membership_Settings::_symcmap2string($syncmap);
-    // compare with default
-    $defaultMapping = CRM_Membership_Settings::_getDefaultSyncmap();
-    $defaultString = CRM_Membership_Settings::_symcmap2string($defaultMapping);
-
-    if ($newString == $defaultString) {
-      // this is the default, just set it to empty
-      CRM_Core_BAO_Setting::setItem('', 'Membership Payments', 'sync_mapping');  
-    } else {
-      CRM_Core_BAO_Setting::setItem($newString, 'Membership Payments', 'sync_mapping');
-    }
+    CRM_Core_BAO_Setting::setItem(json_encode($syncmap), 'Membership Payments', 'sync_mapping');
   }
 
   /**
@@ -109,54 +87,6 @@ class CRM_Membership_Settings {
     CRM_Core_BAO_Setting::setItem($value, 'Membership Payments', 'synce_graceperiod');
   }
 
-
-  /**
-   * converts the given [financial_type_id] => [membership_type_id] tuples
-   * to a comma separated string, e.g. "10:4,2:2"
-   *
-   * @param $syncmap  array([financial_type_id] => [membership_type_id])
-   *
-   * @return comma separated string, e.g. "10:4,2:2"
-   */
-  public static function _symcmap2string($syncmap) {
-    // sort first, to make it comparable
-    ksort($syncmap);
-
-    // then generate string
-    $tuples = array();
-    foreach ($syncmap as $key => $value) {
-      $tuples[] = "$key:$value";
-    }
-    return implode(',', $tuples);
-  }
-
-  /**
-   * converts the given comma separated string, e.g. "10:4,2:2"
-   * to an array([financial_type_id] => [membership_type_id])
-   *
-   * @param mapping_string comma separated string, e.g. "10:4,2:2"
-   *
-   * @return $syncmap  array([financial_type_id] => [membership_type_id])
-   */
-  public static function _string2syncmap($mapping_string) {
-    $mapping = array();
-    $items = split(',', $mapping_string);
-    foreach ($items as $item) {
-      $keyValue = split(':', $item);
-      if (count($keyValue) != 2) {
-        error_log("org.project60.membership: Invalid value for setting 'sync_mapping'!");
-      } else {
-        if (isset($mapping[$keyValue[0]])) {
-          error_log("org.project60.membership: Duplicate value for setting 'sync_mapping'!");
-        } else {
-          $mapping[$keyValue[0]] = $keyValue[1];
-        }
-      }
-    }
-
-    return $mapping;
-  }
-
   /**
    * extracts the default syncmapString from the membership types
    */
@@ -170,9 +100,9 @@ class CRM_Membership_Settings {
         $value = $membership_type['financial_type_id'];
         if (!empty($key) && !empty($value)) {
           if (isset($mapping[$key])) {
-            error_log("org.project60.membership: duplicate use of financial type [$key].");
+            $mapping[$key][] = $value;
           } else {
-            $mapping[$key] = $value;
+            $mapping[$key] = array($value);
           }
         }
       }

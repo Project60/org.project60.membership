@@ -27,3 +27,7 @@
   <p>{ts}Here you can decide which contribution types should be associated with which membership types.{/ts}</p>
   <p>{ts}One contribution type can currently only be mapped to one membership type, so you would need one contribution type per membership type.{/ts}</p>
 {/htxt}
+
+{htxt id='id-live-status'}
+  <p>{ts}If a membership has a 'live' status, membership payments will be assigned to it.{/ts}</p>
+{/htxt}

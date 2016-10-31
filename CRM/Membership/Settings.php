@@ -47,6 +47,21 @@ class CRM_Membership_Settings {
   }
 
   /**
+   * Get the IDs of the 'live' statuses, i.e. the ones that can be assigned payments
+   *  Default is 1,2,3 (new, current, grace)
+   * 
+   * @return array
+   */
+  public static function getLiveStatusIDs() {
+    $status_ids = CRM_Core_BAO_Setting::getItem('Membership Payments', 'live_statuses');
+    if (!is_array($status_ids) || empty($status_ids)) {
+      return array(1,2,3);
+    } else {
+      return $status_ids;
+    }
+  }
+
+  /**
    * get the sync range property (number of days)
    * which describes how far back the membership<->payment mapping should be performed
    *
@@ -85,6 +100,18 @@ class CRM_Membership_Settings {
    */
   public static function setSyncGracePeriod($value) {
     CRM_Core_BAO_Setting::setItem($value, 'Membership Payments', 'synce_graceperiod');
+  }
+
+  /**
+   * Set the IDs of the 'live' statuses, i.e. the ones that can be assigned payments
+   *  This cannot be empty - so fallback is is 1,2,3 (new, current, grace)
+   * 
+   * @param $ids array
+   */
+  public static function setLiveStatusIDs($status_ids) {
+    if (is_array($status_ids) && !empty($status_ids)) {
+      CRM_Core_BAO_Setting::setItem($status_ids, 'Membership Payments', 'live_statuses');
+    }
   }
 
   /**

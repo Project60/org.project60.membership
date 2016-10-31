@@ -34,6 +34,13 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $financial_types = CRM_Contribute_PseudoConstant::financialType();
     $this->assign("financial_types", $financial_types);
     
+    // load status options
+    $membership_statuses = array();
+    $statusQuery = civicrm_api3('MembershipStatus', 'getlist');
+    foreach ($statusQuery['values'] as $status) {
+      $membership_statuses[$status['id']] = $status['label'];
+    }
+
     // get sync_mapping
     $sync_mapping = CRM_Membership_Settings::getSyncMapping();
     $this->assign("sync_mapping", json_encode($sync_mapping));
@@ -64,7 +71,22 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
                       ts("Grace Period (in days)"),
                       array('value' => $grace_period));
 
+    $this->addElement('select', 
+                      "live_status",
+                      ts("Live Statuses"), 
+                      $membership_statuses,
+                      array('multiple' => "multiple", 'class' => 'crm-select2'));
+
     parent::buildQuickForm();
+  }
+
+
+  public function setDefaultValues() {
+    $defaults = parent::setDefaultValues();
+
+    $defaults['live_status'] = CRM_Membership_Settings::getLiveStatusIDs();
+
+    return $defaults;
   }
 
   /**
@@ -89,5 +111,8 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
     // set the grace period
     CRM_Membership_Settings::setSyncGracePeriod($values['grace_period']);
+
+    // set live status ids
+    CRM_Membership_Settings::setLiveStatusIDs($values['live_status']);
   }
 }

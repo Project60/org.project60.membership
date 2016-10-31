@@ -113,6 +113,9 @@ function _membership_payment_synchronize($financial_type_id, $membership_type_id
   	$contribution_id = $new_payments->contribution_id;
   	$date = date('Ymdhis', strtotime($new_payments->contribution_date));
 
+    // add a subquery for the oldest membership ID
+    $oldest_membership_id = "(SELECT MIN(id) FROM civicrm_membership WHERE contact_id = $contact_id AND membership_type_id IN ($membership_type_id_list))";
+
   	// now, try to find a valid membership
     // TODO: optimize by building a membership list in memory instead of individual queries?
   	$find_corresponding_membership_sql = "
@@ -126,8 +129,8 @@ function _membership_payment_synchronize($financial_type_id, $membership_type_id
   	WHERE
   		contact_id = $contact_id
   	AND membership_type_id IN ($membership_type_id_list)
-  	AND ((start_date <= (DATE('$date') + INTERVAL $rangeback DAY)) OR (join_date <= (DATE('$date') + INTERVAL $rangeback DAY)))
-  	AND ((end_date   >  (DATE('$date') - INTERVAL $gracedays DAY)) OR (end_date IS NULL))
+  	AND ((start_date <= (DATE('{$date}') + INTERVAL {$rangeback} DAY)) OR (civicrm_membership.id = {$oldest_membership_id} AND join_date <= (DATE('{$date}') + INTERVAL {$rangeback} DAY)))
+  	AND ((end_date   >  (DATE('{$date}') - INTERVAL {$gracedays} DAY)) OR (end_date IS NULL))
   	GROUP BY
   		civicrm_membership.contact_id;
   	";

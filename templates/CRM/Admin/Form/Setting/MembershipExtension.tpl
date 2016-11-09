@@ -42,6 +42,17 @@
         </tr>
       </table>
     </div>
+
+    <div class="crm-block crm-form-block crm-form-title-here-form-block">
+      <h3>{ts}Membership Status{/ts}</h3>
+      <table>
+        <tr>
+          <td>{$form.live_status.label}&nbsp;<a onclick='CRM.help("{ts}Live Status{/ts}", {literal}{"id":"id-live-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.live_status.html}</td>
+        </tr>
+      </table>
+    </div>
+
     <div class="crm-block crm-form-block crm-form-title-here-form-block">
       <h3>{ts}Financial Type Mapping{/ts}&nbsp;<a onclick='CRM.help("{ts}Financial Type Mapping{/ts}", {literal}{"id":"id-mapping","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon">&nbsp;</a></h3>
       <table>

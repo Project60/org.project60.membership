@@ -87,6 +87,8 @@ function civicrm_api3_membership_payment_synchronize($params) {
 function _membership_payment_synchronize($financial_type_id, $membership_type_ids, $rangeback=0, $gracedays=0) {
   $results = array('mapped'=>array(), 'no_membership' => array(), 'ambiguous'=>array(), 'errors'=>array());
   $membership_type_id_list = implode(',', $membership_type_ids);
+  $membership_status_ids = CRM_Membership_Settings::getLiveStatusIDs();
+  $membership_status_id_list = implode(',', $membership_status_ids);
   $contribution_receive_date = array();
   $membership_start_date = array();
   $membership_join_date = array();
@@ -128,6 +130,7 @@ function _membership_payment_synchronize($financial_type_id, $membership_type_id
   		civicrm_membership
   	WHERE
   		contact_id = $contact_id
+    AND status_id IN ($membership_status_id_list)
   	AND membership_type_id IN ($membership_type_id_list)
   	AND ((start_date <= (DATE('{$date}') + INTERVAL {$rangeback} DAY)) OR (civicrm_membership.id = {$oldest_membership_id} AND join_date <= (DATE('{$date}') + INTERVAL {$rangeback} DAY)))
   	AND ((end_date   >  (DATE('{$date}') - INTERVAL {$gracedays} DAY)) OR (end_date IS NULL))

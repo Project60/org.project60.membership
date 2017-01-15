@@ -17,7 +17,7 @@ What does it do?
 This extension currently (version 0.3) offers only two features:
 
 1. Associate existing (completed) contributions with existing memberships. You will be able to configure this ``civicrm/admin/setting/membership`` and find the front-end at ``civicrm/membership/payments``. You can also call this as a scheduled job via API: ``MembershipPayment.synchronize``
-2. Automatically extend a memebership if an appropriate contribution has been associatend with it. This is also intended to be a scheduled job: ``Membership.extend``. Since people have all sorts of different payment rhythms and different amounts, this job has variety of parameters:
+2. Automatically extend rolling memeberships if an appropriate contribution has been associatend with it. This is also intended to be a scheduled job: ``Membership.extend``. Since people have all sorts of different payment rhythms and different amounts, this job has variety of parameters:
    1. ``horizon``: how far back into the past (in days) should the algorithm go, to check whether a member has "paid up"?
    2. ``precision``: how tolerant is the alogorithm wiht respect to the payment date. This is relative to the payment payment interval, so 0.7 for a monthly cycle means a tolarance of ~10 days.
    3. ``status_ids``: the IDs of the membership statuses that should be investigated. Usually this would be "1,2,3", meaning "new", "current" and "grace".

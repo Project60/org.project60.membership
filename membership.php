@@ -109,3 +109,14 @@ function membership_civicrm_managed(&$entities) {
 function membership_civicrm_caseTypes(&$caseTypes) {
   _membership_civix_civicrm_caseTypes($caseTypes);
 }
+
+/**
+ * CiviSEPA Hook - called whenever a new CiviSEPA installment is created
+ *
+ * @access public
+ */
+static function installment_created($mandate_id, $contribution_recur_id, $contribution_id) {
+  //see if this installment should be assigned to a membership
+  $sepa_logic = CRM_Membership_Sepa::getSingleton();
+  $sepa_logic->assignInstallment($mandate_id, $contribution_id,$contribution_recur_id);
+}

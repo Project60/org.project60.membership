@@ -13,18 +13,118 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
- 
+
 /**
  * Settings logic for membership extension
  */
 class CRM_Membership_Settings {
 
+  /** singleton object */
+  protected static $singleton = NULL;
+
+  /** the current settings blob */
+  protected $settings_bucket = NULL;
+
+  /** cached data on the paid_via field */
+  protected $paid_via_field = NULL;
+
   /**
+   * CRM_Membership_Settings constructor.
+   */
+  protected function __construct() {
+    $this->settings_bucket = CRM_Core_BAO_Setting::getItem('Membership Payments', 'p60_membership_settings');
+    if (!is_array($this->settings_bucket)) {
+      $this->settings_bucket = array();
+    }
+  }
+
+  /**
+   * Get the settings singleton object
+   * @return CRM_Membership_Settings
+   */
+  public static function getSettings() {
+    if (self::$singleton === NULL) {
+      self::$singleton = new CRM_Membership_Settings();
+    }
+    return self::$singleton;
+  }
+
+  /**
+   * Set a named setting to the given value
+   * @param $key   setting name
+   * @param $value new value
+   * @param bool $write_through  write to DB right away
+   */
+  public function setSetting($key, $value, $write_through = TRUE) {
+    $this->settings_bucket[$key] = $value;
+    if ($write_through) {
+      $this->write();
+    }
+  }
+
+  /**
+   * Get a named setting
+   * @param $key
+   * @return mixed|null
+   */
+  public function getSetting($key) {
+    if (isset($this->settings_bucket[$key])) {
+      return $this->settings_bucket[$key];
+    } else {
+      return NULL;
+    }
+  }
+
+  /**
+   * Write settings to DB
+   */
+  public function write() {
+    CRM_Core_BAO_Setting::setItem($this->settings_bucket, 'Membership Payments', 'p60_membership_settings');
+  }
+  /**
+   * Get the field ID of the selected paid_via field
+   * @return int
+   */
+  public function getPaidViaFieldID() {
+    // TODO
+    return 2;
+  }
+
+  /**
+   * Get the field data of the paid_via field
+   * or NULL if none set;
+   */
+  public function getPaidViaField() {
+    $paid_via_id = $this->getPaidViaFieldID();
+    if ($paid_via_id) {
+      if ($this->paid_via_field === NULL) {
+        // load the field data
+        $this->paid_via_field = civicrm_api3('CustomField', 'getsingle', array(
+            'id' => $paid_via_id,
+            'return' => 'column_name,id,label,custom_group_id'));
+        $this->paid_via_field['key'] = 'custom_' . $paid_via_id;
+
+        // add some of the group data as well
+        $group_data = civicrm_api3('CustomGroup', 'getsingle', array(
+            'id' => $this->paid_via_field['custom_group_id'],
+            'return' => 'id,table_name'));
+        $this->paid_via_field['table_name'] = $group_data['table_name'];
+      }
+      return $this->paid_via_field;
+    }
+    return NULL;
+  }
+
+
+
+  // TODO: migrate/refactor
+
+    /**
    * get the syncmap property
    * default is the mapping that is defined by the membership_types' financial type id
    *
    * @return array([financial_type_id] => array(membership_type_id))
-   */
+     */
   public static function getSyncMapping() {
     $mapping_json = CRM_Core_BAO_Setting::getItem('Membership Payments', 'sync_mapping');
     $mapping = json_decode($mapping_json, TRUE);
@@ -49,7 +149,7 @@ class CRM_Membership_Settings {
   /**
    * Get the IDs of the 'live' statuses, i.e. the ones that can be assigned payments
    *  Default is 1,2,3 (new, current, grace)
-   * 
+   *
    * @return array
    */
   public static function getLiveStatusIDs() {
@@ -105,7 +205,7 @@ class CRM_Membership_Settings {
   /**
    * Set the IDs of the 'live' statuses, i.e. the ones that can be assigned payments
    *  This cannot be empty - so fallback is is 1,2,3 (new, current, grace)
-   * 
+   *
    * @param $ids array
    */
   public static function setLiveStatusIDs($status_ids) {
@@ -119,7 +219,7 @@ class CRM_Membership_Settings {
    */
   protected static function _getDefaultSyncmap() {
     $mapping = array();
-    $membership_types = civicrm_api3('MembershipType', 'get', 
+    $membership_types = civicrm_api3('MembershipType', 'get',
        array('is_active' => 1, 'option.limit' => 9999));
     if (empty($membership_types['is_error'])) {
       foreach ($membership_types['values'] as $membership_type) {

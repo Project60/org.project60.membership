@@ -33,8 +33,12 @@
        <h3>{ts}Payment Integration{/ts}</h3>
        <table>
          <tr>
-           <td>{$form.paid_via_field.label}&nbsp;<a onclick='CRM.help("{ts}Paid Via field{/ts}", {literal}{"id":"id-paid-via","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.paid_via_field.label}&nbsp;<a onclick='CRM.help("{ts}Paid Via Field{/ts}", {literal}{"id":"id-paid-via","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.paid_via_field.html}</td>
+         </tr>
+         <tr>
+           <td>{$form.paid_via_linked.label}&nbsp;<a onclick='CRM.help("{ts}Paid Via Linked{/ts}", {literal}{"id":"id-paid-via-linked","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.paid_via_linked.html}</td>
          </tr>
        </table>
      </div>
@@ -49,7 +53,7 @@
   </div>
   <div class="crm-accordion-body">
     <div class="crm-block crm-form-block crm-form-title-here-form-block">
-      <h3>{ts}Time Horizon{/ts}</h3>
+      <h3>{ts}General{/ts}</h3>
       <table>
         <tr>
           <td>{$form.sync_range.label}&nbsp;<a onclick='CRM.help("{ts}Backward Horizon{/ts}", {literal}{"id":"id-sync-range","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
@@ -59,6 +63,10 @@
           <td>{$form.grace_period.label}&nbsp;<a onclick='CRM.help("{ts}Forward Horizon{/ts}", {literal}{"id":"id-grace-period","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.grace_period.html}</td>
         </tr>
+         <tr>
+           <td>{$form.paid_by_field.label}&nbsp;<a onclick='CRM.help("{ts}Paid By Field{/ts}", {literal}{"id":"id-paid-by","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.paid_by_field.html}</td>
+         </tr>
       </table>
     </div>
 

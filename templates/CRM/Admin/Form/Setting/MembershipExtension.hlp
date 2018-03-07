@@ -33,8 +33,8 @@
   <p>{ts}Caution: This status list is only valid for the payment synchronization tool, the membership extension job uses the parameter <code>status_ids</code> instead.{/ts}</p>
 {/htxt}
 
-{htxt id='id-'}
-  <p>{ts}Only if a membership has a 'live' status, membership payments will be assigned to it.{/ts}</p>
-  <p>{ts}Caution: This status list is only valid for the payment synchronization tool, the membership extension job uses the parameter <code>status_ids</code> instead.{/ts}</p>
+{htxt id='id-paid-via'}
+  <p>{ts}You can select a membership custom field to record the connection to any recurring contribution, e.g. a CiviSEPA mandate or similar.{/ts}</p>
+  <p>{ts}The field has to be an integer type, active, read only, and searchable custom field to be eligible.{/ts}</p>
 {/htxt}
 

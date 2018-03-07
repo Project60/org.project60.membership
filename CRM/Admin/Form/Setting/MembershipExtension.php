@@ -15,7 +15,7 @@
 +--------------------------------------------------------*/
 
 require_once 'CRM/Admin/Form/Setting.php';
- 
+
 /**
  * Configuration page for the Project60 Membership extension
  */
@@ -33,7 +33,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     // load financial types
     $financial_types = CRM_Contribute_PseudoConstant::financialType();
     $this->assign("financial_types", $financial_types);
-    
+
     // load status options
     $membership_statuses = array();
     $statusQuery = civicrm_api3('MembershipStatus', 'getlist');
@@ -56,25 +56,25 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
     // add elements
     foreach ($financial_types as $financial_type_id => $financial_type_name) {
-      $this->addElement('select', 
+      $this->addElement('select',
                         "syncmap_$financial_type_id",
-                        $financial_type_name, 
+                        $financial_type_name,
                         $membership_types,
                         array('multiple' => "multiple", 'class' => 'crm-select2'));
     }
 
     $this->addElement('text',
-                      "sync_range", 
+                      "sync_range",
                       ts("Backward horizon (in days)"),
                       array('value' => $sync_range));
     $this->addElement('text',
-                      "grace_period", 
+                      "grace_period",
                       ts("Grace Period (in days)"),
                       array('value' => $grace_period));
 
-    $this->addElement('select', 
-                      "live_status",
-                      ts("Live Statuses"), 
+    $this->addElement('select',
+                      "live_statuses",
+                      ts("Live Statuses"),
                       $membership_statuses,
                       array('multiple' => "multiple", 'class' => 'crm-select2'));
 
@@ -88,11 +88,15 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
   }
 
 
+  /**
+   * preset the current values as default
+   */
   public function setDefaultValues() {
     $defaults = parent::setDefaultValues();
     $settings = CRM_Membership_Settings::getSettings();
-    foreach ($settings as $key => $setting) {
-      $defaults[$key] = $setting;
+    $current_values = $settings->getAllSettings();
+    foreach ($current_values as $key => $value) {
+      $defaults[$key] = $value;
     }
 
     return $defaults;
@@ -115,14 +119,18 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
     // save new settings
     $settings = CRM_Membership_Settings::getSettings();
-    $settings->setSetting('sync_mapping',  $sync_mapping, FALSE);
-    $settings->setSetting('sync_range',    $values['sync_range'], FALSE);
-    $settings->setSetting('grace_period',  $values['grace_period'], FALSE);
-    if (is_array($values['live_status']) && !empty($values['live_status'])) {
-      $settings->setSetting('live_statuses', $values['live_status'], FALSE);
+    $settings->setSetting('sync_mapping',   $sync_mapping, FALSE);
+    $settings->setSetting('sync_range',     $values['sync_range'], FALSE);
+    $settings->setSetting('grace_period',   $values['grace_period'], FALSE);
+    $settings->setSetting('paid_via_field', $values['paid_via_field'], FALSE);
+    if (is_array($values['live_statuses']) && !empty($values['live_statuses'])) {
+      $settings->setSetting('live_statuses', $values['live_statuses'], FALSE);
     }
     $settings->write();
   }
+
+
+  // HELPER FUNCTIONS
 
   /**
    * Get all eligible fields to be used as paid_via
@@ -156,7 +164,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
         'is_view'         => 1,
         'is_searchable'   => 1,
         'return'          => 'id,label'));
-      foreach ($custom_fields as $custom_field) {
+      foreach ($custom_fields['values'] as $custom_field) {
         $options[$custom_field['id']] = $custom_field['label'];
       }
     }

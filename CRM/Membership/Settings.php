@@ -76,6 +76,14 @@ class CRM_Membership_Settings {
   }
 
   /**
+   * Get all settings
+   * @return array
+   */
+  public function getAllSettings() {
+    return $this->settings_bucket;
+  }
+
+  /**
    * Write settings to DB
    */
   public function write() {
@@ -116,17 +124,12 @@ class CRM_Membership_Settings {
   }
 
 
-
-  // TODO: upgrader
-  // sync_rangeback -> sync_range
-  // synce_graceperiod -> sync_graceperiod
-
-    /**
+  /**
    * get the syncmap property
    * default is the mapping that is defined by the membership_types' financial type id
    *
    * @return array([financial_type_id] => array(membership_type_id))
-     */
+   */
   public function getSyncMapping() {
     $mapping = $this->getSetting('sync_mapping');
     if (empty($mapping)) {

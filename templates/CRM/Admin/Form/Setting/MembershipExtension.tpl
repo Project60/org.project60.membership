@@ -66,8 +66,8 @@
       <h3>{ts}Membership Status{/ts}</h3>
       <table>
         <tr>
-          <td>{$form.live_status.label}&nbsp;<a onclick='CRM.help("{ts}Live Status{/ts}", {literal}{"id":"id-live-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
-          <td>{$form.live_status.html}</td>
+          <td>{$form.live_statuses.label}&nbsp;<a onclick='CRM.help("{ts}Live Status{/ts}", {literal}{"id":"id-live-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.live_statuses.html}</td>
         </tr>
       </table>
     </div>
@@ -87,7 +87,7 @@
   </div>
 </div>
 
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div> 
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 
 
 <script type="text/javascript">

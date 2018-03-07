@@ -42,15 +42,16 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     }
 
     // get sync_mapping
-    $sync_mapping = CRM_Membership_Settings::getSyncMapping();
+    $settings = CRM_Membership_Settings::getSettings();
+    $sync_mapping = $settings->getSyncMapping();
     $this->assign("sync_mapping", json_encode($sync_mapping));
 
     // get sync_range
-    $sync_range = CRM_Membership_Settings::getSyncRange();
+    $sync_range = $settings->getSyncRange();
     $this->assign("sync_range", $sync_range);
 
     // get grace_period
-    $grace_period = CRM_Membership_Settings::getSyncGracePeriod();
+    $grace_period = $settings->getSyncGracePeriod();
     $this->assign("grace_period", $grace_period);
 
     // add elements
@@ -77,14 +78,22 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
                       $membership_statuses,
                       array('multiple' => "multiple", 'class' => 'crm-select2'));
 
+    $this->addElement('select',
+        "paid_via_field",
+        ts("Use 'paid via' field"),
+        $this->getPaidViaOptions(),
+        array('class' => 'crm-select2'));
+
     parent::buildQuickForm();
   }
 
 
   public function setDefaultValues() {
     $defaults = parent::setDefaultValues();
-
-    $defaults['live_status'] = CRM_Membership_Settings::getLiveStatusIDs();
+    $settings = CRM_Membership_Settings::getSettings();
+    foreach ($settings as $key => $setting) {
+      $defaults[$key] = $setting;
+    }
 
     return $defaults;
   }
@@ -94,7 +103,6 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
    */
   function postProcess() {
     $values = $this->controller->exportValues($this->_name);
-
     // extract & set the sync mapping
     $sync_mapping = array();
     foreach ($values as $key => $value) {
@@ -104,15 +112,55 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
         $sync_mapping[$key_id] = $value;
       }
     }
-    CRM_Membership_Settings::setSyncMapping($sync_mapping);
 
-    // set the range
-    CRM_Membership_Settings::setSyncRange($values['sync_range']);
+    // save new settings
+    $settings = CRM_Membership_Settings::getSettings();
+    $settings->setSetting('sync_mapping',  $sync_mapping, FALSE);
+    $settings->setSetting('sync_range',    $values['sync_range'], FALSE);
+    $settings->setSetting('grace_period',  $values['grace_period'], FALSE);
+    if (is_array($values['live_status']) && !empty($values['live_status'])) {
+      $settings->setSetting('live_statuses', $values['live_status'], FALSE);
+    }
+    $settings->write();
+  }
 
-    // set the grace period
-    CRM_Membership_Settings::setSyncGracePeriod($values['grace_period']);
+  /**
+   * Get all eligible fields to be used as paid_via
+   * @return array options
+   */
+  protected function getPaidViaOptions() {
+    $options = array('' => ts('Disabled'));
 
-    // set live status ids
-    CRM_Membership_Settings::setLiveStatusIDs($values['live_status']);
+    // find all custom fields that are
+    //  1) attached to a membership
+    //  2) of type Int
+    //  3) not multivalue
+    //  4) indexed
+    //  5) read-only
+    $custom_groups = civicrm_api3('CustomGroup', 'get', array(
+        'extends'     => 'Membership',
+        'is_active'   => '1',
+        'is_multiple' => '0',
+        'return'      => 'id'));
+    $custom_group_ids = array();
+    foreach ($custom_groups['values'] as $custom_group) {
+      $custom_group_ids[] = $custom_group['id'];
+    }
+
+    // if there is eligible groups, look for fields
+    if (!empty($custom_group_ids)) {
+      $custom_fields = civicrm_api3('CustomField', 'get', array(
+        'custom_group_id' => array('IN' => $custom_group_ids),
+        'data_type'       => 'Int',
+        'is_active'       => 1,
+        'is_view'         => 1,
+        'is_searchable'   => 1,
+        'return'          => 'id,label'));
+      foreach ($custom_fields as $custom_field) {
+        $options[$custom_field['id']] = $custom_field['label'];
+      }
+    }
+
+    return $options;
   }
 }

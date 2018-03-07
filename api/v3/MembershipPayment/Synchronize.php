@@ -21,20 +21,22 @@
  * @param rebuild  if set to true or 1, the ill assigend contributions with the given financial type
  *                   will be detached from the membership and rematched wrt the given matching. 
  *					 USE WITH CAUTION!
+ * @return array API result
  */
 function civicrm_api3_membership_payment_synchronize($params) {
-  $mapping = CRM_Membership_Settings::getSyncMapping();
+  $settngs = CRM_Membership_Settings::getSettings();
+  $mapping = $settings->getSyncMapping();
 
   // NEXT: read the 'rangeback' parameter
   if (empty($params['rangeback'])) {
-  	$rangeback = (int) CRM_Membership_Settings::getSyncRange();
+  	$rangeback = (int) $settings->getSyncRange();
   } else {
   	$rangeback = (int) $params['rangeback'];
   }
 
   // NEXT: read the 'gracedays' parameter
   if (empty($params['gracedays'])) {
-    $gracedays = (int) CRM_Membership_Settings::getSyncGracePeriod();
+    $gracedays = (int) $settings->getSyncGracePeriod();
   } else {
     $gracedays = (int) $params['gracedays'];
   }
@@ -57,9 +59,9 @@ function civicrm_api3_membership_payment_synchronize($params) {
   			LEFT JOIN civicrm_contribution ON civicrm_contribution.id = civicrm_membership_payment.contribution_id
   			LEFT JOIN civicrm_membership   ON civicrm_membership.id = civicrm_membership_payment.membership_id
   			WHERE
-  			 civicrm_contribution.financial_type_id = $financial_type_id
+  			 civicrm_contribution.financial_type_id = {$financial_type_id}
   			AND
-  			 civicrm_membership.membership_type_id NOT IN ($membership_type_id_list);";
+  			 civicrm_membership.membership_type_id NOT IN ({$membership_type_id_list});";
   		CRM_Core_DAO::singleValueQuery($remove_bad_assignments_sql);
   	}
   } 

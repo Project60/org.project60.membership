@@ -51,8 +51,8 @@ class CRM_Membership_Settings {
 
   /**
    * Set a named setting to the given value
-   * @param $key   setting name
-   * @param $value new value
+   * @param $key   string name
+   * @param $value mixed value
    * @param bool $write_through  write to DB right away
    */
   public function setSetting($key, $value, $write_through = TRUE) {
@@ -117,7 +117,9 @@ class CRM_Membership_Settings {
 
 
 
-  // TODO: migrate/refactor
+  // TODO: upgrader
+  // sync_rangeback -> sync_range
+  // synce_graceperiod -> sync_graceperiod
 
     /**
    * get the syncmap property
@@ -125,9 +127,8 @@ class CRM_Membership_Settings {
    *
    * @return array([financial_type_id] => array(membership_type_id))
      */
-  public static function getSyncMapping() {
-    $mapping_json = CRM_Core_BAO_Setting::getItem('Membership Payments', 'sync_mapping');
-    $mapping = json_decode($mapping_json, TRUE);
+  public function getSyncMapping() {
+    $mapping = $this->getSetting('sync_mapping');
     if (empty($mapping)) {
       return CRM_Membership_Settings::_getDefaultSyncmap();
     } else {
@@ -142,8 +143,8 @@ class CRM_Membership_Settings {
    * default is 400 (days)
    * @return int
    */
-  public static function getSyncRange() {
-    return (int) CRM_Core_BAO_Setting::getItem('Membership Payments', 'sync_rangeback');
+  public function getSyncRange() {
+    return (int) $this->getSetting('sync_range');
   }
 
   /**
@@ -152,8 +153,8 @@ class CRM_Membership_Settings {
    *
    * @return array
    */
-  public static function getLiveStatusIDs() {
-    $status_ids = CRM_Core_BAO_Setting::getItem('Membership Payments', 'live_statuses');
+  public function getLiveStatusIDs() {
+    $status_ids = $this->getSetting('live_statuses');
     if (!is_array($status_ids) || empty($status_ids)) {
       return array(1,2,3);
     } else {
@@ -168,50 +169,9 @@ class CRM_Membership_Settings {
    * default is 32 (days)
    * @return int
    */
-  public static function getSyncGracePeriod() {
-    return (int) CRM_Core_BAO_Setting::getItem('Membership Payments', 'synce_graceperiod');
-  }
-
-  /**
-   * set the syncmap property
-   * @param $syncmap array([financial_type_id] => array(membership_type_ids))
-   */
-  public static function setSyncMapping($syncmap) {
-    CRM_Core_BAO_Setting::setItem(json_encode($syncmap), 'Membership Payments', 'sync_mapping');
-  }
-
-  /**
-   * set the sync range property (number of days)
-   * which describes how far back the membership<->payment mapping should be performed
-   *
-   * default is 400 (days)
-   * @return $range int
-   */
-  public static function setSyncRange($range) {
-    CRM_Core_BAO_Setting::setItem($range, 'Membership Payments', 'sync_rangeback');
-  }
-
-  /**
-   * set the sync range property (number of days)
-   * which describes how far back the membership<->payment mapping should be performed
-   *
-   * default is 32 (days)
-   * @return $range int
-   */
-  public static function setSyncGracePeriod($value) {
-    CRM_Core_BAO_Setting::setItem($value, 'Membership Payments', 'synce_graceperiod');
-  }
-
-  /**
-   * Set the IDs of the 'live' statuses, i.e. the ones that can be assigned payments
-   *  This cannot be empty - so fallback is is 1,2,3 (new, current, grace)
-   *
-   * @param $ids array
-   */
-  public static function setLiveStatusIDs($status_ids) {
-    if (is_array($status_ids) && !empty($status_ids)) {
-      CRM_Core_BAO_Setting::setItem($status_ids, 'Membership Payments', 'live_statuses');
-    }
+  public function getSyncGracePeriod() {
+    // TODO: updater: synce_graceperiod
+    return (int) $this->getSetting('sync_graceperiod');
   }
 
   /**

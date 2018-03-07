@@ -24,6 +24,25 @@
    </div>
 </div-->
 
+<div class="crm-accordion-wrapper" id="general">
+  <div class="crm-accordion-header">
+    {ts}Payment Integration{/ts}
+  </div>
+  <div class="crm-accordion-body">
+     <div class="crm-block crm-form-block crm-form-title-here-form-block">
+       <h3>{ts}Payment Integration{/ts}</h3>
+       <table>
+         <tr>
+           <td>{$form.paid_via_field.label}&nbsp;<a onclick='CRM.help("{ts}Paid Via field{/ts}", {literal}{"id":"id-paid-via","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.paid_via_field.html}</td>
+         </tr>
+       </table>
+     </div>
+   </div>
+</div>
+
+
+
 <div class="crm-accordion-wrapper" id="synchronization">
   <div class="crm-accordion-header">
     {ts}Payment Synchronisation Tool{/ts}

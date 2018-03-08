@@ -117,6 +117,22 @@ function membership_civicrm_caseTypes(&$caseTypes) {
  */
 function membership_installment_created($mandate_id, $contribution_recur_id, $contribution_id) {
   //see if this installment should be assigned to a membership
-  $sepa_logic = CRM_Membership_Sepa::getSingleton();
-  $sepa_logic->assignInstallment($mandate_id, $contribution_id,$contribution_recur_id);
+  $paid_by_logic = CRM_Membership_PaidByLogic::getSingleton();
+  $paid_by_logic->assignSepaInstallment($mandate_id, $contribution_id,$contribution_recur_id);
+}
+
+/**
+ * Implements hook_civicrm_buildForm().
+ *
+ * Insert
+ *
+ * @param string $formName
+ * @param CRM_Core_Form $form
+ */
+function membership_civicrm_buildForm($formName, &$form) {
+  error_log($formName);
+  if ($formName == 'CRM_Member_Form_MembershipView') {
+    $paid_by_logic = CRM_Membership_PaidByLogic::getSingleton();
+    $paid_by_logic->extendForm($formName, $form);
+  }
 }

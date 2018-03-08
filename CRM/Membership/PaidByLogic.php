@@ -19,15 +19,36 @@
  * to memberships
  * @see https://github.com/Project60/org.project60.membership/issues/10
  */
-class CRM_Membership_Sepa {
+class CRM_Membership_PaidByLogic {
 
     protected static $singleton = NULL;
 
     public static function getSingleton() {
       if (self::$singleton === NULL) {
-        self::$singleton = new CRM_Membership_Sepa();
+        self::$singleton = new CRM_Membership_PaidByLogic();
       }
       return self::$singleton;
+    }
+
+    /**
+     * Render a nice representation of the
+     */
+    public function extendForm($formName, &$form) {
+      // see if there is a paid_via field
+      $settings = CRM_Membership_Settings::getSettings();
+      $paid_via = $settings->getPaidViaField();
+      if (!$paid_via) return;
+
+
+      if ($formName == 'CRM_Member_Form_MembershipView') {
+        // render the current
+        $form->assign('p60paidby_label',   $paid_via['label']);
+        $form->assign('p60paidby_current', 'TODO: RENDER');
+        // TODO: add buttons
+        CRM_Core_Region::instance('page-body')->add(array(
+          'template' => 'CRM/Membership/Snippets/PaidByField.tpl',
+        ));
+      }
     }
 
     /**
@@ -36,7 +57,7 @@ class CRM_Membership_Sepa {
      * @param $contribution_recur_id
      * @param $contribution_id
      */
-    public function assignInstallment($mandate_id, $contribution_recur_id, $contribution_id) {
+    public function assignSepaInstallment($mandate_id, $contribution_recur_id, $contribution_id) {
       // see if there is a paid_via field
       $settings = CRM_Membership_Settings::getSettings();
       $paid_via = $settings->getPaidViaField();
@@ -45,7 +66,7 @@ class CRM_Membership_Sepa {
       // then assign
       CRM_Core_DAO::executeQuery("
         INSERT IGNORE INTO civicrm_membership_payment (membership_id, contribution_id)
-          SELECT 
+          SELECT
             entity_id           AS membership_id,
             {$contribution_id}  AS contribution_id
           FROM {$paid_via['table_name']}

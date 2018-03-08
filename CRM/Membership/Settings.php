@@ -94,8 +94,11 @@ class CRM_Membership_Settings {
    * @return int
    */
   public function getPaidViaFieldID() {
-    // TODO
-    return 2;
+    if (isset($this->settings_bucket['paid_via_field'])) {
+      return (int) $this->settings_bucket['paid_via_field'];
+    } else {
+      return NULL;
+    }
   }
 
   /**
@@ -108,13 +111,13 @@ class CRM_Membership_Settings {
       if ($this->paid_via_field === NULL) {
         // load the field data
         $this->paid_via_field = civicrm_api3('CustomField', 'getsingle', array(
-            'id' => $paid_via_id,
+            'id'     => $paid_via_id,
             'return' => 'column_name,id,label,custom_group_id'));
         $this->paid_via_field['key'] = 'custom_' . $paid_via_id;
 
         // add some of the group data as well
         $group_data = civicrm_api3('CustomGroup', 'getsingle', array(
-            'id' => $this->paid_via_field['custom_group_id'],
+            'id'     => $this->paid_via_field['custom_group_id'],
             'return' => 'id,table_name'));
         $this->paid_via_field['table_name'] = $group_data['table_name'];
       }

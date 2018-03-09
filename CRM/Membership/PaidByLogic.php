@@ -45,10 +45,12 @@ class CRM_Membership_PaidByLogic {
 
       if ($formName == 'CRM_Member_Form_MembershipView') {
         // render the current
-        $current_display = $this->renderRecurringContribution($paid_via, $membership_id);
+        $contribution_recur = $this->getRecurringContribution($paid_via, $membership_id);
+        $current_display    = $this->renderRecurringContribution($contribution_recur);
+        $edit_link          = CRM_Utils_System::url("civicrm/membership/paidby", "reset=1&mid={$membership_id}");
         $form->assign('p60paidby_current', $current_display);
         $form->assign('p60paidby_label',   $paid_via['label']);
-        // TODO: add buttons
+        $form->assign('p60paidby_edit',    $edit_link);
         CRM_Core_Region::instance('page-body')->add(array(
           'template' => 'CRM/Membership/Snippets/PaidByField.tpl',
         ));
@@ -81,30 +83,40 @@ class CRM_Membership_PaidByLogic {
     /**
      * render a textual representation of the field value
      */
-    protected function renderRecurringContribution($paid_via_field, $membership_id) {
+    protected function getRecurringContribution($paid_via_field, $membership_id) {
       $paid_via_key = $paid_via_field['key'];
       $membership = civicrm_api3('Membership', 'getsingle', array(
         'id'     => $membership_id,
         'return' => $paid_via_key));
 
       if (empty($membership[$paid_via_key])) {
-        return ts('<i>None</i>');
+        return NULL;
       }
 
       try {
         // load the recurring contribution
-        $contribution_recur = civicrm_api3('ContributionRecur', 'getsingle', array(
+        return civicrm_api3('ContributionRecur', 'getsingle', array(
           'id'     => $membership[$paid_via_key]
         ));
-
-        // generate a type string
-        $type  = $this->renderRecurringContributionType($contribution_recur);
-        $cycle = $this->renderRecurringContributionCycle($contribution_recur);
-
-        return ts("%1: %2", array(1 => $type, 2 => $cycle));
       } catch (Exception $e) {
-        return ts('<strong>Error</strong>');
+        CRM_Core_Session::setStatus(ts("Couldn't load 'paid via' data."), ts('Error'), 'error');
+        return NULL;
       }
+    }
+
+    /**
+     * render a textual representation of the field value
+     */
+    protected function renderRecurringContribution($contribution_recur) {
+      if (empty($contribution_recur)) {
+        return ts('<i>None</i>');
+      }
+
+      // generate a type string
+      $type  = $this->renderRecurringContributionType($contribution_recur);
+      $cycle = $this->renderRecurringContributionCycle($contribution_recur);
+
+      return ts("%1: %2", array(1 => $type, 2 => $cycle));
     }
 
     /**
@@ -143,8 +155,44 @@ class CRM_Membership_PaidByLogic {
      * render a string to represent the type of recurring contribution
      */
     protected function renderRecurringContributionCycle($contribution_recur) {
+      // render amount
       $money = CRM_Utils_Money::format($contribution_recur['amount'], $contribution_recur['currency']);
-      $mode  = 'monthly';
-      return ts("%1 %2", array(1 => $money, 2 => $mode));
+
+      // render frequency
+      error_log(json_encode($contribution_recur));
+      switch ($contribution_recur['frequency_unit']) {
+        case 'month':
+          switch ($contribution_recur['frequency_interval']) {
+            case 12:
+              $mode = ts('annually');
+              break 2;
+            case 1:
+              $mode = ts('monthly');
+              break 2;
+            default:
+              $mode = ts('every %1 months', array(1 => $contribution_recur['frequency_interval']));
+              break 2;
+          }
+        case 'year':
+          switch ($contribution_recur['frequency_interval']) {
+            case 1:
+              $mode = ts('annually');
+              break 2;
+            default:
+              $mode = ts('every %1 years', array(1 => $contribution_recur['frequency_interval']));
+              break 2;
+          }
+        default:
+          $mode = ts('(illegal frequency)');
+          break;
+      }
+
+      // render collection day
+      if (isset($contribution_recur['cycle_day'])) {
+        $collection = ts("on the %1.", array(1 => $contribution_recur['cycle_day']));
+      } else {
+        $collection = '';
+      }
+      return ts("%1 %2 %3", array(1 => $money, 2 => $mode, 3 => $collection));
     }
 }

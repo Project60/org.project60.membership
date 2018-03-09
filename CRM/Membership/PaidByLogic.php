@@ -115,18 +115,20 @@ class CRM_Membership_PaidByLogic {
     }
 
     // generate a type string
-    $type  = $this->renderRecurringContributionType($contribution_recur);
-    $cycle = $this->renderRecurringContributionCycle($contribution_recur);
-    $text  = ts("%1: %2", array(1 => $type, 2 => $cycle));
+    $type   = $this->renderRecurringContributionType($contribution_recur);
+    $cycle  = $this->renderRecurringContributionCycle($contribution_recur);
+    $annual = $this->calculateAnnual($contribution_recur);
+    $text   = ts("%1: %2", array(1 => $type, 2 => $cycle));
 
     // get contact
     $contact = $this->renderContact($contribution_recur['contact_id']);
 
     // copy values into object
-    $contribution_recur['display_type']  = $type;
-    $contribution_recur['display_cycle'] = $cycle;
-    $contribution_recur['display_text']  = $text;
-    $contribution_recur['contact']       = $contact;
+    $contribution_recur['display_type']   = $type;
+    $contribution_recur['display_cycle']  = $cycle;
+    $contribution_recur['display_text']   = $text;
+    $contribution_recur['display_annual'] = $annual;
+    $contribution_recur['contact']        = $contact;
 
     return $text;
   }
@@ -171,7 +173,6 @@ class CRM_Membership_PaidByLogic {
     $money = CRM_Utils_Money::format($contribution_recur['amount'], $contribution_recur['currency']);
 
     // render frequency
-    error_log(json_encode($contribution_recur));
     switch ($contribution_recur['frequency_unit']) {
       case 'month':
         switch ($contribution_recur['frequency_interval']) {
@@ -225,5 +226,25 @@ class CRM_Membership_PaidByLogic {
       ));
     }
     return $this->_renderedContacts[$contact_id];
+  }
+
+  /**
+   * add a value annual to the recurring contribution
+   *
+   * return string rendered version
+   */
+  protected function calculateAnnual(&$contribution_recur) {
+    $multiplier = 0;
+    if ($contribution_recur['frequency_unit'] == 'month') {
+      $multiplier = 1.0;
+    } elseif ($contribution_recur['frequency_unit'] == 'year') {
+      $multiplier = 12.0;
+    }
+
+    // calcualte and format
+    $contribution_recur['annual'] = (float) $contribution_recur['amount'] * (float) $multiplier * 12.0 / (float) $contribution_recur['frequency_interval'];
+    $contribution_recur['annual'] = number_format($contribution_recur['annual'], 2, '.', '');
+
+    return CRM_Utils_Money::format($contribution_recur['annual'], $contribution_recur['currency']);
   }
 }

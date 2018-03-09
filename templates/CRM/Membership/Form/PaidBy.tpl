@@ -22,13 +22,19 @@
     <tr class="sticky">
       <th>&nbsp;</th>
       <th>{ts}ID{/ts}</th>
-      <th>{ts}Mode{/ts}</th>
-      <th>{ts}Contact{/ts}</th>
       <th>{ts}Annual{/ts}</th>
+      <th>{ts}Payment Mode{/ts}</th>
+      <th>{ts}Paid By{/ts}</th>
       <th>{ts}status{/ts}</th>
     </tr>
   </thead>
   <tbody id='p60_paid_via_options'>
+    <tr class="sticky">
+      <td>&nbsp;</td>
+      <td>[0]</td>
+      <td>{0.00|crmMoney}</td>
+      <td colspan="3">{ts}manual{/ts}</td>
+    </tr>
   </tbody>
 </table>
 
@@ -39,7 +45,7 @@
 
 <script type="text/javascript">
 var owner_id = "{$membership.contact_id}";
-var paid_by  = "{$membership.contact_id}"; // TODO
+var paid_by  = "{$membership.paid_by}"; // TODO
 
 {literal}
 function addRecurring(contact_id) {
@@ -54,9 +60,9 @@ function addRecurring(contact_id) {
       <tr class=" ' + rcont.class + '">\
         <td></td>\
         <td>[' + rcont.id + ']</td>\
+        <td>' + rcont.display_annual + '</td>\
         <td>' + rcont.display_cycle + '</td>\
         <td><span class="icon crm-icon ' + rcont.contact.contact_type + '-icon"></span>' + rcont.contact.display_name + '</td>\
-        <td>' + rcont.display_annual + '</td>\
         <td>' + rcont.display_status + '</td>\
       </tr>');
     }

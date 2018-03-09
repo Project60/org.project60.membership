@@ -20,7 +20,7 @@
       {$p60paidby_current}
       {if $p60paidby_edit}
         <span>
-          <a href="{$p60paidby_edit}" class="action-item crm-hover-button crm-popup" title="{ts}change{/ts}">{ts}change{/ts}</a>
+          <a href="{$p60paidby_edit}" class="action-item crm-hover-button crm-popup medium-popup" title="{ts}change{/ts}">{ts}change{/ts}</a>
         </span>
       {/if}
     </td>

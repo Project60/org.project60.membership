@@ -23,6 +23,8 @@ class CRM_Membership_PaidByLogic {
 
   protected static $singleton = NULL;
 
+  protected $financial_types = NULL;
+
   public static function getSingleton() {
     if (self::$singleton === NULL) {
       self::$singleton = new CRM_Membership_PaidByLogic();
@@ -54,6 +56,9 @@ class CRM_Membership_PaidByLogic {
       CRM_Core_Region::instance('page-body')->add(array(
         'template' => 'CRM/Membership/Snippets/PaidByField.tpl',
       ));
+
+      // also, add some styling
+      CRM_Core_Resources::singleton()->addStyleFile('org.project60.membership', 'css/p60mem.css');
     }
   }
 
@@ -129,6 +134,13 @@ class CRM_Membership_PaidByLogic {
     $contribution_recur['display_text']   = $text;
     $contribution_recur['display_annual'] = $annual;
     $contribution_recur['contact']        = $contact;
+    $contribution_recur['financial_type'] = $this->getFinancialType($contribution_recur['financial_type_id']);
+    $contribution_recur['display_status'] = 'TODO';
+
+    if ($contribution_recur['contribution_status_id'] == '5'
+      || $contribution_recur['contribution_status_id'] == '2') {
+      $contribution_recur['classes'] = "p60-paid-via-row-eligible";
+    }
 
     return $text;
   }
@@ -246,5 +258,19 @@ class CRM_Membership_PaidByLogic {
     $contribution_recur['annual'] = number_format($contribution_recur['annual'], 2, '.', '');
 
     return CRM_Utils_Money::format($contribution_recur['annual'], $contribution_recur['currency']);
+  }
+
+  /**
+   * get the name of the financial type
+   */
+  protected function getFinancialType($financial_type_id) {
+    if ($this->financial_types === NULL) {
+      $query = civicrm_api3('FinancialType', 'get', array(
+        'return'     => 'id,name',
+        'sequential' => 0
+      ));
+      $this->financial_types = $query['values'];
+    }
+    return $this->financial_types[$financial_type_id]['name'];
   }
 }

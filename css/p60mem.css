@@ -1,0 +1,15 @@
+tr.p60-paid-via-row-eligible {
+  background-color: rgb(200, 200, 237);
+}
+
+tr.p60-paid-via-row-selected {
+  background-color: rgb(0, 200, 50);
+}
+
+tr.p60-paid-via-row-error {
+  background-color: rgb(120, 0, 0);
+}
+
+table.p60-paid-via {
+  margin: 10px;
+}

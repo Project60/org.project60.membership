@@ -60,7 +60,10 @@ class CRM_Membership_Form_PaidBy extends CRM_Core_Form {
 
   public function postProcess() {
     $values = $this->exportValues();
-    // TODO
+
+    // TODO: store selection
+    error_log(json_encode($values));
+
     parent::postProcess();
   }
 }

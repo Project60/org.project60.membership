@@ -89,6 +89,19 @@ class CRM_Membership_Settings {
   public function write() {
     CRM_Core_BAO_Setting::setItem($this->settings_bucket, 'Membership Payments', 'p60_membership_settings');
   }
+
+  /**
+   * Get the field ID of the selected paid_via field
+   * @return int
+   */
+  public function getPaidByFieldID() {
+    if (isset($this->settings_bucket['paid_by_field'])) {
+      return (int) $this->settings_bucket['paid_by_field'];
+    } else {
+      return NULL;
+    }
+  }
+
   /**
    * Get the field ID of the selected paid_via field
    * @return int

@@ -33,6 +33,42 @@ class CRM_Membership_PaidByLogic {
   }
 
   /**
+   * Change the payment contract for a membership
+   */
+  public function changeContract($membership_id, $contribution_recur_id) {
+    if (empty($membership_id)) {
+      // no membership given
+      return;
+    }
+
+    $settings   = CRM_Membership_Settings::getSettings();
+    $field_id   = $settings->getPaidViaFieldID();
+    $field_name = "custom_{$field_id}";
+    if (empty($field_id)) {
+      // paid via field not set
+      return;
+    }
+
+    // load membership to compare
+    $membership = civicrm_api3('Membership', 'getsingle', array(
+      'id'     => $membership_id,
+      'return' => $field_name,
+    ));
+
+    if ($membership[$field_name] == $contribution_id) {
+      // nothing changed
+      return;
+    }
+
+    // now: set the new ID
+    civicrm_api3('Membership', 'create', array(
+      'id'        => $membership_id,
+      $field_name => (int) $contribution_recur_id));
+
+    // TODO: further changes?
+  }
+
+  /**
    * Render a nice representation of the
    */
   public function extendForm($formName, &$form) {
@@ -47,7 +83,7 @@ class CRM_Membership_PaidByLogic {
 
     if ($formName == 'CRM_Member_Form_MembershipView') {
       // render the current
-      $contribution_recur = $this->getRecurringContribution($paid_via, $membership_id);
+      $contribution_recur = $this->getRecurringContribution($membership_id);
       $current_display    = $this->renderRecurringContribution($contribution_recur);
       $edit_link          = CRM_Utils_System::url("civicrm/membership/paidby", "reset=1&mid={$membership_id}");
       $form->assign('p60paidby_current', $current_display);
@@ -88,7 +124,9 @@ class CRM_Membership_PaidByLogic {
   /**
    * render a textual representation of the field value
    */
-  public function getRecurringContribution($paid_via_field, $membership_id) {
+  public function getRecurringContribution($membership_id) {
+    $settings = CRM_Membership_Settings::getSettings();
+    $paid_via_field = $settings->getPaidViaField();
     $paid_via_key = $paid_via_field['key'];
     $membership = civicrm_api3('Membership', 'getsingle', array(
       'id'     => $membership_id,
@@ -100,9 +138,10 @@ class CRM_Membership_PaidByLogic {
 
     try {
       // load the recurring contribution
-      return civicrm_api3('ContributionRecur', 'getsingle', array(
-        'id'     => $membership[$paid_via_key]
+      $contribution_recur = civicrm_api3('ContributionRecur', 'getsingle', array(
+        'id' => $membership[$paid_via_key]
       ));
+      return $contribution_recur;
     } catch (Exception $e) {
       CRM_Core_Session::setStatus(ts("Couldn't load 'paid via' data."), ts('Error'), 'error');
       return NULL;

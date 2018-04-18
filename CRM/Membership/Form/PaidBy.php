@@ -37,14 +37,24 @@ class CRM_Membership_Form_PaidBy extends CRM_Core_Form {
     // get some IDs
     $membership_id = CRM_Utils_Request::retrieve('mid',  'Integer');
     $membership = civicrm_api3('Membership', 'getsingle', array('id' => $membership_id));
-    $contribution_recur = $logic->getRecurringContribution($paid_via, $membership_id);
+    $contribution_recur = $logic->getRecurringContribution($membership_id);
+
+    // see if there is a 'paid by'
+    $paid_by_id = $settings->getPaidByFieldID();
+    if ($paid_by_id) {
+      $paid_by_field_name = "custom_{$paid_by_id}_id";
+      if (!empty($membership[$paid_by_field_name])) {
+        $membership['paid_by'] = $membership[$paid_by_field_name];
+      }
+    }
 
     // add vars:
     $this->assign('paid_by_current', $contribution_recur);
     $this->assign('membership',      $membership);
 
     // add form elements
-    $this->add('hidden', 'selected_contribution_rcur_id');
+    $this->add('hidden', 'selected_contribution_rcur_id', $contribution_recur ? $contribution_recur['id'] : '');
+    $this->add('hidden', 'membership_id', $membership_id);
 
     $this->addButtons(array(
       array(
@@ -61,8 +71,11 @@ class CRM_Membership_Form_PaidBy extends CRM_Core_Form {
   public function postProcess() {
     $values = $this->exportValues();
 
-    // TODO: store selection
-    error_log(json_encode($values));
+    // Store selection
+    if (!empty($values['membership_id']) && isset($values['selected_contribution_rcur_id'])) {
+      $logic = CRM_Membership_PaidByLogic::getSingleton();
+      $logic->changeContract($values['membership_id'], $values['selected_contribution_rcur_id']);
+    }
 
     parent::postProcess();
   }

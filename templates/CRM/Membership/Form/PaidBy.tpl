@@ -17,6 +17,9 @@
   {ts}Please select the recurring payment to be connected to this membership below.{/ts}
 </div>
 
+{$form.selected_contribution_rcur_id.html}
+{$form.membership_id.html}
+
 <table class="selector row-highlight p60-paid-via">
   <thead>
     <tr class="sticky">
@@ -50,7 +53,7 @@ var paid_by   = "{$membership.paid_by}"; // TODO
 var checkmark = '<img class="p60-paid-via-checkmark" src="{$config->resourceBase}i/check.gif" alt="{ts}Selected{/ts}"/>';
 
 {literal}
-function updateSelection() {
+function p60m_updateSelection() {
   // remove selected tag
   cj("table.p60-paid-via")
     .find("tr.p60-paid-via-row-selected")
@@ -63,12 +66,12 @@ function updateSelection() {
 
   // select current
   var current = cj("input[name=selected_contribution_rcur_id]").val();
+  console.log(current);
   if (current =='') current = 0;
   cj("tr[id=p60_paid_via_" + current + "]")
     .addClass("p60-paid-via-row-selected")
     .find("img.p60-paid-via-checkmark")
     .show();
-
 }
 
 function addRecurring(contact_id) {
@@ -91,14 +94,14 @@ function addRecurring(contact_id) {
       </tr>');
     }
 
-    updateSelection();
+    p60m_updateSelection();
   });
 }
 
 // trigger with owner and paid_by
 cj(document).ready(function() {
   // select default
-  updateSelection();
+  p60m_updateSelection();
 
   // add click handler
   cj("table.p60-paid-via").click(function(e) {
@@ -116,7 +119,7 @@ cj(document).ready(function() {
 
       // update ID field
       cj("input[name=selected_contribution_rcur_id]").val(rcur_id);
-      updateSelection();
+      p60m_updateSelection();
 
     } else {
       // create a a little "not selectable" animation

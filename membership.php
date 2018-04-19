@@ -15,6 +15,7 @@
 +--------------------------------------------------------*/
 
 require_once 'membership.civix.php';
+use CRM_Membership_ExtensionUtil as E;
 
 /**
 * Add an action for creating donation receipts after doing a search
@@ -25,8 +26,12 @@ function membership_civicrm_searchTasks($objectType, &$tasks) {
   if ($objectType == 'contribution') {
     if (CRM_Core_Permission::check('access CiviMember')) {
       $tasks[] = array(
-          'title' => ts('Assign to Membership'),
+          'title' => E::ts('Assign to Membership'),
           'class' => 'CRM_Membership_Form_Task_AssignTask',
+          'result' => false);
+      $tasks[] = array(
+          'title' => E::ts('Detach from Membership'),
+          'class' => 'CRM_Membership_Form_Task_DetachTask',
           'result' => false);
     }
   }

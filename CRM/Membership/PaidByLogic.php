@@ -86,9 +86,9 @@ class CRM_Membership_PaidByLogic {
       $contribution_recur = $this->getRecurringContribution($membership_id);
       $current_display    = $this->renderRecurringContribution($contribution_recur);
       $edit_link          = CRM_Utils_System::url("civicrm/membership/paidby", "reset=1&mid={$membership_id}");
-      $form->assign('p60paidby_current', $current_display);
-      $form->assign('p60paidby_label',   $paid_via['label']);
-      $form->assign('p60paidby_edit',    $edit_link);
+      $form->assign('p60paid_via_current', $current_display);
+      $form->assign('p60paid_via_label',   $paid_via['label']);
+      $form->assign('p60paid_via_edit',    $edit_link);
       CRM_Core_Region::instance('page-body')->add(array(
         'template' => 'CRM/Membership/Snippets/PaidByField.tpl',
       ));

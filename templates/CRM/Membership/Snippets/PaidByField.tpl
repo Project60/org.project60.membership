@@ -15,24 +15,25 @@
 
 <table>
   <tr id="p60paidby_row">
-    <td class="label">{$p60paidby_label}</td>
+    <td class="label">{$p60paid_via_label}</td>
     <td class="html-adjust">
-      {$p60paidby_current}
-      {if $p60paidby_edit}
+      {$p60paid_via_current}
+      {if $p60paid_via_edit}
         <span>
-          <a href="{$p60paidby_edit}" class="action-item crm-hover-button crm-popup medium-popup" title="{ts}change{/ts}">{ts}change{/ts}</a>
+          <a href="{$p60paid_via_edit}" class="action-item crm-hover-button crm-popup medium-popup" title="{ts}change{/ts}">{ts}change{/ts}</a>
         </span>
       {/if}
     </td>
   </tr>
 </table>
 
-{literal}
 <script type="text/javascript">
+var old_label = "{$p60paid_via_label}";
+{literal}
 // move the snippet above to the right place
 cj(document).ready(function() {
   cj("#MembershipView")
-    .find("tr td.label:contains('SUPERLINKE')")
+    .find("tr td.label:contains('" + old_label + "')")
     .parent()
     .before(cj("tr[id=p60paidby_row]"))
     .remove();

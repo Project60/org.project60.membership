@@ -135,7 +135,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $settings->setSetting('sync_range',      $values['sync_range'], FALSE);
     $settings->setSetting('grace_period',    $values['grace_period'], FALSE);
     $settings->setSetting('paid_via_field',  $values['paid_via_field'], FALSE);
-    $settings->setSetting('paid_via_linked', $values['paid_via_linked'], FALSE);
+    $settings->setSetting('paid_via_linked', CRM_Utils_Array::value('paid_via_linked', $values), FALSE);
     $settings->setSetting('paid_by_field',   $values['paid_by_field'], FALSE);
     if (is_array($values['live_statuses']) && !empty($values['live_statuses'])) {
       $settings->setSetting('live_statuses', $values['live_statuses'], FALSE);

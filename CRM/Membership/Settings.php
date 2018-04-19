@@ -27,6 +27,7 @@ class CRM_Membership_Settings {
 
   /** cached data on the paid_via field */
   protected $paid_via_field = NULL;
+  protected $paid_by_field = NULL;
 
   /**
    * CRM_Membership_Settings constructor.
@@ -103,6 +104,18 @@ class CRM_Membership_Settings {
   }
 
   /**
+   * Get the field data of the paid_via field
+   * or NULL if none set;
+   */
+  public function getPaidByField() {
+    if ($this->paid_by_field == NULL) {
+      $field_id = $this->getPaidByFieldID();
+      $this->paid_by_field = $this->getFieldInfo($field_id);
+    }
+    return $this->paid_by_field;
+  }
+
+  /**
    * Get the field ID of the selected paid_via field
    * @return int
    */
@@ -119,22 +132,32 @@ class CRM_Membership_Settings {
    * or NULL if none set;
    */
   public function getPaidViaField() {
-    $paid_via_id = $this->getPaidViaFieldID();
-    if ($paid_via_id) {
+    if ($this->paid_via_field == NULL) {
+      $field_id = $this->getPaidViaFieldID();
+      $this->paid_via_field = $this->getFieldInfo($field_id);
+    }
+    return $this->paid_via_field;
+  }
+
+  /**
+   *
+   */
+  protected function getFieldInfo($field_id) {
+    if ($field_id) {
       if ($this->paid_via_field === NULL) {
         // load the field data
-        $this->paid_via_field = civicrm_api3('CustomField', 'getsingle', array(
-            'id'     => $paid_via_id,
+        $field_info = civicrm_api3('CustomField', 'getsingle', array(
+            'id'     => $field_id,
             'return' => 'column_name,id,label,custom_group_id'));
-        $this->paid_via_field['key'] = 'custom_' . $paid_via_id;
+        $field_info['key'] = 'custom_' . $field_id;
 
         // add some of the group data as well
         $group_data = civicrm_api3('CustomGroup', 'getsingle', array(
-            'id'     => $this->paid_via_field['custom_group_id'],
+            'id'     => $field_info['custom_group_id'],
             'return' => 'id,table_name'));
-        $this->paid_via_field['table_name'] = $group_data['table_name'];
+        $field_info['table_name'] = $group_data['table_name'];
       }
-      return $this->paid_via_field;
+      return $field_info;
     }
     return NULL;
   }

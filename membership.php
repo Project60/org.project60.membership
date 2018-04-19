@@ -140,3 +140,20 @@ function membership_civicrm_buildForm($formName, &$form) {
     $paid_by_logic->extendForm($formName, $form);
   }
 }
+
+/**
+ * Implements hook_civicrm_navigationMenu().
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
+ */
+function membership_civicrm_navigationMenu(&$menu) {
+  _membership_civix_insert_navigation_menu($menu, 'Memberships', array(
+    'label'      => E::ts('Synchronise Payments'),
+    'name'       => 'p60_payment_sync',
+    'url'        => 'civicrm/membership/payments',
+    'permission' => 'access CiviContribute',
+    'operator'   => 'OR',
+    'separator'  => 0,
+  ));
+  _membership_civix_navigationMenu($menu);
+}

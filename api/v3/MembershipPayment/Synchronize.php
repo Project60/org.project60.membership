@@ -19,13 +19,13 @@
  * corresponding membership.
  *
  * @param rebuild  if set to true or 1, the ill assigend contributions with the given financial type
- *                   will be detached from the membership and rematched wrt the given matching. 
+ *                   will be detached from the membership and rematched wrt the given matching.
  *					 USE WITH CAUTION!
  * @return array API result
  */
 function civicrm_api3_membership_payment_synchronize($params) {
-  $settngs = CRM_Membership_Settings::getSettings();
-  $mapping = $settings->getSyncMapping();
+  $settings = CRM_Membership_Settings::getSettings();
+  $mapping  = $settings->getSyncMapping();
 
   // NEXT: read the 'rangeback' parameter
   if (empty($params['rangeback'])) {
@@ -41,6 +41,21 @@ function civicrm_api3_membership_payment_synchronize($params) {
     $gracedays = (int) $params['gracedays'];
   }
 
+  // check if contribution_ids are given
+  $contribution_ids = array();
+  if (!empty($params['contribution_ids'])) {
+    $cid_data = $params['contribution_ids'];
+    if (is_string($cid_data)) {
+      $cid_data = explode(',', $cid_data);
+    }
+    if (is_array($cid_data)) {
+      foreach ($cid_data as $contribution_id) {
+        $contribution_ids[] = (int) $contribution_id;
+      }
+    }
+  }
+
+  // verify mapping
   foreach ($mapping as $financial_type_id => $membership_type_ids) {
     foreach ($membership_type_ids as $membership_type_id) {
       if (!is_numeric($financial_type_id) || !is_numeric($membership_type_id))
@@ -51,142 +66,53 @@ function civicrm_api3_membership_payment_synchronize($params) {
   // if required, detach all ill assigned memberships for the given financial types first
   if (!empty($params['rebuild']) && ($params['rebuild']==1 || strtolower($params['rebuild'])=='true')) {
   	foreach ($mapping as $financial_type_id => $membership_type_ids) {
-      if (empty($membership_type_ids)) continue;
-      $membership_type_id_list = implode(',', $membership_type_ids);
-  		$remove_bad_assignments_sql = "
-  			DELETE civicrm_membership_payment
-  			FROM civicrm_membership_payment
-  			LEFT JOIN civicrm_contribution ON civicrm_contribution.id = civicrm_membership_payment.contribution_id
-  			LEFT JOIN civicrm_membership   ON civicrm_membership.id = civicrm_membership_payment.membership_id
-  			WHERE
-  			 civicrm_contribution.financial_type_id = {$financial_type_id}
-  			AND
-  			 civicrm_membership.membership_type_id NOT IN ({$membership_type_id_list});";
-  		CRM_Core_DAO::singleValueQuery($remove_bad_assignments_sql);
+      CRM_Membership_SynchroniseLogic::resetPayments($financial_type_id, $membership_type_ids, $contribution_ids);
   	}
-  } 
+  }
 
   // start synchronization
   $results = array('mapped'=>array(), 'no_membership' => array(), 'ambiguous'=>array(), 'errors'=>array());
   foreach ($mapping as $financial_type_id => $membership_type_ids) {
     if (empty($membership_type_ids)) continue;
-  	$new_results = _membership_payment_synchronize($financial_type_id, $membership_type_ids, $rangeback, $gracedays);
+  	$new_results = CRM_Membership_SynchroniseLogic::synchronizePayments($financial_type_id, $membership_type_ids, $rangeback, $gracedays, $contribution_ids);
   	foreach ($new_results as $key => $new_values)
   		$results[$key] += $new_values;
   }
 
   $null = NULL;
-  return civicrm_api3_create_success(array_keys($results['mapped']), $params, $null, $null, $null, 
+  return civicrm_api3_create_success(array_keys($results['mapped']), $params, $null, $null, $null,
   	array('no_membership'=>$results['no_membership'], 'ambiguous'=>$results['ambiguous'], 'errors'=>$results['errors']));
 }
 
-
-
 /**
- * this function will execute the synchronization 
- *   for ONE financial_type_id => membership_type_id mapping
+ * Adding specs
  */
-function _membership_payment_synchronize($financial_type_id, $membership_type_ids, $rangeback=0, $gracedays=0) {
-  $results = array('mapped'=>array(), 'no_membership' => array(), 'ambiguous'=>array(), 'errors'=>array());
-  $membership_type_id_list = implode(',', $membership_type_ids);
-  $membership_status_ids = CRM_Membership_Settings::getLiveStatusIDs();
-  $membership_status_id_list = implode(',', $membership_status_ids);
-  $contribution_receive_date = array();
-  $membership_start_date = array();
-  $membership_join_date = array();
-  $eligible_states = "1";		// completed
-
-  // first: find all contributions that are not yet connected to a membership
-  $find_new_payments_sql = "
-  SELECT
-  	civicrm_contribution.id    			    AS contribution_id,
-  	civicrm_contribution.contact_id     AS contact_id,
-  	civicrm_contribution.receive_date   AS contribution_date
-  FROM
-  	civicrm_contribution
-  LEFT JOIN
-  	civicrm_membership_payment ON civicrm_contribution.id = civicrm_membership_payment.contribution_id
-  WHERE
-  	civicrm_contribution.financial_type_id = $financial_type_id
-  AND civicrm_contribution.contribution_status_id IN ($eligible_states)
-  AND civicrm_membership_payment.membership_id IS NULL;
-  ";
-  $new_payments = CRM_Core_DAO::executeQuery($find_new_payments_sql);
-  while ($new_payments->fetch()) {
-  	$contact_id = $new_payments->contact_id;
-  	$contribution_id = $new_payments->contribution_id;
-  	$date = date('Ymdhis', strtotime($new_payments->contribution_date));
-
-    // add a subquery for the oldest membership ID
-    $oldest_membership_id = "(SELECT MIN(id) FROM civicrm_membership WHERE contact_id = $contact_id AND membership_type_id IN ($membership_type_id_list))";
-
-  	// now, try to find a valid membership
-    // TODO: optimize by building a membership list in memory instead of individual queries?
-  	$find_corresponding_membership_sql = "
-  	SELECT
-  		id         AS membership_id,
-  		COUNT(id)  AS membership_count,
-  		start_date AS membership_start_date,
-  		join_date  AS membership_join_date
-  	FROM
-  		civicrm_membership
-  	WHERE
-  		contact_id = $contact_id
-    AND status_id IN ($membership_status_id_list)
-  	AND membership_type_id IN ($membership_type_id_list)
-  	AND ((start_date <= (DATE('{$date}') + INTERVAL {$rangeback} DAY)) OR (civicrm_membership.id = {$oldest_membership_id} AND join_date <= (DATE('{$date}') + INTERVAL {$rangeback} DAY)))
-  	AND ((end_date   >  (DATE('{$date}') - INTERVAL {$gracedays} DAY)) OR (end_date IS NULL))
-  	GROUP BY
-  		civicrm_membership.contact_id;
-  	";
-  	$corresponding_membership = CRM_Core_DAO::executeQuery($find_corresponding_membership_sql);
-  	if (!$corresponding_membership->fetch()) {
-  		// NO MEMBERSHIP FOUND
-  		$results['no_membership'][] = $contribution_id;
-  	} elseif ($corresponding_membership->membership_count == 1) {
-  		// MEMBERSHIP FOUND
-  		$results['mapped'][$contribution_id] = $corresponding_membership->membership_id;
-  		$contribution_receive_date[$contribution_id] = $date;
-  		$membership_start_date[$corresponding_membership->membership_id] = 
-  			date('Ymdhis', strtotime($corresponding_membership->membership_start_date));
-  		$membership_join_date[$corresponding_membership->membership_id] = 
-  			date('Ymdhis', strtotime($corresponding_membership->membership_join_date));
-  	} else {
-  		// MEMBERSHIP AMBIGUOUS
-  		$results['ambiguous'][] = $contribution_id;
-  	}
-  }
-  $new_payments->free();
-
-  // EXECUTE 
-  foreach ($results['mapped'] as $contribution_id => $membership_id) {
-  	// create contribution -> membership connections
-  	$create_result = civicrm_api('MembershipPayment', 'create', 
-  		array('contribution_id'=>$contribution_id, 'membership_id'=>$membership_id, 'version'=>3));
-  	if (!empty($create_result['is_error'])) {
-  		// ERROR HANDLING
-  		$results['errors'][$contribution_id] = $create_result['is_error'];
-  		continue;
-  	}
-
-  	// adjust memberships if wanted
-  	if ($rangeback) {
-  		$contribution_date = $contribution_receive_date[$contribution_id];
-  		$start_date = $membership_start_date[$membership_id];
-  		$join_date = $membership_join_date[$membership_id];
-  		if ($contribution_date < $start_date) {
-  			$adjust_query = array("version" => 3, "id" => $membership_id, "start_date" => $contribution_date);
-  			if ($contribution_date < $join_date) {
-  				$adjust_query["join_date"] = $contribution_date;
-  			}
-  			$adjust_result = civicrm_api('Membership', 'create', $adjust_query);
-  			if (!empty($adjust_result['is_error'])) {
-  				// ERROR HANDLING
-  				$results['errors'][$contribution_id] = $adjust_result['is_error'];
-  			}
-  		}
-  	}
-  }
-
-  return $results;
+function _civicrm_api3_membership_payment_synchronize_spec(&$params) {
+  $params['rangeback'] = array(
+    'name'         => 'rangeback',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Range',
+    'description'  => 'Backward horizon (in days). Defaults to value in settings.',
+    );
+  $params['gracedays'] = array(
+    'name'         => 'gracedays',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Grace',
+    'description'  => 'Grace Period (in days). Defaults to value in settings.',
+    );
+  $params['rebuild'] = array(
+    'name'         => 'rebuild',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Rebuild Mapping',
+    'description'  => 'Caution: Will first remove the existing assignments!',
+    );
+  $params['contribution_ids'] = array(
+    'name'         => 'contribution_ids',
+    'api.required' => 0,
+    'title'        => 'List of contribution IDs to process',
+    'description'  => 'If not given, all contribution IDs will be processed.',
+    );
 }

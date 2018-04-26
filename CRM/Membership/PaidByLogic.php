@@ -174,11 +174,13 @@ class CRM_Membership_PaidByLogic {
     $contribution_recur['display_annual'] = $annual;
     $contribution_recur['contact']        = $contact;
     $contribution_recur['financial_type'] = $this->getFinancialType($contribution_recur['financial_type_id']);
-    $contribution_recur['display_status'] = 'TODO';
 
     if ($contribution_recur['contribution_status_id'] == '5'
       || $contribution_recur['contribution_status_id'] == '2') {
       $contribution_recur['classes'] = "p60-paid-via-row-eligible";
+      $contribution_recur['display_status'] = E::ts("Active");
+    } else {
+      $contribution_recur['display_status'] = E::ts("Terminated");
     }
 
     return $text;

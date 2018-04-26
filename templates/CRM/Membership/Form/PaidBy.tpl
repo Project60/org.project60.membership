@@ -66,7 +66,6 @@ function p60m_updateSelection() {
 
   // select current
   var current = cj("input[name=selected_contribution_rcur_id]").val();
-  console.log(current);
   if (current =='') current = 0;
   cj("tr[id=p60_paid_via_" + current + "]")
     .addClass("p60-paid-via-row-selected")

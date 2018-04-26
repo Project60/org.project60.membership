@@ -14,6 +14,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use CRM_Membership_ExtensionUtil as E;
+
 /**
  * This class contains the logic connecting CiviSEPA mandates
  * to memberships

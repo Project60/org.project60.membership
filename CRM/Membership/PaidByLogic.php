@@ -287,13 +287,13 @@ class CRM_Membership_PaidByLogic {
   protected function calculateAnnual(&$contribution_recur) {
     $multiplier = 0;
     if ($contribution_recur['frequency_unit'] == 'month') {
-      $multiplier = 1.0;
-    } elseif ($contribution_recur['frequency_unit'] == 'year') {
       $multiplier = 12.0;
+    } elseif ($contribution_recur['frequency_unit'] == 'year') {
+      $multiplier = 1.0;
     }
 
     // calcualte and format
-    $contribution_recur['annual'] = (float) $contribution_recur['amount'] * (float) $multiplier * 12.0 / (float) $contribution_recur['frequency_interval'];
+    $contribution_recur['annual'] = (float) $contribution_recur['amount'] * (float) $multiplier / (float) $contribution_recur['frequency_interval'];
     $contribution_recur['annual'] = number_format($contribution_recur['annual'], 2, '.', '');
 
     return CRM_Utils_Money::format($contribution_recur['annual'], $contribution_recur['currency']);

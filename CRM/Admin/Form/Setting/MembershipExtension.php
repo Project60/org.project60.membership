@@ -79,7 +79,19 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
                       array('multiple' => "multiple", 'class' => 'crm-select2'));
 
 
-    // add payment integration fields
+    // add membership number integration fields
+    $this->addElement('select',
+          "membership_number_field",
+          ts("Membership Number Field"),
+          $this->getMembershipNumberOptions(),
+          array('class' => 'crm-select2'));
+
+      $this->addElement('text',
+          "membership_number_generator",
+          ts("Number Pattern"));
+
+
+      // add payment integration fields
     $this->addElement('select',
         "paid_via_field",
         ts("Paid via Field"),
@@ -134,6 +146,8 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $settings->setSetting('sync_mapping',    $sync_mapping, FALSE);
     $settings->setSetting('sync_range',      $values['sync_range'], FALSE);
     $settings->setSetting('grace_period',    $values['grace_period'], FALSE);
+    $settings->setSetting('membership_number_field',  $values['membership_number_field'], FALSE);
+    $settings->setSetting('membership_number_generator',  $values['membership_number_generator'], FALSE);
     $settings->setSetting('paid_via_field',  $values['paid_via_field'], FALSE);
     $settings->setSetting('paid_via_linked', CRM_Utils_Array::value('paid_via_linked', $values), FALSE);
     $settings->setSetting('paid_by_field',   $values['paid_by_field'], FALSE);
@@ -185,6 +199,49 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
     return $options;
   }
+
+
+    /**
+     * Get all eligible fields to be used membership number
+     * @return array options
+     */
+    protected function getMembershipNumberOptions() {
+        $options = array('' => ts('Disabled'));
+
+        // find all custom fields that are
+        //  1) attached to a membership
+        //  2) of type Int
+        //  3) not multivalue
+        //  4) indexed
+        //  5) read-only
+        $custom_groups = civicrm_api3('CustomGroup', 'get', array(
+            'extends'     => 'Membership',
+            'is_active'   => '1',
+            'is_multiple' => '0',
+            'return'      => 'id'));
+        $custom_group_ids = array();
+        foreach ($custom_groups['values'] as $custom_group) {
+            $custom_group_ids[] = $custom_group['id'];
+        }
+
+        // if there is eligible groups, look for fields
+        if (!empty($custom_group_ids)) {
+            $custom_fields = civicrm_api3('CustomField', 'get', array(
+                'custom_group_id' => array('IN' => $custom_group_ids),
+                'data_type'       => 'String',
+                'html_type'       => 'Text',
+                'is_active'       => 1,
+                'is_view'         => 0,
+                'is_searchable'   => 1,
+                'return'          => 'id,label'));
+            foreach ($custom_fields['values'] as $custom_field) {
+                $options[$custom_field['id']] = $custom_field['label'];
+            }
+        }
+
+        return $options;
+    }
+
 
 /**
    * Get all eligible fields to be used as paid_via

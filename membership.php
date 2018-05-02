@@ -127,9 +127,23 @@ function membership_installment_created($mandate_id, $contribution_recur_id, $co
 }
 
 /**
+ * CiviCRM PRE Hook - generate new membership number when new membership is created
+ *
+ * @access public
+ */
+function membership_civicrm_pre($op, $objectName, $id, &$params) {
+    error_log("YO $op, $objectName, $id");
+    if ($op == 'create' && $objectName == 'Membership' && empty($id)) {
+        // this might be one for us
+        CRM_Membership_NumberLogic::generateNewNumber($params);
+    }
+}
+
+
+/**
  * Implements hook_civicrm_buildForm().
  *
- * Insert
+ * Insertj
  *
  * @param string $formName
  * @param CRM_Core_Form $form

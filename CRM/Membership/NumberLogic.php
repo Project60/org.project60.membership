@@ -76,7 +76,49 @@ class CRM_Membership_NumberLogic {
         }
     }
 
+    /**
+     * Generate a new number based on the generator string
+     *
+     * @param $generator string generator template
+     * @param $params
+     * @return string
+     */
     protected static function generateNumber($generator, $params) {
-        return "YEAHH!";
+        $number = $generator;
+
+        // replace {mid+x} patterns
+        if (preg_match('#\{mid(?P<offset>[+-][0-9]+)?\}#', $number, $matches)) {
+            error_log(json_encode($matches));
+            // get the next membership ID
+            // FIXME: this is not very reliable
+            $mid = CRM_Core_DAO::singleValueQuery("SELECT MAX(id) FROM civicrm_membership;") + 1;
+            if (!empty($matches['offset'])) {
+                if (substr($matches['offset'], 0, 1) == '-') {
+                    $mid -= substr($matches['offset'], 1);
+                } else {
+                    $mid += substr($matches['offset'], 1);
+                }
+            }
+            $number = preg_replace('#\{mid(?P<offset>[+-][0-9]+)?\}#', $mid, $number);
+        }
+
+
+        // replace {cid+x} patterns
+        if (preg_match('#\{cid(?P<offset>[+-][0-9]+)?\}#', $number, $matches)) {
+            // get the next membership ID
+            $cid = $params['contact_id'];
+            if (!empty($matches['offset'])) {
+                if (substr($matches['offset'], 0, 1) == '-') {
+                    $cid -= substr($matches['offset'], 1);
+                } else {
+                    $cid += substr($matches['offset'], 1);
+                }
+            }
+            $number = preg_replace('#\{cid(?P<offset>[+-][0-9]+)?\}#', $mid, $number);
+        }
+
+        // TODO: implement {seq:x} pattern
+
+        return $number;
     }
 }

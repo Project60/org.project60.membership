@@ -23,6 +23,65 @@ use CRM_Membership_ExtensionUtil as E;
  */
 class CRM_Membership_NumberLogic {
 
+
+    /**
+     * Get the current membership number picked from the given membership IDs
+     *
+     * @param  $contact_ids array contact IDs
+     * @param $membership_type_ids array list of potential membership type IDs
+     * @return array contact id => membership number
+     * @throws API_Exception
+     */
+    public static function getCurrentMembershipNumbers($contact_ids, $membership_type_ids = NULL) {
+        $contact_id_2_membership_number = array();
+
+        // load field and group
+        $settings = CRM_Membership_Settings::getSettings();
+        $number_field_id = $settings->getSetting('membership_number_field');
+        if (empty($number_field_id)) {
+          return $contact_id_2_membership_number;
+        }
+        $field = civicrm_api3('CustomField', 'getsingle', array(
+            'id'     => $number_field_id,
+            'return' => 'column_name,custom_group_id'));
+        $group = civicrm_api3('CustomGroup', 'getsingle', array(
+            'id'     => $field['custom_group_id'],
+            'return' => 'table_name'));
+
+        // build SQL query
+        $contact_id_list = implode(',', $contact_ids);
+        $active_status_list = implode(',', $settings->getLiveStatusIDs());
+
+        $MEMBERSHIP_TYPE_CONDITION = '';
+        if (!empty($membership_type_ids)) {
+          $membership_type_id_list = implode(',', $membership_type_ids);
+          $MEMBERSHIP_TYPE_CONDITION = "AND membership.membership_type_id IN ({$membership_type_id_list})";
+        }
+
+        $query = "
+        SELECT 
+          membership.contact_id                                 AS contact_id,
+          GROUP_CONCAT(membership.status_id 
+            ORDER BY membership.status_id, membership.id DESC)  AS membership_status,
+          GROUP_CONCAT(number_table.{$field['column_name']}
+            ORDER BY membership.status_id, membership.id DESC)  AS membership_numbers
+        FROM civicrm_membership membership 
+        LEFT JOIN {$group['table_name']} number_table ON number_table.entity_id = membership.id
+        WHERE membership.contact_id IN ({$contact_id_list})
+          AND membership.status_id IN ({$active_status_list})
+          {$MEMBERSHIP_TYPE_CONDITION}
+        GROUP BY membership.contact_id;";
+//        error_log($query);
+        $data = CRM_Core_DAO::executeQuery($query);
+        while ($data->fetch()) {
+          // TODO: evaluate the status?
+          //$status = explode(',', $data->membership_status);
+          $numbers = explode(',', $data->membership_numbers);
+          $contact_id_2_membership_number[$data->contact_id] = $numbers[0];
+        }
+        return $contact_id_2_membership_number;
+    }
+
     /**
      * Will generate a new membership number when called from the preHook
      * Conditions:
@@ -39,11 +98,9 @@ class CRM_Membership_NumberLogic {
         if ($field_id && $generator) {
             // the configuration sais we should generate a number
             $value = self::getFieldValue($params, $field_id);
-            error_log("VALUE IS $value");
             if (empty($value)) {
                 // generate!
                 $value = self::generateNumber($generator, $params);
-                error_log("VALUE IS NOW $value");
                 self::setFieldValue($params, $field_id, $value);
             }
         }
@@ -88,7 +145,6 @@ class CRM_Membership_NumberLogic {
 
         // replace {mid+x} patterns
         if (preg_match('#\{mid(?P<offset>[+-][0-9]+)?\}#', $number, $matches)) {
-            error_log(json_encode($matches));
             // get the next membership ID
             // FIXME: this is not very reliable
             $mid = CRM_Core_DAO::singleValueQuery("SELECT MAX(id) FROM civicrm_membership;") + 1;

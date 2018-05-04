@@ -132,7 +132,6 @@ function membership_installment_created($mandate_id, $contribution_recur_id, $co
  * @access public
  */
 function membership_civicrm_pre($op, $objectName, $id, &$params) {
-    error_log("YO $op, $objectName, $id");
     if ($op == 'create' && $objectName == 'Membership' && empty($id)) {
         // this might be one for us
         CRM_Membership_NumberLogic::generateNewNumber($params);
@@ -170,4 +169,45 @@ function membership_civicrm_navigationMenu(&$menu) {
     'separator'  => 0,
   ));
   _membership_civix_navigationMenu($menu);
+}
+
+
+/**
+ * Hook implementation: New Tokens
+ */
+function membership_civicrm_tokens( &$tokens ) {
+  $membership_types = civicrm_api3('MembershipType', 'get', array(
+      'is_active' => 1,
+      'return'    => 'id,name'));
+  if (!empty($membership_types['values'])) {
+    $membership_tokens = array();
+    foreach ($membership_types['values'] as $membership_type) {
+      $membership_tokens["membership_number.membership_number_{$membership_type['id']}"] = E::ts("%1 Number", array(1 => $membership_type['name']));
+    }
+    $tokens['membership_number'] = $membership_tokens;
+  }
+}
+
+/**
+ * Hook implementation: New Tokens
+ */
+function membership_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+  // error_log("CALL: " . json_encode($cids) . ' / ' . json_encode($tokens));
+  if (empty($tokens['membership_number'])) return;
+
+  // collect membership types
+  foreach ($tokens['membership_number'] as $token) {
+    if (substr($token, 0, 18) == 'membership_number_') {
+      $membership_type_id = substr($token, 18);
+      $tvalues = CRM_Membership_NumberLogic::getCurrentMembershipNumbers($cids, array($membership_type_id));
+      foreach ($tokens['membership_number'] as $key => $value) {
+        // there seems to be a difference between indivudual and mass mailings:
+        $token = $job ? $key : $value;
+
+        foreach ($tvalues as $cid => $number) {
+          $values[$cid]["membership_number.{$token}"] = $number;
+        }
+      }
+    }
+  }
 }

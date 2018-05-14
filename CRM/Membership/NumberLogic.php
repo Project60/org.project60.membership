@@ -23,6 +23,28 @@ use CRM_Membership_ExtensionUtil as E;
  */
 class CRM_Membership_NumberLogic {
 
+    /**
+     * Inject membership number into summary view
+     *  if the configuration option is set
+     */
+    public static function adjustSummaryView($contact_id) {
+      $settings = CRM_Membership_Settings::getSettings();
+      if ($settings->getSetting('membership_number_show')) {
+        // get membership number(s)
+        $result = self::getCurrentMembershipNumbers(array($contact_id));
+        if (empty($result[$contact_id])) {
+          $number = "";
+        } else {
+          $number = $result[$contact_id];
+        }
+
+        // inject into summary view
+        CRM_Core_Smarty::singleton()->assign('membership_number_string', $number);
+        CRM_Core_Region::instance('page-body')->add(array(
+            'template' => 'CRM/Membership/Snippets/MembershipNumber.tpl',
+        ));
+      }
+    }
 
     /**
      * Get the current membership number picked from the given membership IDs

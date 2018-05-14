@@ -211,3 +211,10 @@ function membership_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = 
     }
   }
 }
+
+/**
+ * Hook implementation: New Tokens
+ */
+function membership_civicrm_summary( $contactID, &$content, &$contentPlacement ) {
+  CRM_Membership_NumberLogic::adjustSummaryView($contactID);
+}

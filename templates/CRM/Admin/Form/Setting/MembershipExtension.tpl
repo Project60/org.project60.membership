@@ -37,6 +37,10 @@
           <td>{$form.membership_number_field.html}</td>
         </tr>
         <tr>
+          <td>{$form.membership_number_show.label}&nbsp;<a onclick='CRM.help("{ts}Show Number in SummaryView{/ts}", {literal}{"id":"id-number-show","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.membership_number_show.html}</td>
+        </tr>
+        <tr>
           <td>{$form.membership_number_generator.label}&nbsp;<a onclick='CRM.help("{ts}Generator Pattern{/ts}", {literal}{"id":"id-number-generator","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.membership_number_generator.html}</td>
         </tr>

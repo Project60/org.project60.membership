@@ -46,3 +46,24 @@
   <p>{ts}You can select a membership custom field to indicate that another contact is paying for this membership.{/ts}</p>
   <p>{ts}The field has to be an contact reference type, active, and searchable custom field to be eligible.{/ts}</p>
 {/htxt}
+
+{htxt id='id-number'}
+  <p>{ts}You can select a membership custom field to contain the Membership Number{/ts}</p>
+  <p>{ts}The field has to be an active, text type, searchable custom field to be eligible.{/ts}</p>
+{/htxt}
+
+{htxt id='id-number-show'}
+  <p>{ts}If you select this, the current membership number of the contact will be show in the contact's summary view, underneath the external identifier.{/ts}</p>
+{/htxt}
+
+{htxt id='id-number-generator'}
+  <p>{ts}If you fill this field the membership number will automatically generated for <i>new</i> memberships.{/ts}</p>
+  <p>{ts}Any characters are allowed but it is advisable to stick to alphanumeric characters, and to avoid whitespaces and special characters.{/ts}</p>
+  <p>
+    {ts}Additionally, the following special tokens are currently available:{/ts}:
+    <ul>
+      <li>{ts}<code>{literal}{mid[+offset]}{/literal}</code>: CiviCRM Membership ID, with optional offset value. Example <code>{literal}{mid+1000}{/literal}</code>{/ts}</li>
+      <li>{ts}<code>{literal}{cid[+offset]}{/literal}</code>: CiviCRM Contact ID, with optional offset value. Example <code>{literal}{cid+100000}{/literal}</code>{/ts}</li>
+    </ul>
+  </p>
+{/htxt}

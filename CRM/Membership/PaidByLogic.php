@@ -57,7 +57,7 @@ class CRM_Membership_PaidByLogic {
       'return' => $field_name,
     ));
 
-    if ($membership[$field_name] == $contribution_id) {
+    if ($membership[$field_name] == $contribution_recur_id) {
       // nothing changed
       return;
     }

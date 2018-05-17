@@ -142,10 +142,19 @@ cj(document).ready(function() {
   addRecurring(owner_id);
 });
 
+// pull recurring contributions from membership 'paid by' field
 if (paid_by.length > 0 && owner_id != paid_by) {
-  // pull recurring contributions from membership 'paid by' field
   cj(document).ready(addRecurring(paid_by));
 }
+
+// trigger form update
+cj(document).on('crmPopupFormSuccess', function() {
+    // find the membership form and reload
+    cj("form#MembershipView")
+        .closest(".crm-ajax-container, #crm-main-content-wrapper")
+        .crmSnippet()
+        .crmSnippet('refresh');
+});
 
 {/literal}
 </script>

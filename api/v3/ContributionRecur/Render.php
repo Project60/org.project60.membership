@@ -2,6 +2,8 @@
 /*-------------------------------------------------------+
 | Project 60 - Membership Extension                      |
 | Copyright (C) 2018 SYSTOPIA                            |
+| Author: B. Endres (endres -at- systopia.de)            |
+| http://www.systopia.de/                                |
 +--------------------------------------------------------+
 | This program is released as free software under the    |
 | Affero GPL license. You can redistribute it and/or     |
@@ -12,20 +14,18 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-/*
-* Settings metadata file
-*/
 
-return array(
-  'sync_mapping' => array(
-    'group_name' => 'Membership Payments',
-    'group' => 'org.project60',
-    'name' => 'p60_membership_settings',
-    'type' => 'array',
-    'default' => "undefined",
-    'add' => '4.6',
-    'is_domain' => 1,
-    'is_contact' => 0,
-    'description' => 'P60 Membership settings'
-  )
-);
+/**
+ * API command: ContributionRecur.render
+ *
+ * behaves in the same way as ContributionRecur.get, but
+ * will add some extra parameters
+ */
+function civicrm_api3_contribution_recur_render($params) {
+  $recurring_contributions = civicrm_api3('ContributionRecur', 'get', $params);
+  $logic = CRM_Membership_PaidByLogic::getSingleton();
+  foreach ($recurring_contributions['values'] as &$recurring_contribution) {
+    $logic->renderRecurringContribution($recurring_contribution);
+  }
+  return $recurring_contributions;
+}

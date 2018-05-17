@@ -15,6 +15,7 @@
 +--------------------------------------------------------*/
 
 require_once 'membership.civix.php';
+use CRM_Membership_ExtensionUtil as E;
 
 /**
 * Add an action for creating donation receipts after doing a search
@@ -25,8 +26,12 @@ function membership_civicrm_searchTasks($objectType, &$tasks) {
   if ($objectType == 'contribution') {
     if (CRM_Core_Permission::check('access CiviMember')) {
       $tasks[] = array(
-          'title' => ts('Assign to Membership'),
+          'title' => E::ts('Assign to Membership'),
           'class' => 'CRM_Membership_Form_Task_AssignTask',
+          'result' => false);
+      $tasks[] = array(
+          'title' => E::ts('Detach from Membership'),
+          'class' => 'CRM_Membership_Form_Task_DetachTask',
           'result' => false);
     }
   }
@@ -108,4 +113,47 @@ function membership_civicrm_managed(&$entities) {
  */
 function membership_civicrm_caseTypes(&$caseTypes) {
   _membership_civix_civicrm_caseTypes($caseTypes);
+}
+
+/**
+ * CiviSEPA Hook - called whenever a new CiviSEPA installment is created
+ *
+ * @access public
+ */
+function membership_installment_created($mandate_id, $contribution_recur_id, $contribution_id) {
+  //see if this installment should be assigned to a membership
+  $paid_by_logic = CRM_Membership_PaidByLogic::getSingleton();
+  $paid_by_logic->assignSepaInstallment($mandate_id, $contribution_id,$contribution_recur_id);
+}
+
+/**
+ * Implements hook_civicrm_buildForm().
+ *
+ * Insert
+ *
+ * @param string $formName
+ * @param CRM_Core_Form $form
+ */
+function membership_civicrm_buildForm($formName, &$form) {
+  if ($formName == 'CRM_Member_Form_MembershipView') {
+    $paid_by_logic = CRM_Membership_PaidByLogic::getSingleton();
+    $paid_by_logic->extendForm($formName, $form);
+  }
+}
+
+/**
+ * Implements hook_civicrm_navigationMenu().
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
+ */
+function membership_civicrm_navigationMenu(&$menu) {
+  _membership_civix_insert_navigation_menu($menu, 'Memberships', array(
+    'label'      => E::ts('Synchronise Payments'),
+    'name'       => 'p60_payment_sync',
+    'url'        => 'civicrm/membership/payments',
+    'permission' => 'access CiviContribute',
+    'operator'   => 'OR',
+    'separator'  => 0,
+  ));
+  _membership_civix_navigationMenu($menu);
 }

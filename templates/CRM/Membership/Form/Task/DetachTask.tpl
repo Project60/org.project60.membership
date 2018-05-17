@@ -1,7 +1,8 @@
-<?php
-/*-------------------------------------------------------+
+{*-------------------------------------------------------+
 | Project 60 - Membership Extension                      |
 | Copyright (C) 2018 SYSTOPIA                            |
+| Author: B. Endres (endres -at- systopia.de)            |
+| http://www.systopia.de/                                |
 +--------------------------------------------------------+
 | This program is released as free software under the    |
 | Affero GPL license. You can redistribute it and/or     |
@@ -10,22 +11,12 @@
 | at www.gnu.org/licenses/agpl.html. Removal of this     |
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
-+--------------------------------------------------------*/
++-------------------------------------------------------*}
 
-/*
-* Settings metadata file
-*/
+<div class="crm-info">
+  <p>{$infotext}</p>
+</div>
 
-return array(
-  'sync_mapping' => array(
-    'group_name' => 'Membership Payments',
-    'group' => 'org.project60',
-    'name' => 'p60_membership_settings',
-    'type' => 'array',
-    'default' => "undefined",
-    'add' => '4.6',
-    'is_domain' => 1,
-    'is_contact' => 0,
-    'description' => 'P60 Membership settings'
-  )
-);
+<div class="crm-submit-buttons">
+{include file="CRM/common/formButtons.tpl" location="bottom"}
+</div>

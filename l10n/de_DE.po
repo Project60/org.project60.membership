@@ -98,11 +98,11 @@ msgstr "Mitgliedschaftstyp"
 
 #: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Start Date"
-msgstr ""
+msgstr "Startdatum"
 
 #: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Join Date"
-msgstr ""
+msgstr "Beitrittsdatum"
 
 #: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Membership Owner ID"
@@ -118,7 +118,7 @@ msgstr "Kontakt Name"
 
 #: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "Membership Fees Received"
@@ -174,6 +174,7 @@ msgstr "Anpassung in Vergangenheit (in Tagen)"
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 #: templates/CRM/Membership/Page/MembershipPayments.tpl
+#: templates/CRM/Membership/Form/Task/AssignTask.tpl
 msgid "Help"
 msgstr "Hilfe"
 
@@ -219,15 +220,15 @@ msgstr "Zuwendungen wurden neu zugeordnet"
 
 #: templates/CRM/Membership/Page/MembershipPayments.tpl
 msgid "Contribution"
-msgstr ""
+msgstr "Zuwendung"
 
 #: templates/CRM/Membership/Page/MembershipPayments.tpl
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: templates/CRM/Membership/Page/MembershipPayments.tpl
 msgid "Contributor"
-msgstr ""
+msgstr "Zahler"
 
 #: templates/CRM/Membership/Page/MembershipPayments.tpl
 msgid "view membership"
@@ -245,6 +246,260 @@ msgstr "Zuwendungen ohne aktive Mitgliedschaft"
 msgid "contributions with ambiguous memberships"
 msgstr "Zuwendungen mit nicht eindeutiger Mitgliedschaft"
 
+#: CRM/Admin/Form/Setting/MembershipExtension.php
+msgid "Live Statuses"
+msgstr "Aktive Status"
+
+#: CRM/Admin/Form/Setting/MembershipExtension.php
+msgid "Paid via Field"
+msgstr "Zahlungsvertrag Feld"
+
+#: CRM/Admin/Form/Setting/MembershipExtension.php
+msgid "End with membership"
+msgstr "Mit MItgliedschaft beenden"
+
+#: CRM/Admin/Form/Setting/MembershipExtension.php
+msgid "Paid by Field"
+msgstr "Fremdzahler-Feld"
+
+#: CRM/Admin/Form/Setting/MembershipExtension.php
+msgid "Disabled"
+msgstr ""
+
+#: CRM/Membership/Form/PaidBy.php
+msgid "Change Membership Payment"
+msgstr "Zahlungsweise Ändern"
+
+#: CRM/Membership/Form/PaidBy.php
+msgid "Paid Via Field not enabled!"
+msgstr "Zahlungsvertrag-Feld nicht konfiguriert!"
+
+#: CRM/Membership/Form/PaidBy.php CRM/Membership/Form/Task/AssignTask.php
+#: CRM/Membership/PaidByLogic.php
+msgid "Error"
+msgstr "Fehler"
+
+#: CRM/Membership/Form/PaidBy.php
+msgid "Save Changes"
+msgstr "Speichern"
+
+#: CRM/Membership/Form/Task/AssignTask.php
+msgid "Assign Contributions to Membership"
+msgstr "Zuwendungen zu Mitgliedschaft zuweisen"
+
+#: CRM/Membership/Form/Task/AssignTask.php
+msgid "Contact"
+msgstr "Kontakt"
+
+#: CRM/Membership/Form/Task/AssignTask.php
+msgid "Membership"
+msgstr "Mitgliedschaft"
+
+#: CRM/Membership/Form/Task/AssignTask.php
+msgid "Assign"
+msgstr "Zuweisen"
+
+#: CRM/Membership/Form/Task/AssignTask.php
+msgid "%1 contributions have been newly assigned, %2 have been re-assigned. %3 contributions were already assigned to the selected membership."
+msgstr "%1 Zuwendungen wurden zugewiesen, %2 wurden von einer anderen Mitgliedschaft übertragen. %3 Zuwenden waren vorher bereits zu dieser Mitgliedschaft zugewiesen."
+
+#: CRM/Membership/Form/Task/AssignTask.php
+#: CRM/Membership/Form/Task/DetachTask.php
+msgid "Success"
+msgstr "Erfolg"
+
+#: CRM/Membership/Form/Task/AssignTask.php
+msgid "Invalid values."
+msgstr "Ungültige Werte"
+
+#: CRM/Membership/Form/Task/DetachTask.php
+msgid "Detach Contributions from Membership"
+msgstr "Zuwendungen von Mitgliedschaften loslösen"
+
+#: CRM/Membership/Form/Task/DetachTask.php
+msgid "%1 of the %2 contributions are currently attached to a membership."
+msgstr "%1 der %2 Zuwendungen sind aktuelle einer Mitgliedschaft zugeordnet."
+
+#: CRM/Membership/Form/Task/DetachTask.php
+msgid "Detach"
+msgstr "Loslösen"
+
+#: CRM/Membership/Form/Task/DetachTask.php
+msgid "%1 contributions have been detached from their memberships."
+msgstr "%1 Zuwendungen wurden von ihren Mitgliedschaften abgelöst"
+
+#: CRM/Membership/PaidByLogic.php
+msgid "Couldn't load 'paid via' data."
+msgstr ""
+
+#: CRM/Membership/PaidByLogic.php
+msgid "<i>None</i>"
+msgstr "<i>Kein</i>"
+
+#: CRM/Membership/PaidByLogic.php
+msgid "%1: %2"
+msgstr "%1: %2"
+
+#: CRM/Membership/PaidByLogic.php
+msgid "SEPA"
+msgstr ""
+
+#: CRM/Membership/PaidByLogic.php
+msgid "Recurring %1"
+msgstr ""
+
+#: CRM/Membership/PaidByLogic.php
+msgid "Recurring"
+msgstr ""
+
+#: CRM/Membership/PaidByLogic.php
+msgid "annually"
+msgstr ""
+
+#: CRM/Membership/PaidByLogic.php
+msgid "monthly"
+msgstr "monatlich"
+
+#: CRM/Membership/PaidByLogic.php
+msgid "every %1 months"
+msgstr ""
+
+#: CRM/Membership/PaidByLogic.php
+msgid "every %1 years"
+msgstr ""
+
+#: CRM/Membership/PaidByLogic.php
+msgid "(illegal frequency)"
+msgstr ""
+
+#: CRM/Membership/PaidByLogic.php
+msgid "on the %1."
+msgstr ""
+
+#: CRM/Membership/PaidByLogic.php
+msgid "%1 %2 %3"
+msgstr ""
+
+#: CRM/Membership/Upgrader/Base.php
+msgid "Upgrade %1 to revision %2"
+msgstr ""
+
+#: membership.php
+msgid "Assign to Membership"
+msgstr "Zuweisen zu Mitgliedschaft"
+
+#: membership.php
+msgid "Detach from Membership"
+msgstr "Von Mitgliedschaft ablösen"
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid "Only if a membership has a 'live' status, membership payments will be assigned to it."
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid "Caution: This status list is only valid for the payment synchronization tool, the membership extension job uses the parameter <code>status_ids</code> instead."
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid "You can select a membership custom field to record the connection to any recurring contribution, e.g. a CiviSEPA mandate or similar."
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid "The field has to be an integer type, active, read only, and searchable custom field to be eligible."
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid "If you check this box, the connected recurring contribution or mandate will be ended automatically if the membership is ended."
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid "You can select a membership custom field to indicate that another contact is paying for this membership."
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid "The field has to be an contact reference type, active, and searchable custom field to be eligible."
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Payment Integration"
+msgstr "Zahlungsanbindung"
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Paid Via Field"
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Paid Via Linked"
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "General"
+msgstr "Allgemein"
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Paid By Field"
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Membership Status"
+msgstr "Mitgliedsstatus"
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Live Status"
+msgstr ""
+
+#: templates/CRM/Membership/Form/PaidBy.tpl
+msgid "Please select the recurring payment to be connected to this membership below."
+msgstr ""
+
+#: templates/CRM/Membership/Form/PaidBy.tpl
+msgid "ID"
+msgstr ""
+
+#: templates/CRM/Membership/Form/PaidBy.tpl
+msgid "Annual"
+msgstr ""
+
+#: templates/CRM/Membership/Form/PaidBy.tpl
+msgid "Payment Mode"
+msgstr ""
+
+#: templates/CRM/Membership/Form/PaidBy.tpl
+msgid "Finacial Type"
+msgstr "Zuwendungsart"
+
+#: templates/CRM/Membership/Form/PaidBy.tpl
+msgid "Paid By"
+msgstr ""
+
+#: templates/CRM/Membership/Form/PaidBy.tpl
+msgid "status"
+msgstr ""
+
+#: templates/CRM/Membership/Form/PaidBy.tpl
+msgid "Selected"
+msgstr ""
+
+#: templates/CRM/Membership/Form/PaidBy.tpl
+msgid "manual"
+msgstr ""
+
+#: templates/CRM/Membership/Form/Task/AssignTask.hlp
+msgid "The contact search only includes contacts that have memberships."
+msgstr ""
+
+#: templates/CRM/Membership/Form/Task/AssignTask.tpl
+msgid "Assigning %1 Contributions:"
+msgstr "%1 Zuwendungen zuweisen:"
+
+#: templates/CRM/Membership/Form/Task/AssignTask.tpl
+msgid "Contact Search"
+msgstr "Kontaktsuche"
+
+#: templates/CRM/Membership/Snippets/PaidByField.tpl
+msgid "change"
+msgstr ""
+
 #~ msgid ""
 #~ "If you select this, contributions that are already associated with a "
 #~ "membership will be revised if they do not comply with the mapping "
@@ -255,9 +510,6 @@ msgstr "Zuwendungen mit nicht eindeutiger Mitgliedschaft"
 #~ "einer Mitgliedschaft zugeordnet sind, neu zugeordnet. Dies gilt "
 #~ "allerdings nur für Zuwendungen mit einer Zuwendungsart die im 'mapping' "
 #~ "angegeben wurde."
-
-#~ msgid "Adjust Memberships"
-#~ msgstr "Mitgliedschaft anpassen"
 
 #~ msgid "Adjust start date"
 #~ msgstr "Startdatum anpassen"

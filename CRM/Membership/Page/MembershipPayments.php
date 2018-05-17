@@ -19,10 +19,11 @@ require_once 'CRM/Core/Page.php';
 class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
 
   function run() {
-    $mapping = CRM_Membership_Settings::getSyncMapping();
+    $settings = CRM_Membership_Settings::getSettings();
+    $mapping  = $settings->getSyncMapping();
     $this->assign('mapping', $mapping);
 
-    $rangeback = CRM_Membership_Settings::getSyncRange();
+    $rangeback = $settings->getSyncRange();
     $this->assign('rangeback', $rangeback);
 
     // if parameter RUN is set, execute and compile list
@@ -36,9 +37,9 @@ class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
         $rangeback = 0;
       }
       $result = civicrm_api('MembershipPayment', 'synchronize', array(
-          'mapping'   => $mapping, 
-          'rangeback' => $rangeback, 
-          'rebuild'   => $rebuild, 
+          'mapping'   => $mapping,
+          'rangeback' => $rangeback,
+          'rebuild'   => $rebuild,
           'version'   => 3));
       $this->assign('results', print_r($result, true));
 
@@ -55,7 +56,7 @@ class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
   // use DB statements to loop up data for the given contributions
   function getData($contribution_ids, $list_name, $add_membership = false) {
     if (count($contribution_ids) == 0) return;
-    
+
     $contribution_id_list = implode(",", $contribution_ids);
     $date_format = CRM_Core_Config::singleton()->dateformatFull;
     $data_list = array();
@@ -85,7 +86,7 @@ class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
     LEFT JOIN  civicrm_contact         ON civicrm_contribution.contact_id = civicrm_contact.id
     LEFT JOIN  civicrm_financial_type  ON civicrm_contribution.financial_type_id = civicrm_financial_type.id
     $membership_join
-    WHERE 
+    WHERE
       civicrm_contribution.id IN ($contribution_id_list);
     ";
     $results = CRM_Core_DAO::executeQuery($contribution_data_sql);
@@ -108,7 +109,7 @@ class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
       if (count($data_list) >= 500) break;
     }
     $results->free();
-    
+
     $this->assign($list_name, $data_list);
   }
 }

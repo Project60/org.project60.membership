@@ -8,8 +8,8 @@
     <author>B. Endres</author>
     <email>info@systopia.de</email>
   </maintainer>
-  <releaseDate>2016-11-09</releaseDate>
-  <version>0.4.beta1</version>
+  <releaseDate></releaseDate>
+  <version>0.5.dev</version>
   <develStage>testing</develStage>
   <compatibility>
     <ver>4.6</ver>

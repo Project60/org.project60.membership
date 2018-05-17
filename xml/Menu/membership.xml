@@ -15,4 +15,10 @@
     <adminGroup>CiviMember</adminGroup>
     <icon>admin/small/online_contribution_pages.png</icon>
   </item>
+  <item>
+    <path>civicrm/membership/paidby</path>
+    <page_callback>CRM_Membership_Form_PaidBy</page_callback>
+    <title>PaidBy</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>

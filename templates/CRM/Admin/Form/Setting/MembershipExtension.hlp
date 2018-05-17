@@ -32,3 +32,17 @@
   <p>{ts}Only if a membership has a 'live' status, membership payments will be assigned to it.{/ts}</p>
   <p>{ts}Caution: This status list is only valid for the payment synchronization tool, the membership extension job uses the parameter <code>status_ids</code> instead.{/ts}</p>
 {/htxt}
+
+{htxt id='id-paid-via'}
+  <p>{ts}You can select a membership custom field to record the connection to any recurring contribution, e.g. a CiviSEPA mandate or similar.{/ts}</p>
+  <p>{ts}The field has to be an integer type, active, read only, and searchable custom field to be eligible.{/ts}</p>
+{/htxt}
+
+{htxt id='id-paid-via-linked'}
+  <p>{ts}If you check this box, the connected recurring contribution or mandate will be ended automatically if the membership is ended.{/ts}</p>
+{/htxt}
+
+{htxt id='id-paid-by'}
+  <p>{ts}You can select a membership custom field to indicate that another contact is paying for this membership.{/ts}</p>
+  <p>{ts}The field has to be an contact reference type, active, and searchable custom field to be eligible.{/ts}</p>
+{/htxt}

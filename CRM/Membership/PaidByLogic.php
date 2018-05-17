@@ -57,7 +57,7 @@ class CRM_Membership_PaidByLogic {
       'return' => $field_name,
     ));
 
-    if ($membership[$field_name] == $contribution_id) {
+    if ($membership[$field_name] == $contribution_recur_id) {
       // nothing changed
       return;
     }
@@ -87,7 +87,7 @@ class CRM_Membership_PaidByLogic {
       // render the current
       $contribution_recur = $this->getRecurringContribution($membership_id);
       $current_display    = $this->renderRecurringContribution($contribution_recur);
-      $edit_link          = CRM_Utils_System::url("civicrm/membership/paidby", "reset=1&mid={$membership_id}");
+      $edit_link          = CRM_Utils_System::url("civicrm/membership/paidby", "reset=1&mid={$membership_id}&action=update");
       $form->assign('p60paid_via_current', $current_display);
       $form->assign('p60paid_via_label',   $paid_via['label']);
       $form->assign('p60paid_via_edit',    $edit_link);

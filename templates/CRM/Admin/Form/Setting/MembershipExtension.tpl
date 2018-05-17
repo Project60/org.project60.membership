@@ -26,6 +26,31 @@
 
 <div class="crm-accordion-wrapper" id="general">
   <div class="crm-accordion-header">
+    {ts}Membership Number Integration{/ts}
+  </div>
+  <div class="crm-accordion-body">
+    <div class="crm-block crm-form-block crm-form-title-here-form-block">
+      <h3>{ts}Membership Number Integration{/ts}</h3>
+      <table>
+        <tr>
+          <td>{$form.membership_number_field.label}&nbsp;<a onclick='CRM.help("{ts}Membership Number Field{/ts}", {literal}{"id":"id-number","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.membership_number_field.html}</td>
+        </tr>
+        <tr>
+          <td>{$form.membership_number_show.label}&nbsp;<a onclick='CRM.help("{ts}Show Number in SummaryView{/ts}", {literal}{"id":"id-number-show","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.membership_number_show.html}</td>
+        </tr>
+        <tr>
+          <td>{$form.membership_number_generator.label}&nbsp;<a onclick='CRM.help("{ts}Generator Pattern{/ts}", {literal}{"id":"id-number-generator","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.membership_number_generator.html}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="crm-accordion-wrapper" id="general">
+  <div class="crm-accordion-header">
     {ts}Payment Integration{/ts}
   </div>
   <div class="crm-accordion-body">

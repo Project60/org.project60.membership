@@ -173,6 +173,10 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
  * @param CRM_Core_Form $form
  */
 function membership_civicrm_buildForm($formName, &$form) {
+  // first: general UI mods
+  CRM_Membership_UiMods::adjustForm($formName, $form);
+
+  // then inject paid-via stuff - if enabled
   if ($formName == 'CRM_Member_Form_MembershipView') {
     $paid_by_logic = CRM_Membership_PaidByLogic::getSingleton();
     $paid_by_logic->extendForm($formName, $form);

@@ -95,7 +95,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
         ts("Number Pattern"));
 
 
-      // add payment integration fields
+    // add payment integration fields
     $this->addElement('select',
         "paid_via_field",
         ts("Paid via Field"),
@@ -107,6 +107,10 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
         ts("End with Statuses"),
         $membership_statuses,
         array('multiple' => "multiple", 'class' => 'crm-select2'));
+
+    $this->addElement('checkbox',
+        "hide_auto_renewal",
+        ts("Hide Auto Renewal"));
 
     $this->addElement('select',
         "paid_by_field",
@@ -155,6 +159,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $settings->setSetting('membership_number_field',  $values['membership_number_field'], FALSE);
     $settings->setSetting('membership_number_generator',  $values['membership_number_generator'], FALSE);
     $settings->setSetting('membership_number_show', CRM_Utils_Array::value('membership_number_show', $values), FALSE);
+    $settings->setSetting('hide_auto_renewal', CRM_Utils_Array::value('membership_number_show', $values), FALSE);
     $settings->setSetting('paid_via_field',  $values['paid_via_field'], FALSE);
     $settings->setSetting('paid_by_field',   $values['paid_by_field'], FALSE);
     if (is_array($values['live_statuses']) && !empty($values['live_statuses'])) {

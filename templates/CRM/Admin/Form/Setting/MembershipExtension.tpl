@@ -62,8 +62,8 @@
            <td>{$form.paid_via_field.html}</td>
          </tr>
          <tr>
-           <td>{$form.paid_via_linked.label}&nbsp;<a onclick='CRM.help("{ts}Paid Via Linked{/ts}", {literal}{"id":"id-paid-via-linked","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
-           <td>{$form.paid_via_linked.html}</td>
+           <td>{$form.paid_via_end_with_status.label}&nbsp;<a onclick='CRM.help("{ts}End with status{/ts}", {literal}{"id":"id-paid-via-end-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.paid_via_end_with_status.html}</td>
          </tr>
        </table>
      </div>

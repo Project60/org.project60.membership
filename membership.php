@@ -127,15 +127,40 @@ function membership_installment_created($mandate_id, $contribution_recur_id, $co
 }
 
 /**
- * CiviCRM PRE Hook - generate new membership number when new membership is created
+ * CiviCRM PRE Hook
  *
  * @access public
  */
 function membership_civicrm_pre($op, $objectName, $id, &$params) {
-    if ($op == 'create' && $objectName == 'Membership' && empty($id)) {
-        // this might be one for us
-        CRM_Membership_NumberLogic::generateNewNumber($params);
+  if ($objectName == 'Membership') {
+    // generate new membership number when new membership is created
+    if ($op == 'create' && empty($id)) {
+      // this might be one for us
+      CRM_Membership_NumberLogic::generateNewNumber($params);
     }
+
+    // catch if a membership is set to a certain status
+    if (!empty($id) && ($op == 'create' || $op == 'edit')) {
+      $logic = CRM_Membership_PaidByLogic::getSingleton();
+      $logic->membershipUpdatePre($id, $params);
+    }
+  }
+}
+
+/**
+ * CiviCRM POST Hook
+ *
+ * @access public
+ */
+function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+  if ($objectName == 'Membership') {
+    // catch if a membership is set to a certain status
+    if (!empty($objectId) && ($op == 'create' || $op == 'edit')) {
+      $logic = CRM_Membership_PaidByLogic::getSingleton();
+
+      $logic->membershipUpdatePOST($objectId, $objectRef);
+    }
+  }
 }
 
 

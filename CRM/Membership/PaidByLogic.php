@@ -181,7 +181,7 @@ class CRM_Membership_PaidByLogic
     $paid_via_field = $settings->getPaidViaField();
     $paid_via_key = $paid_via_field['key'];
     $membership = civicrm_api3('Membership', 'getsingle', array(
-        'id' => $membership_id,
+        'id'     => $membership_id,
         'return' => $paid_via_key));
 
     if (empty($membership[$paid_via_key])) {
@@ -198,6 +198,33 @@ class CRM_Membership_PaidByLogic
       CRM_Core_Session::setStatus(ts("Couldn't load 'paid via' data."), ts('Error'), 'error');
       return NULL;
     }
+  }
+
+  /**
+   * Get the recurring contriutions based on the
+   * @param $membership_ids array list of membership IDs
+   *
+   * @return array membership id => recurring contribution ID
+   */
+  public function getRecurringContributions($membership_ids) {
+    $result = array();
+    $settings = CRM_Membership_Settings::getSettings();
+    $paid_via_field = $settings->getPaidViaField();
+    if (!$paid_via_field) {
+      return $result;
+    }
+
+    $membership_id_list = implode(',', $membership_ids);
+    $query = CRM_Core_DAO::executeQuery("
+      SELECT 
+        entity_id                        AS membership_id,
+        {$paid_via_field['column_name']} AS contribution_recur_id
+      FROM {$paid_via_field['table_name']} paymentinfo
+      WHERE entity_id IN ({$membership_id_list});");
+    while ($query->fetch()) {
+      $result[$query->membership_id] = $query->contribution_recur_id;
+    }
+    return $result;
   }
 
   /**

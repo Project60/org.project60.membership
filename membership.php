@@ -127,6 +127,17 @@ function membership_installment_created($mandate_id, $contribution_recur_id, $co
 }
 
 /**
+ * CiviCRM SearchColumn Hook
+ *
+ * @access public
+ */
+function membership_civicrm_searchColumns( $objectName, &$headers, &$rows, &$selector ) {
+  if ($objectName == 'membership') {
+    CRM_Membership_UiMods::adjustList($headers, $rows, $selector);
+  }
+}
+
+/**
  * CiviCRM PRE Hook
  *
  * @access public

@@ -24,12 +24,40 @@ use CRM_Membership_ExtensionUtil as E;
 class CRM_Membership_UiMods {
 
   /**
+   * Adjust a membership list (e.g. search result)
+   */
+  public static function adjustList(&$headers, &$rows, &$selector) {
+    $settings = CRM_Membership_Settings::getSettings();
+    if ($settings->getSetting('hide_auto_renewal')) {
+      // set header
+      $headers[8] = array('name' => E::ts("Contract"));
+
+      // extract memberhship IDs
+      $membership_ids = array();
+      foreach ($rows as $index => $row) {
+        $membership_ids[] = $row['membership_id'];
+      }
+
+      // render the payment
+      $logic = CRM_Membership_PaidByLogic::getSingleton();
+      $membership2rcontribution = $logic->getRecurringContributions($membership_ids);
+
+      // set to data
+      foreach ($rows as $index => &$row) {
+        $membership_id = $row['membership_id'];
+        $row['auto_renew'] = !empty($membership2rcontribution[$membership_id]);
+      }
+    }
+  }
+
+  /**
    * Adjust a form
    */
   public static function adjustForm($formName, $form) {
     if ($formName == 'CRM_Member_Form_MembershipView') {
       $settings = CRM_Membership_Settings::getSettings();
-      if ($settings->getSetting('hide_auto_renewal')) {
+      $paid_via_field = $settings->getPaidViaField();
+      if ($paid_via_field && $settings->getSetting('hide_auto_renewal')) {
         CRM_Core_Smarty::singleton()->assign('auto_renewal_label', ts('Auto Renew'));
         CRM_Core_Region::instance('page-body')->add(array(
             'template' => 'CRM/Membership/Snippets/HideAutoRenewal.tpl',

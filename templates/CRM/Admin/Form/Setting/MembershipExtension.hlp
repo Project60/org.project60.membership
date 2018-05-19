@@ -38,8 +38,8 @@
   <p>{ts}The field has to be an integer type, active, read only, and searchable custom field to be eligible.{/ts}</p>
 {/htxt}
 
-{htxt id='id-paid-via-linked'}
-  <p>{ts}If you check this box, the connected recurring contribution or mandate will be ended automatically if the membership is ended.{/ts}</p>
+{htxt id='id-paid-via-end-status'}
+  <p>{ts}For any membership status you select, the linked recurring contribution or mandate will be ended automatically should a membership be set to that status.{/ts}</p>
 {/htxt}
 
 {htxt id='id-paid-by'}
@@ -66,4 +66,8 @@
       <li>{ts}<code>{literal}{cid[+offset]}{/literal}</code>: CiviCRM Contact ID, with optional offset value. Example <code>{literal}{cid+100000}{/literal}</code>{/ts}</li>
     </ul>
   </p>
+{/htxt}
+
+{htxt id='id-hide-auto-renewal'}
+  <p>{ts}The built-in auto renewal feature interferes with the P60 membership concept, so we recommend not to use it. If you activate this option the fields will be hidden from the UI and the column in the tab and the search result will be freed up for something else.{/ts}</p>
 {/htxt}

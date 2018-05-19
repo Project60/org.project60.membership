@@ -127,15 +127,51 @@ function membership_installment_created($mandate_id, $contribution_recur_id, $co
 }
 
 /**
- * CiviCRM PRE Hook - generate new membership number when new membership is created
+ * CiviCRM SearchColumn Hook
+ *
+ * @access public
+ */
+function membership_civicrm_searchColumns( $objectName, &$headers, &$rows, &$selector ) {
+  if ($objectName == 'membership') {
+    CRM_Membership_UiMods::adjustList($headers, $rows, $selector);
+  }
+}
+
+/**
+ * CiviCRM PRE Hook
  *
  * @access public
  */
 function membership_civicrm_pre($op, $objectName, $id, &$params) {
-    if ($op == 'create' && $objectName == 'Membership' && empty($id)) {
-        // this might be one for us
-        CRM_Membership_NumberLogic::generateNewNumber($params);
+  if ($objectName == 'Membership') {
+    // generate new membership number when new membership is created
+    if ($op == 'create' && empty($id)) {
+      // this might be one for us
+      CRM_Membership_NumberLogic::generateNewNumber($params);
     }
+
+    // catch if a membership is set to a certain status
+    if (!empty($id) && ($op == 'create' || $op == 'edit')) {
+      $logic = CRM_Membership_PaidByLogic::getSingleton();
+      $logic->membershipUpdatePre($id, $params);
+    }
+  }
+}
+
+/**
+ * CiviCRM POST Hook
+ *
+ * @access public
+ */
+function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+  if ($objectName == 'Membership') {
+    // catch if a membership is set to a certain status
+    if (!empty($objectId) && ($op == 'create' || $op == 'edit')) {
+      $logic = CRM_Membership_PaidByLogic::getSingleton();
+
+      $logic->membershipUpdatePOST($objectId, $objectRef);
+    }
+  }
 }
 
 
@@ -148,6 +184,10 @@ function membership_civicrm_pre($op, $objectName, $id, &$params) {
  * @param CRM_Core_Form $form
  */
 function membership_civicrm_buildForm($formName, &$form) {
+  // first: general UI mods
+  CRM_Membership_UiMods::adjustForm($formName, $form);
+
+  // then inject paid-via stuff - if enabled
   if ($formName == 'CRM_Member_Form_MembershipView') {
     $paid_by_logic = CRM_Membership_PaidByLogic::getSingleton();
     $paid_by_logic->extendForm($formName, $form);

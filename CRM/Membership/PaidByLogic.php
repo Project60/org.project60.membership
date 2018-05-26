@@ -423,8 +423,9 @@ class CRM_Membership_PaidByLogic
    */
   public function membershipUpdatePOST($membership_id, $object) {
     $update = array_pop($this->monitoring_stack);
-    if ($update['membership_id'] != $membership_id) {
-      throw new Exception("Illegal pre/post sequence: membership IDs don't match!");
+    if (!empty($update['membership_id']) && $update['membership_id'] != $membership_id) {
+      error_log("P60 Memberships: Illegal pre/post sequence: membership IDs don't match!");
+      return;
     }
 
     // now check if we are supposed to do anything about this

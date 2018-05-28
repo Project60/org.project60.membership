@@ -213,7 +213,7 @@ class CRM_Membership_Settings {
    */
   public function getSyncGracePeriod() {
     // TODO: updater: synce_graceperiod
-    return (int) $this->getSetting('sync_graceperiod');
+    return (int) $this->getSetting('grace_period');
   }
 
   /**

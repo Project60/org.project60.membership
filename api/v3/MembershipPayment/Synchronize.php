@@ -52,6 +52,8 @@ function civicrm_api3_membership_payment_synchronize($params) {
       foreach ($cid_data as $contribution_id) {
         $contribution_ids[] = (int) $contribution_id;
       }
+    } else {
+      $contribution_ids[] = (int) $cid_data;
     }
   }
 

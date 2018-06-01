@@ -208,6 +208,10 @@ class CRM_Membership_PaidByLogic
    */
   public function getRecurringContributions($membership_ids) {
     $result = array();
+    if (empty($membership_ids)) {
+      return $result;
+    }
+
     $settings = CRM_Membership_Settings::getSettings();
     $paid_via_field = $settings->getPaidViaField();
     if (!$paid_via_field) {

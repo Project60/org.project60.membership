@@ -70,7 +70,7 @@
            <td>{$form.installment_amount_field.html}</td>
          </tr>
          <tr class="p60-paid-via-dependent">
-           <td>{$form.diff_amount_field.label}&nbsp;<a onclick='CRM.help("{ts}Annual Gap Field{/ts}", {literal}{"id":"id-annual-amount-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.diff_amount_field.label}&nbsp;<a onclick='CRM.help("{ts}Annual Gap Field{/ts}", {literal}{"id":"id-annual-gap-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.diff_amount_field.html}</td>
          </tr>
          <tr class="p60-paid-via-dependent">
@@ -84,6 +84,10 @@
          <tr class="p60-paid-via-dependent p60-payment-type-dependent">
            <td>{$form.payment_type_field_mapping.label}&nbsp;<a onclick='CRM.help("{ts}Payment Type Field Mapping{/ts}", {literal}{"id":"id-payment-type-field-mapping","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.payment_type_field_mapping.html}</td>
+         </tr>
+         <tr class="p60-paid-via-dependent p60-payment-type-dependent">
+           <td>{$form.synchronise_payment_now.label}&nbsp;<a onclick='CRM.help("{ts}Update Payment Data Now{/ts}", {literal}{"id":"id-update-now","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.synchronise_payment_now.html}</td>
          </tr>
          <tr>
            <td>{$form.paid_via_end_with_status.label}&nbsp;<a onclick='CRM.help("{ts}End with status{/ts}", {literal}{"id":"id-paid-via-end-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>

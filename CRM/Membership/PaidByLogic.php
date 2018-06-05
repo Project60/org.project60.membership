@@ -171,7 +171,6 @@ class CRM_Membership_PaidByLogic
         WHERE {$paid_via['column_name']} = {$contribution_recur_id};");
   }
 
-
   /**
    * render a textual representation of the field value
    */
@@ -441,5 +440,34 @@ class CRM_Membership_PaidByLogic
         $this->endContract($membership_id);
       }
     }
+  }
+
+
+  //   DERIVED FIELDS
+
+  /**
+   * Recalculate all derived fields with on big SQL statement
+   */
+  public function synchroniseDerivedFields() {
+    $settings = CRM_Membership_Settings::getSettings();
+    $derived_fields = $settings->getDerivedFields();
+    if (empty($derived_fields) || empty($derived_fields['paid_via_field'])) return;
+
+
+    $joins = $updates = array();
+
+    // add paid_via field
+    $joins[] = "LEFT JOIN {$derived_fields['paid_via_field']['table_name']} paid_via ON paid_via.entity_id = membership.id";
+
+    $update_query = "UPDATE civcirm_membership membership";
+    foreach ($joins as $join) {
+      $update_query .= "\n" . $join;
+    }
+    foreach ($updates as $update) {
+      $update_query .= "\n" . $update;
+    }
+    $update_query .= "\n WHERE paid_via.{$derived_fields['paid_via_field']['column_name']} IS NOT NULL
+                         AND paid_via.{$derived_fields['paid_via_field']['column_name']} <> ''";
+    error_log($update_query);
   }
 }

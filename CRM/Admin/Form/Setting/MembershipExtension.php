@@ -140,6 +140,10 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
         "payment_type_field_mapping",
         E::ts("Payment Type Field Mapping"));
 
+    $this->addElement('checkbox',
+        'synchronise_payment_now',
+        E::ts("Update Payment Data Now"));
+
 
     $this->addElement('select',
         "paid_via_end_with_status",
@@ -215,6 +219,12 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
       $settings->setSetting('paid_via_end_with_status', $values['paid_via_end_with_status'], FALSE);
     }
     $settings->write();
+
+    // update fields if requested
+    if (!empty($values['synchronise_payment_now'])) {
+      $logic = CRM_Membership_PaidByLogic::getSingleton();
+      $logic->synchroniseDerivedFields();
+    }
   }
 
 

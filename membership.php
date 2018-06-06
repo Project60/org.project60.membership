@@ -120,10 +120,10 @@ function membership_civicrm_caseTypes(&$caseTypes) {
  *
  * @access public
  */
-function membership_installment_created($mandate_id, $contribution_recur_id, $contribution_id) {
+function membership_civicrm_installment_created($mandate_id, $contribution_recur_id, $contribution_id) {
   //see if this installment should be assigned to a membership
   $paid_by_logic = CRM_Membership_PaidByLogic::getSingleton();
-  $paid_by_logic->assignSepaInstallment($mandate_id, $contribution_id,$contribution_recur_id);
+  $paid_by_logic->assignSepaInstallment($mandate_id, $contribution_recur_id,$contribution_id);
 }
 
 /**

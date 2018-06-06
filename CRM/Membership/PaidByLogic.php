@@ -168,7 +168,7 @@ class CRM_Membership_PaidByLogic
           entity_id           AS membership_id,
           {$contribution_id}  AS contribution_id
         FROM {$paid_via['table_name']}
-        WHERE {$paid_via['column_name']} = {$contribution_recur_id};");
+        WHERE {$paid_via['column_name']} = {$mandate_id};");
   }
 
 

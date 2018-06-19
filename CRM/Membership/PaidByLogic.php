@@ -161,14 +161,11 @@ class CRM_Membership_PaidByLogic
     $paid_via = $settings->getPaidViaField();
     if (!$paid_via) return;
 
-    // then assign
-    CRM_Core_DAO::executeQuery("
-      INSERT IGNORE INTO civicrm_membership_payment (membership_id, contribution_id)
-        SELECT
-          entity_id           AS membership_id,
-          {$contribution_id}  AS contribution_id
-        FROM {$paid_via['table_name']}
-        WHERE {$paid_via['column_name']} = {$contribution_recur_id};");
+    // Create membership payment with the api. So that the pre and post hooks are invoked.
+    $membership_dao = CRM_Core_DAO::executeQuery("SELECT entity_id AS membership_id FROM {$paid_via['table_name']} WHERE {$paid_via['column_name']} = {$contribution_recur_id}");
+    while($membership_dao->fetch()) {
+      civicrm_api3('MembershipPayment', 'create', array('membership_id' => $membership_dao->membership_id, 'contribution_id' => $contribution_id));
+    }
   }
 
 
@@ -440,6 +437,46 @@ class CRM_Membership_PaidByLogic
         // ok, we should end the connected mandate/recurring contribution
         $this->endContract($membership_id);
       }
+    }
+  }
+
+
+  /**
+   * MEMBERSHIP PAYMENT STATUS MONITORING
+   *
+   * If a membership payment is added also update the end date of the membership.
+   * We don't check the status of the contribution as we assume only pending or completed contributions
+   * will be added to the membership.
+   *
+   * @param $contribution_id integer Contribution ID
+   * @param $membership_id        object  Contribution BAO object (?)
+   * @throws Exception     only if something's wrong with the pre/post call sequence - shouldn't happen
+   */
+  public function membershipPaymentCreatePOST($contribution_id, $membership_id) {
+    $settings = CRM_Membership_Settings::getSettings();
+    if (!$settings->getSetting('update_membership_status')) {
+      return;
+    }
+
+    // Calculate new end date and set this as the new membership end date.
+    $contribution = civicrm_api3('Contribution', 'getsingle', array('id' => $contribution_id));
+    $membership = civicrm_api3('Membership', 'getsingle', array('id' => $membership_id));
+    $currentEndDate = new DateTime($membership['end_date']);
+    $newDates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType($membership_id, $contribution['receive_date']);
+    $newEndDate = new DateTime($newDates['end_date']);
+    if ($newEndDate > $currentEndDate) {
+      $membershipStatus = CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate(
+        CRM_Utils_Date::customFormat($membership['start_date'], '%Y%m%d'),
+        $newDates['end_date'],
+        CRM_Utils_Date::customFormat($membership['join_date'], '%Y%m%d'),
+        'today',
+        FALSE,
+        $membership['membership_type_id']
+      );
+      $membershipParams['status_id'] = $membershipStatus['id'];
+      $membershipParams['id'] = $membership_id;
+      $membershipParams['end_date'] = $newDates['end_date'];
+      civicrm_api3('Membership', 'create', $membershipParams);
     }
   }
 }

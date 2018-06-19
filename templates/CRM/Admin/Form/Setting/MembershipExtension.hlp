@@ -38,6 +38,10 @@
   <p>{ts}The field has to be an integer type, active, read only, and searchable custom field to be eligible.{/ts}</p>
 {/htxt}
 
+{htxt id='update-membership-status'}
+ <p>{ts}As soon as the sepa mandate is debitted the contribution is created and added to the membership. If you check this box the end date and the status of the membership will be updated.{/ts}</p>
+{/htxt}
+
 {htxt id='id-paid-via-end-status'}
   <p>{ts}For any membership status you select, the linked recurring contribution or mandate will be ended automatically should a membership be set to that status.{/ts}</p>
 {/htxt}

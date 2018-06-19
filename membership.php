@@ -172,6 +172,10 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
       $logic->membershipUpdatePOST($objectId, $objectRef);
     }
   }
+  if ($objectName == 'MembershipPayment' && $op == 'create') {
+    $logic = CRM_Membership_PaidByLogic::getSingleton();
+    $logic->membershipPaymentCreatePOST($objectRef->contribution_id, $objectRef->membership_id);
+  }
 }
 
 

@@ -62,16 +62,16 @@
            <td>{$form.paid_via_field.html}</td>
          </tr>
          <tr>
-           <td>{$form.update_membership_status.label}&nbsp;<a onclick='CRM.help("{ts}Update membership status and end date{/ts}", {literal}{"id":"update-membership-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
-           <td>{$form.update_membership_status.html}</td>
-         </tr>
-         <tr>
            <td>{$form.paid_via_end_with_status.label}&nbsp;<a onclick='CRM.help("{ts}End with status{/ts}", {literal}{"id":"id-paid-via-end-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.paid_via_end_with_status.html}</td>
          </tr>
          <tr>
            <td>{$form.hide_auto_renewal.label}&nbsp;<a onclick='CRM.help("{ts}Hide Auto Renewal{/ts}", {literal}{"id":"id-hide-auto-renewal","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.hide_auto_renewal.html}</td>
+         </tr>
+         <tr>
+           <td>{$form.update_membership_status.label}&nbsp;<a onclick='CRM.help("{ts}Update membership status and end date{/ts}", {literal}{"id":"update-membership-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.update_membership_status.html}</td>
          </tr>
        </table>
      </div>

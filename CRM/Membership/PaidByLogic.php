@@ -31,6 +31,9 @@ class CRM_Membership_PaidByLogic
   /** stores the pre/post hook records */
   protected $monitoring_stack = array();
 
+  /** stores the pre/post hook records for contribution status changed */
+  protected $contribution_status_monitoring_stack = array();
+
   public static function getSingleton()
   {
     if (self::$singleton === NULL) {
@@ -458,8 +461,13 @@ class CRM_Membership_PaidByLogic
       return;
     }
 
-    // Calculate new end date and set this as the new membership end date.
+    $completed_status = civicrm_api3('OptionValue', 'getvalue', array('name' => 'Completed', 'option_group_id' => 'contribution_status', 'return' => 'value'));
     $contribution = civicrm_api3('Contribution', 'getsingle', array('id' => $contribution_id));
+    if ($contribution['contribution_status_id'] != $completed_status) {
+      return; // Do not calculate the new end date as the contribution is not yet completed.
+    }
+
+    // Calculate new end date and set this as the new membership end date.
     $membership = civicrm_api3('Membership', 'getsingle', array('id' => $membership_id));
     $currentEndDate = new DateTime($membership['end_date']);
     $newDates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType($membership_id, $contribution['receive_date']);
@@ -478,5 +486,59 @@ class CRM_Membership_PaidByLogic
       $membershipParams['end_date'] = $newDates['end_date'];
       civicrm_api3('Membership', 'create', $membershipParams);
     }
+  }
+
+  /**
+   * Contribution status monitor function.
+   *
+   * Monitor for contribution status changed to completed to update the membership end date.
+   *
+   * @param $contribution_id
+   * @param $params
+   * @throws Exception     only if something's wrong with the pre/post call sequence - shouldn't happen
+   */
+  public function contributionUpdatePRE($contribution_id, $params) {
+    $settings = CRM_Membership_Settings::getSettings();
+    if (!$settings->getSetting('update_membership_status')) {
+      return;
+    }
+
+    $completed_status = civicrm_api3('OptionValue', 'getvalue', array('name' => 'Completed', 'option_group_id' => 'contribution_status', 'return' => 'value'));
+    $contribution = civicrm_api3('Contribution', 'getsingle', array('id' => $contribution_id));
+    if ($params['contribution_status_id'] != $completed_status) {
+      return;
+    }
+    if ($params['contribution_status_id'] == $contribution['contribution_status_id']) {
+      return;
+    }
+
+    $this->contribution_status_monitoring_stack[$contribution_id] = $contribution;
+  }
+
+  /**
+   * Contribution status monitor function.
+   *
+   * Monitor for contribution status changed to completed to update the membership end date.
+   *
+   * @param $contribution_id
+   * @param $object
+   * @throws Exception     only if something's wrong with the pre/post call sequence - shouldn't happen
+   */
+  public function contributionUpdatePOST($contribution_id, $object) {
+    $settings = CRM_Membership_Settings::getSettings();
+    if (!$settings->getSetting('update_membership_status')) {
+      return;
+    }
+
+    if (!isset($this->contribution_status_monitoring_stack[$contribution_id])) {
+      return;
+    }
+
+    $membershipPayments = civicrm_api3('MembershipPayment', 'get', array('contribution_id' => $contribution_id, 'options' => array('limit' => 0)));
+    foreach($membershipPayments['values'] as $membershipPayment) {
+      $this->membershipPaymentCreatePOST($contribution_id, $membershipPayment['membership_id']);
+    }
+
+    unset($this->contribution_status_monitoring_stack[$contribution_id]);
   }
 }

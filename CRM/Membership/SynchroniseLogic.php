@@ -49,6 +49,14 @@ class CRM_Membership_SynchroniseLogic {
       }
     }
 
+    // include 'paid_by' information
+    $JOIN_PAID_BY_TABLE = $OR_CONTACT_IS_PAID_BY = '';
+    $paid_by_field = $settings->getPaidByField();
+    if ($paid_by_field) {
+      // there is a paid_by field set up -> use it
+      $JOIN_PAID_BY_TABLE = "LEFT JOIN {$paid_by_field['table_name']} paid_by_table ON paid_by_table.entity_id = civicrm_membership.id";
+    }
+
     // add contribution restriction
     $AND_IN_CONTRIBUTION_ID_LIST = '';
     if (!empty($contribution_ids)) {
@@ -84,6 +92,11 @@ class CRM_Membership_SynchroniseLogic {
         continue;
       }
 
+      if ($paid_by_field) {
+        // there is a paid_by field set up -> use it
+        $OR_CONTACT_IS_PAID_BY = "OR paid_by_table.{$paid_by_field['column_name']} = {$contact_id}";
+      }
+
       // add a subquery for the oldest membership ID
       $oldest_membership_id = "(SELECT MIN(id) FROM civicrm_membership WHERE contact_id = {$contact_id} AND membership_type_id IN ($membership_type_id_list))";
 
@@ -97,7 +110,8 @@ class CRM_Membership_SynchroniseLogic {
         start_date                   AS membership_start_date,
         join_date                    AS membership_join_date
       FROM civicrm_membership
-      WHERE civicrm_membership.contact_id = {$contact_id}
+      {$JOIN_PAID_BY_TABLE}
+      WHERE (civicrm_membership.contact_id = {$contact_id} {$OR_CONTACT_IS_PAID_BY})
       AND status_id IN ($membership_status_id_list)
       AND membership_type_id IN ($membership_type_id_list)
       AND ((start_date <= (DATE('{$date}') + INTERVAL {$rangeback} DAY)) OR (civicrm_membership.id = {$oldest_membership_id} AND join_date <= (DATE('{$date}') + INTERVAL {$rangeback} DAY)))

@@ -34,6 +34,23 @@ class CRM_Membership_PaidByLogic
   /** stores the pre/post hook records for contribution status changed */
   protected $contribution_status_monitoring_stack = array();
 
+  /**
+   * Contains a list of memberships which have been renewed by
+   * the logic in this class.
+   *
+   * Why do we need this? If one updates a contribution related to a membership and puts the status
+   * to completed we want the membership to be renewed. However if one does this through the UI
+   * civicrm core does handle the renewal, but if the renewal is done through the api (e.g. with civi banking or sepa). then
+   * the renewal is not handled.
+   * This class contains functionality to cater for the latter but the side effect is that if you set a membership contribution to completed through
+   * the ui the membership is renewed twice (e.g. for two periods instead of one).
+   * So the solution is as soon as this extension renews a membership store the end date in this array and use the membership_pre hook to reset the end date
+   * to our date.
+   *
+   * @var array
+   */
+  protected $renewed_memberships = array();
+
   public static function getSingleton()
   {
     if (self::$singleton === NULL) {
@@ -411,10 +428,18 @@ class CRM_Membership_PaidByLogic
    * @param $membership_id integer Membership ID
    * @param $update        array   Membership update
    */
-  public function membershipUpdatePre($membership_id, $update) {
+  public function membershipUpdatePre($membership_id, &$update) {
     // simply store the update params on the stack, will be evaluated in membershipUpdatePOST
     $update['membership_id'] = $membership_id; // just to be on the save side :)
     array_push($this->monitoring_stack, $update);
+
+    // Check whether we have need to reset the end date after we have done a renewal.
+    // Read the explanation at the variable declaration of $renewed_memberships of this class.
+    if (isset($this->renewed_memberships[$membership_id])) {
+      if (isset($update['end_date'])) {
+        $update['end_date'] = $this->renewed_memberships[$membership_id]['end_date'];
+      }
+    }
   }
 
 
@@ -485,6 +510,7 @@ class CRM_Membership_PaidByLogic
       $membershipParams['id'] = $membership_id;
       $membershipParams['end_date'] = $newDates['end_date'];
       civicrm_api3('Membership', 'create', $membershipParams);
+      $this->renewed_memberships[$membership_id] = $membershipParams;
     }
   }
 

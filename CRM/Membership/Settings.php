@@ -26,8 +26,7 @@ class CRM_Membership_Settings {
   protected $settings_bucket = NULL;
 
   /** cached data on the paid_via field */
-  protected $paid_via_field = NULL;
-  protected $paid_by_field = NULL;
+  protected $field_cache = array();
 
   /**
    * CRM_Membership_Settings constructor.
@@ -108,11 +107,8 @@ class CRM_Membership_Settings {
    * or NULL if none set;
    */
   public function getPaidByField() {
-    if ($this->paid_by_field == NULL) {
-      $field_id = $this->getPaidByFieldID();
-      $this->paid_by_field = $this->getFieldInfo($field_id);
-    }
-    return $this->paid_by_field;
+    $field_id = $this->getPaidByFieldID();
+    return $this->getFieldInfo($field_id);
   }
 
   /**
@@ -132,11 +128,8 @@ class CRM_Membership_Settings {
    * or NULL if none set;
    */
   public function getPaidViaField() {
-    if ($this->paid_via_field == NULL) {
-      $field_id = $this->getPaidViaFieldID();
-      $this->paid_via_field = $this->getFieldInfo($field_id);
-    }
-    return $this->paid_via_field;
+    $field_id = $this->getPaidViaFieldID();
+    return $this->getFieldInfo($field_id);
   }
 
   /**
@@ -144,7 +137,7 @@ class CRM_Membership_Settings {
    */
   protected function getFieldInfo($field_id) {
     if ($field_id) {
-      if ($this->paid_via_field === NULL) {
+      if (!isset($this->field_cache[$field_id])) {
         // load the field data
         $field_info = civicrm_api3('CustomField', 'getsingle', array(
             'id'     => $field_id,
@@ -156,8 +149,9 @@ class CRM_Membership_Settings {
             'id'     => $field_info['custom_group_id'],
             'return' => 'id,table_name'));
         $field_info['table_name'] = $group_data['table_name'];
+        $this->field_cache[$field_id] = $field_info;
       }
-      return $field_info;
+      return $this->field_cache[$field_id];
     }
     return NULL;
   }

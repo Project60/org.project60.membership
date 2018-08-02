@@ -34,13 +34,27 @@ class CRM_Membership_SynchroniseLogic {
     $membership_join_date = array();
     $eligible_states = "1";   // completed
 
+    // get a mapping of memberships that are linked to recuring-contributions
+    $paid_via_field = $settings->getPaidViaField();
+    $paid_via_column = $paid_via_field['column_name'];
+    $paid_via_mapping = array();
+    if ($paid_via_field) {
+      $paid_via_mapping_sql = "
+      SELECT entity_id, {$paid_via_field['column_name']}
+      FROM {$paid_via_field['table_name']}
+      WHERE {$paid_via_column} IS NOT NULL;";
+      $result = CRM_Core_DAO::executeQuery($paid_via_mapping_sql);
+      while ($result->fetch()) {
+        $paid_via_mapping[$result->{$paid_via_column}] = $result->entity_id;
+      }
+    }
+
     // include 'paid_by' information
     $JOIN_PAID_BY_TABLE = $OR_CONTACT_IS_PAID_BY = '';
     $paid_by_field = $settings->getPaidByField();
     if ($paid_by_field) {
       // there is a paid_by field set up -> use it
       $JOIN_PAID_BY_TABLE = "LEFT JOIN {$paid_by_field['table_name']} paid_by_table ON paid_by_table.entity_id = civicrm_membership.id";
-      $OR_CONTACT_IS_PAID_BY = "OR contact_id = paid_by_table.{$paid_by_field['column_name']}";
     }
 
     // add contribution restriction
@@ -53,9 +67,10 @@ class CRM_Membership_SynchroniseLogic {
     // first: find all contributions that are not yet connected to a membership
     $find_new_payments_sql = "
     SELECT
-      civicrm_contribution.id             AS contribution_id,
-      civicrm_contribution.contact_id     AS contact_id,
-      civicrm_contribution.receive_date   AS contribution_date
+      civicrm_contribution.id                     AS contribution_id,
+      civicrm_contribution.contact_id             AS contact_id,
+      civicrm_contribution.receive_date           AS contribution_date,
+      civicrm_contribution.contribution_recur_id  AS contribution_recur_id
     FROM
       civicrm_contribution
     LEFT JOIN
@@ -68,7 +83,14 @@ class CRM_Membership_SynchroniseLogic {
     while ($new_payments->fetch()) {
       $contact_id = $new_payments->contact_id;
       $contribution_id = $new_payments->contribution_id;
+      $contribution_recur_id = $new_payments->contribution_recur_id;
       $date = date('Ymdhis', strtotime($new_payments->contribution_date));
+
+      // first check if we got a paid_via-mapping for the contribution
+      if (array_key_exists($contribution_recur_id, $paid_via_mapping)) {
+        $results['mapped'][$contribution_id] = $paid_via_mapping[$contribution_recur_id];
+        continue;
+      }
 
       if ($paid_by_field) {
         // there is a paid_by field set up -> use it

@@ -105,10 +105,10 @@ class CRM_Membership_SynchroniseLogic {
 
       $find_corresponding_membership_sql = "
       SELECT
-        civicrm_membership.id        AS membership_id,
-        COUNT(civicrm_membership.id) AS membership_count,
-        start_date                   AS membership_start_date,
-        join_date                    AS membership_join_date
+        civicrm_membership.id                  AS membership_id,
+        COUNT(DISTINCT(civicrm_membership.id)) AS membership_count,
+        start_date                             AS membership_start_date,
+        join_date                              AS membership_join_date
       FROM civicrm_membership
       {$JOIN_PAID_BY_TABLE}
       WHERE (civicrm_membership.contact_id = {$contact_id} {$OR_CONTACT_IS_PAID_BY})
@@ -116,8 +116,6 @@ class CRM_Membership_SynchroniseLogic {
       AND membership_type_id IN ($membership_type_id_list)
       AND ((start_date <= (DATE('{$date}') + INTERVAL {$rangeback} DAY)) OR (civicrm_membership.id = {$oldest_membership_id} AND join_date <= (DATE('{$date}') + INTERVAL {$rangeback} DAY)))
       AND ((end_date   >  (DATE('{$date}') - INTERVAL {$gracedays} DAY)) OR (end_date IS NULL))
-      GROUP BY
-        civicrm_membership.id;
       ";
       $corresponding_membership = CRM_Core_DAO::executeQuery($find_corresponding_membership_sql);
       if (!$corresponding_membership->fetch()) {

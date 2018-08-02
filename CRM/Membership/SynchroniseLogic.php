@@ -117,7 +117,7 @@ class CRM_Membership_SynchroniseLogic {
       AND ((start_date <= (DATE('{$date}') + INTERVAL {$rangeback} DAY)) OR (civicrm_membership.id = {$oldest_membership_id} AND join_date <= (DATE('{$date}') + INTERVAL {$rangeback} DAY)))
       AND ((end_date   >  (DATE('{$date}') - INTERVAL {$gracedays} DAY)) OR (end_date IS NULL))
       GROUP BY
-        civicrm_membership.contact_id;
+        civicrm_membership.id;
       ";
       $corresponding_membership = CRM_Core_DAO::executeQuery($find_corresponding_membership_sql);
       if (!$corresponding_membership->fetch()) {

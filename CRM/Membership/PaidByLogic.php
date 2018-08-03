@@ -51,12 +51,55 @@ class CRM_Membership_PaidByLogic
    */
   protected $renewed_memberships = array();
 
+  /**
+   * Contains a list with strings which should be replaced in the status messages.
+   *
+   * Use the function replaceStatusMessages to do the actual replacements.
+   * The replacement does a search and replace in the status text.
+   *
+   * So far we only replace status messages from the postProcess hook and when the form
+   * is a contribution form.
+   *
+   * Every item in the array consists of a subarray with two keys
+   * - original: the original translated message text
+   * - new: the new translated message text
+   *
+   * @var array
+   */
+  protected $replacementStatusMessages = array();
+
   public static function getSingleton()
   {
     if (self::$singleton === NULL) {
       self::$singleton = new CRM_Membership_PaidByLogic();
     }
     return self::$singleton;
+  }
+
+  /**
+   * Replaces text within a status message
+   * See also the description at the variable declaration $replacementStatusMessages
+   */
+  public function replaceStatusMessages() {
+    $session = CRM_Core_Session::singleton();
+    // Get the message buffer and clear it. That is ok as we are going to readd the
+    // messages anyway.
+    $statusMsgs = $session->getStatus(true);
+    // Check for replacements and replace the text in the messages.
+    foreach($this->replacementStatusMessages as $replacement) {
+      foreach($statusMsgs as $key => $statusMsg) {
+        if (stripos($statusMsg['text'], $replacement['original'])) {
+          $statusMsgs[$key]['text'] = str_replace($replacement['original'], $replacement['new'], $statusMsg['text']);
+        }
+      }
+    }
+    // Readd the messages.
+    foreach($statusMsgs as $statusMsg) {
+      if (!is_array($statusMsg['options'])) {
+        $statusMsg['options'] = array();
+      }
+      CRM_Core_Session::setStatus($statusMsg['text'], $statusMsg['title'], $statusMsg['type'], $statusMsg['options']);
+    }
   }
 
   /**
@@ -437,6 +480,34 @@ class CRM_Membership_PaidByLogic
     // Read the explanation at the variable declaration of $renewed_memberships of this class.
     if (isset($this->renewed_memberships[$membership_id])) {
       if (isset($update['end_date'])) {
+        // Create a replament for the status messages.
+        $formattedOriginalEndDate = CRM_Utils_Date::customFormat($update['end_date'], '%B %E%f, %Y');
+        $formattedNewEndDate = CRM_Utils_Date::customFormat($this->renewed_memberships[$membership_id]['end_date'],'%B %E%f, %Y');
+        // Retrieve displayNamne
+        $displayName = CRM_Core_DAO::singleValueQuery("
+          SELECT display_name 
+          FROM civicrm_membership 
+          INNER JOIN civicrm_contact ON civicrm_membership.contact_id = civicrm_contact.id 
+          WHERE civicrm_membership.id = %1",
+          array (
+              1=>array($membership_id, 'Integer')
+          )
+        );
+        $replaceStatusMessage['original'] = ts("Membership for %1 has been updated. The membership End Date is %2.",
+          array(
+            1 => $displayName,
+            2 => $formattedOriginalEndDate,
+          )
+        );
+        $replaceStatusMessage['new'] = ts("Membership for %1 has been updated. The membership End Date is %2.",
+          array(
+            1 => $displayName,
+            2 => $formattedNewEndDate,
+          )
+        );
+        $this->replacementStatusMessages[] = $replaceStatusMessage;
+
+        // Now correct the end date
         $update['end_date'] = $this->renewed_memberships[$membership_id]['end_date'];
       }
     }

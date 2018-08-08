@@ -118,9 +118,11 @@ class CRM_Membership_SynchroniseLogic {
       AND ((end_date   >  (DATE('{$date}') - INTERVAL {$gracedays} DAY)) OR (end_date IS NULL))
       ";
       $corresponding_membership = CRM_Core_DAO::executeQuery($find_corresponding_membership_sql);
-      if (!$corresponding_membership->fetch()) {
+      if (  !$corresponding_membership->fetch()
+          || $corresponding_membership->membership_count == 0) {
         // NO MEMBERSHIP FOUND
         $results['no_membership'][] = $contribution_id;
+
       } elseif ($corresponding_membership->membership_count == 1) {
         // MEMBERSHIP FOUND
         $results['mapped'][$contribution_id] = $corresponding_membership->membership_id;
@@ -129,6 +131,7 @@ class CRM_Membership_SynchroniseLogic {
           date('Ymdhis', strtotime($corresponding_membership->membership_start_date));
         $membership_join_date[$corresponding_membership->membership_id] =
           date('Ymdhis', strtotime($corresponding_membership->membership_join_date));
+
       } else {
         // MEMBERSHIP AMBIGUOUS
         $results['ambiguous'][] = $contribution_id;

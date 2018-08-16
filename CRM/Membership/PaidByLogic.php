@@ -231,7 +231,6 @@ class CRM_Membership_PaidByLogic
     }
   }
 
-
   /**
    * render a textual representation of the field value
    */
@@ -621,7 +620,8 @@ class CRM_Membership_PaidByLogic
    * @param $object
    * @throws Exception     only if something's wrong with the pre/post call sequence - shouldn't happen
    */
-  public function contributionUpdatePOST($contribution_id, $object) {
+  public function contributionUpdatePOST($contribution_id, $object)
+  {
     $settings = CRM_Membership_Settings::getSettings();
     if (!$settings->getSetting('update_membership_status')) {
       return;
@@ -632,10 +632,37 @@ class CRM_Membership_PaidByLogic
     }
 
     $membershipPayments = civicrm_api3('MembershipPayment', 'get', array('contribution_id' => $contribution_id, 'options' => array('limit' => 0)));
-    foreach($membershipPayments['values'] as $membershipPayment) {
+    foreach ($membershipPayments['values'] as $membershipPayment) {
       $this->membershipPaymentCreatePOST($contribution_id, $membershipPayment['membership_id']);
     }
 
     unset($this->contribution_status_monitoring_stack[$contribution_id]);
+  }
+
+  //   DERIVED FIELDS
+
+  /**
+   * Recalculate all derived fields with on big SQL statement
+   */
+  public function synchroniseDerivedFields() {
+    $settings = CRM_Membership_Settings::getSettings();
+    $derived_fields = $settings->getDerivedFields();
+    if (empty($derived_fields) || empty($derived_fields['paid_via_field'])) return;
+
+
+    $joins = $updates = array();
+
+    // add paid_via field
+    $joins[] = "LEFT JOIN {$derived_fields['paid_via_field']['table_name']} paid_via ON paid_via.entity_id = membership.id";
+
+    $update_query = "UPDATE civcirm_membership membership";
+    foreach ($joins as $join) {
+      $update_query .= "\n" . $join;
+    }
+    foreach ($updates as $update) {
+      $update_query .= "\n" . $update;
+    }
+    $update_query .= "\n WHERE paid_via.{$derived_fields['paid_via_field']['column_name']} IS NOT NULL
+                         AND paid_via.{$derived_fields['paid_via_field']['column_name']} <> ''";
   }
 }

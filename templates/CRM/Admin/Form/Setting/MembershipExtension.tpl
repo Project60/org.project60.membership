@@ -65,6 +65,25 @@
            <td>{$form.annual_amount_field.label}&nbsp;<a onclick='CRM.help("{ts}Annual Amount Field{/ts}", {literal}{"id":"id-annual-amount-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.annual_amount_field.html}</td>
          </tr>
+         <tr>
+           <td>{$form.paid_via_end_with_status.label}&nbsp;<a onclick='CRM.help("{ts}End with status{/ts}", {literal}{"id":"id-paid-via-end-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.paid_via_end_with_status.html}</td>
+         </tr>
+         <tr>
+           <td>{$form.hide_auto_renewal.label}&nbsp;<a onclick='CRM.help("{ts}Hide Auto Renewal{/ts}", {literal}{"id":"id-hide-auto-renewal","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.hide_auto_renewal.html}</td>
+         </tr>
+         <tr>
+           <td>{$form.update_membership_status.label}&nbsp;<a onclick='CRM.help("{ts}Update membership status and end date{/ts}", {literal}{"id":"update-membership-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.update_membership_status.html}</td>
+         </tr>
+       </table>
+       <br/>
+     </div>
+
+     <div class="crm-block crm-form-block crm-form-title-here-form-block">
+       <h3>{ts}Derived Fields{/ts}</h3>
+       <table>
          <tr class="p60-paid-via-dependent">
            <td>{$form.installment_amount_field.label}&nbsp;<a onclick='CRM.help("{ts}Installment Amount Field{/ts}", {literal}{"id":"id-installment-amount-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.installment_amount_field.html}</td>
@@ -86,22 +105,11 @@
            <td>{$form.payment_type_field_mapping.html}</td>
          </tr>
          <tr class="p60-paid-via-dependent p60-payment-type-dependent">
-           <td>{$form.synchronise_payment_now.label}&nbsp;<a onclick='CRM.help("{ts}Update Payment Data Now{/ts}", {literal}{"id":"id-update-now","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.synchronise_payment_now.label}&nbsp;<a onclick='CRM.help("{ts}Update Derived Fields on Save{/ts}", {literal}{"id":"id-update-now","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.synchronise_payment_now.html}</td>
          </tr>
-         <tr>
-           <td>{$form.paid_via_end_with_status.label}&nbsp;<a onclick='CRM.help("{ts}End with status{/ts}", {literal}{"id":"id-paid-via-end-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
-           <td>{$form.paid_via_end_with_status.html}</td>
-         </tr>
-         <tr>
-           <td>{$form.hide_auto_renewal.label}&nbsp;<a onclick='CRM.help("{ts}Hide Auto Renewal{/ts}", {literal}{"id":"id-hide-auto-renewal","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
-           <td>{$form.hide_auto_renewal.html}</td>
-         </tr>
-         <tr>
-           <td>{$form.update_membership_status.label}&nbsp;<a onclick='CRM.help("{ts}Update membership status and end date{/ts}", {literal}{"id":"update-membership-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a></td>
-           <td>{$form.update_membership_status.html}</td>
-         </tr>
        </table>
+       <br/>
      </div>
    </div>
 </div>
@@ -129,6 +137,7 @@
            <td>{$form.paid_by_field.html}</td>
          </tr>
       </table>
+      <br/>
     </div>
 
     <div class="crm-block crm-form-block crm-form-title-here-form-block">
@@ -139,6 +148,7 @@
           <td>{$form.live_statuses.html}</td>
         </tr>
       </table>
+      <br/>
     </div>
 
     <div class="crm-block crm-form-block crm-form-title-here-form-block">
@@ -152,6 +162,7 @@
         </tr>
 {/foreach}
       </table>
+      <br/>
     </div>
   </div>
 </div>

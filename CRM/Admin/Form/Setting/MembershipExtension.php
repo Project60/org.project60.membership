@@ -102,7 +102,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     // add payment integration fields
     $this->addElement('select',
         "paid_via_field",
-        E::ts("Paid via Field"),
+        E::ts("Payment Contract (paid via) Field"),
         $this->getPaidViaOptions(),
         array('class' => 'crm-select2'));
 
@@ -142,7 +142,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
     $this->addElement('checkbox',
         'synchronise_payment_now',
-        E::ts("Update Payment Data Now"));
+        E::ts("Update Derived Fields on Save"));
 
 
     $this->addElement('select',
@@ -208,7 +208,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $settings->setSetting('membership_number_show', CRM_Utils_Array::value('membership_number_show', $values), FALSE);
     $settings->setSetting('hide_auto_renewal', CRM_Utils_Array::value('membership_number_show', $values), FALSE);
     $settings->setSetting('paid_via_field',  $values['paid_via_field'], FALSE);
-    $settings->setSetting('update_membership_status',  $values['update_membership_status'], FALSE);
+    $settings->setSetting('update_membership_status',  CRM_Utils_Array::value('update_membership_status', $values), FALSE);
     $settings->setSetting('paid_by_field',   $values['paid_by_field'], FALSE);
     $settings->setSetting('annual_amount_field',        $values['annual_amount_field'], FALSE);
     $settings->setSetting('installment_amount_field',   $values['installment_amount_field'], FALSE);
@@ -228,7 +228,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     // update fields if requested
     if (!empty($values['synchronise_payment_now'])) {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
-      $logic->synchroniseDerivedFields();
+      $logic->updateDerivedFields();
     }
   }
 

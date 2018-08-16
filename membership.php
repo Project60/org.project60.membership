@@ -18,6 +18,23 @@ require_once 'membership.civix.php';
 use CRM_Membership_ExtensionUtil as E;
 
 /**
+ * Implements hook_civicrm_postProcess().
+ *
+ * @param string $formName
+ * @param CRM_Core_Form $form
+ */
+function membership_civicrm_postProcess($formName, &$form) {
+  if ($form instanceof CRM_Contribute_Form_Contribution) {
+    // Reset the status message after our logic has renewed a membership after completing
+    // a contribution. The civicrm status message from core would
+    // indicate a wrong end date and that end date is shown to the user
+    // so that is confusing.
+    $paidByLogic = CRM_Membership_PaidByLogic::getSingleton();
+    $paidByLogic->replaceStatusMessages();
+  }
+}
+
+/**
 * Add an action for creating donation receipts after doing a search
 *
 * @access public
@@ -156,6 +173,10 @@ function membership_civicrm_pre($op, $objectName, $id, &$params) {
       $logic->membershipUpdatePre($id, $params);
     }
   }
+  if ($objectName == 'Contribution' && $op == 'edit') {
+    $logic = CRM_Membership_PaidByLogic::getSingleton();
+    $logic->contributionUpdatePRE($id, $params);
+  }
 }
 
 /**
@@ -171,6 +192,14 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
 
       $logic->membershipUpdatePOST($objectId, $objectRef);
     }
+  }
+  if ($objectName == 'MembershipPayment' && $op == 'create') {
+    $logic = CRM_Membership_PaidByLogic::getSingleton();
+    $logic->membershipPaymentCreatePOST($objectRef->contribution_id, $objectRef->membership_id);
+  }
+  if ($objectName == 'Contribution' && $op == 'edit') {
+    $logic = CRM_Membership_PaidByLogic::getSingleton();
+    $logic->contributionUpdatePOST($objectId, $objectRef);
   }
 }
 

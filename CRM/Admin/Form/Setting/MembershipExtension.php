@@ -109,8 +109,12 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
         array('multiple' => "multiple", 'class' => 'crm-select2'));
 
     $this->addElement('checkbox',
-        "hide_auto_renewal",
-        ts("Hide Auto Renewal"));
+        "update_membership_status",
+        ts("Extend membership when contribution is completed"));
+
+    $this->addElement('checkbox',
+      "hide_auto_renewal",
+      ts("Hide Auto Renewal"));
 
     $this->addElement('select',
         "paid_by_field",
@@ -161,6 +165,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $settings->setSetting('membership_number_show', CRM_Utils_Array::value('membership_number_show', $values), FALSE);
     $settings->setSetting('hide_auto_renewal', CRM_Utils_Array::value('membership_number_show', $values), FALSE);
     $settings->setSetting('paid_via_field',  $values['paid_via_field'], FALSE);
+    $settings->setSetting('update_membership_status',  $values['update_membership_status'], FALSE);
     $settings->setSetting('paid_by_field',   $values['paid_by_field'], FALSE);
     if (is_array($values['live_statuses']) && !empty($values['live_statuses'])) {
       $settings->setSetting('live_statuses', $values['live_statuses'], FALSE);

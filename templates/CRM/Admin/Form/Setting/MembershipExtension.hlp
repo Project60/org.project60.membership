@@ -38,6 +38,11 @@
   <p>{ts}The field has to be an integer type, active, read only, and searchable custom field to be eligible.{/ts}</p>
 {/htxt}
 
+{htxt id='update-membership-status'}
+ <p>{ts}Extend the membership as soon as the membership contribution is set to completed.{/ts}</p>
+ <p>{ts}This will calculate the new end date and a new status.{/ts}</p>
+{/htxt}
+
 {htxt id='id-paid-via-end-status'}
   <p>{ts}For any membership status you select, the linked recurring contribution or mandate will be ended automatically should a membership be set to that status.{/ts}</p>
 {/htxt}

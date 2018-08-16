@@ -31,12 +31,75 @@ class CRM_Membership_PaidByLogic
   /** stores the pre/post hook records */
   protected $monitoring_stack = array();
 
+  /** stores the pre/post hook records for contribution status changed */
+  protected $contribution_status_monitoring_stack = array();
+
+  /**
+   * Contains a list of memberships which have been renewed by
+   * the logic in this class.
+   *
+   * Why do we need this? If one updates a contribution related to a membership and puts the status
+   * to completed we want the membership to be renewed. However if one does this through the UI
+   * civicrm core does handle the renewal, but if the renewal is done through the api (e.g. with civi banking or sepa). then
+   * the renewal is not handled.
+   * This class contains functionality to cater for the latter but the side effect is that if you set a membership contribution to completed through
+   * the ui the membership is renewed twice (e.g. for two periods instead of one).
+   * So the solution is as soon as this extension renews a membership store the end date in this array and use the membership_pre hook to reset the end date
+   * to our date.
+   *
+   * @var array
+   */
+  protected $renewed_memberships = array();
+
+  /**
+   * Contains a list with strings which should be replaced in the status messages.
+   *
+   * Use the function replaceStatusMessages to do the actual replacements.
+   * The replacement does a search and replace in the status text.
+   *
+   * So far we only replace status messages from the postProcess hook and when the form
+   * is a contribution form.
+   *
+   * Every item in the array consists of a subarray with two keys
+   * - original: the original translated message text
+   * - new: the new translated message text
+   *
+   * @var array
+   */
+  protected $replacementStatusMessages = array();
+
   public static function getSingleton()
   {
     if (self::$singleton === NULL) {
       self::$singleton = new CRM_Membership_PaidByLogic();
     }
     return self::$singleton;
+  }
+
+  /**
+   * Replaces text within a status message
+   * See also the description at the variable declaration $replacementStatusMessages
+   */
+  public function replaceStatusMessages() {
+    $session = CRM_Core_Session::singleton();
+    // Get the message buffer and clear it. That is ok as we are going to readd the
+    // messages anyway.
+    $statusMsgs = $session->getStatus(true);
+    // Check for replacements and replace the text in the messages.
+    foreach($this->replacementStatusMessages as $replacement) {
+      foreach($statusMsgs as $key => $statusMsg) {
+        if (stripos($statusMsg['text'], $replacement['original'])) {
+          $statusMsgs[$key]['text'] = str_replace($replacement['original'], $replacement['new'], $statusMsg['text']);
+        }
+      }
+    }
+    // Readd the messages.
+    foreach($statusMsgs as $statusMsg) {
+      if (!is_array($statusMsg['options'])) {
+        $statusMsg['options'] = array();
+      }
+      CRM_Core_Session::setStatus($statusMsg['text'], $statusMsg['title'], $statusMsg['type'], $statusMsg['options']);
+    }
   }
 
   /**
@@ -161,14 +224,11 @@ class CRM_Membership_PaidByLogic
     $paid_via = $settings->getPaidViaField();
     if (!$paid_via) return;
 
-    // then assign
-    CRM_Core_DAO::executeQuery("
-      INSERT IGNORE INTO civicrm_membership_payment (membership_id, contribution_id)
-        SELECT
-          entity_id           AS membership_id,
-          {$contribution_id}  AS contribution_id
-        FROM {$paid_via['table_name']}
-        WHERE {$paid_via['column_name']} = {$contribution_recur_id};");
+    // Create membership payment with the api. So that the pre and post hooks are invoked.
+    $membership_dao = CRM_Core_DAO::executeQuery("SELECT entity_id AS membership_id FROM {$paid_via['table_name']} WHERE {$paid_via['column_name']} = {$contribution_recur_id}");
+    while($membership_dao->fetch()) {
+      civicrm_api3('MembershipPayment', 'create', array('membership_id' => $membership_dao->membership_id, 'contribution_id' => $contribution_id));
+    }
   }
 
 
@@ -411,10 +471,46 @@ class CRM_Membership_PaidByLogic
    * @param $membership_id integer Membership ID
    * @param $update        array   Membership update
    */
-  public function membershipUpdatePre($membership_id, $update) {
+  public function membershipUpdatePre($membership_id, &$update) {
     // simply store the update params on the stack, will be evaluated in membershipUpdatePOST
     $update['membership_id'] = $membership_id; // just to be on the save side :)
     array_push($this->monitoring_stack, $update);
+
+    // Check whether we have need to reset the end date after we have done a renewal.
+    // Read the explanation at the variable declaration of $renewed_memberships of this class.
+    if (isset($this->renewed_memberships[$membership_id])) {
+      if (isset($update['end_date'])) {
+        // Create a replament for the status messages.
+        $formattedOriginalEndDate = CRM_Utils_Date::customFormat($update['end_date'], '%B %E%f, %Y');
+        $formattedNewEndDate = CRM_Utils_Date::customFormat($this->renewed_memberships[$membership_id]['end_date'],'%B %E%f, %Y');
+        // Retrieve displayNamne
+        $displayName = CRM_Core_DAO::singleValueQuery("
+          SELECT display_name 
+          FROM civicrm_membership 
+          INNER JOIN civicrm_contact ON civicrm_membership.contact_id = civicrm_contact.id 
+          WHERE civicrm_membership.id = %1",
+          array (
+              1=>array($membership_id, 'Integer')
+          )
+        );
+        $replaceStatusMessage['original'] = ts("Membership for %1 has been updated. The membership End Date is %2.",
+          array(
+            1 => $displayName,
+            2 => $formattedOriginalEndDate,
+          )
+        );
+        $replaceStatusMessage['new'] = ts("Membership for %1 has been updated. The membership End Date is %2.",
+          array(
+            1 => $displayName,
+            2 => $formattedNewEndDate,
+          )
+        );
+        $this->replacementStatusMessages[] = $replaceStatusMessage;
+
+        // Now correct the end date
+        $update['end_date'] = $this->renewed_memberships[$membership_id]['end_date'];
+      }
+    }
   }
 
 
@@ -441,5 +537,105 @@ class CRM_Membership_PaidByLogic
         $this->endContract($membership_id);
       }
     }
+  }
+
+
+  /**
+   * MEMBERSHIP PAYMENT STATUS MONITORING
+   *
+   * If a membership payment is added also update the end date of the membership.
+   * We don't check the status of the contribution as we assume only pending or completed contributions
+   * will be added to the membership.
+   *
+   * @param $contribution_id integer Contribution ID
+   * @param $membership_id        object  Contribution BAO object (?)
+   * @throws Exception     only if something's wrong with the pre/post call sequence - shouldn't happen
+   */
+  public function membershipPaymentCreatePOST($contribution_id, $membership_id) {
+    $settings = CRM_Membership_Settings::getSettings();
+    if (!$settings->getSetting('update_membership_status')) {
+      return;
+    }
+
+    $completed_status = civicrm_api3('OptionValue', 'getvalue', array('name' => 'Completed', 'option_group_id' => 'contribution_status', 'return' => 'value'));
+    $contribution = civicrm_api3('Contribution', 'getsingle', array('id' => $contribution_id));
+    if ($contribution['contribution_status_id'] != $completed_status) {
+      return; // Do not calculate the new end date as the contribution is not yet completed.
+    }
+
+    // Calculate new end date and set this as the new membership end date.
+    $membership = civicrm_api3('Membership', 'getsingle', array('id' => $membership_id));
+    $currentEndDate = new DateTime($membership['end_date']);
+    $newDates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType($membership_id, $contribution['receive_date']);
+    $newEndDate = new DateTime($newDates['end_date']);
+    if ($newEndDate > $currentEndDate) {
+      $membershipStatus = CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate(
+        CRM_Utils_Date::customFormat($membership['start_date'], '%Y%m%d'),
+        $newDates['end_date'],
+        CRM_Utils_Date::customFormat($membership['join_date'], '%Y%m%d'),
+        'today',
+        FALSE,
+        $membership['membership_type_id']
+      );
+      $membershipParams['status_id'] = $membershipStatus['id'];
+      $membershipParams['id'] = $membership_id;
+      $membershipParams['end_date'] = $newDates['end_date'];
+      civicrm_api3('Membership', 'create', $membershipParams);
+      $this->renewed_memberships[$membership_id] = $membershipParams;
+    }
+  }
+
+  /**
+   * Contribution status monitor function.
+   *
+   * Monitor for contribution status changed to completed to update the membership end date.
+   *
+   * @param $contribution_id
+   * @param $params
+   * @throws Exception     only if something's wrong with the pre/post call sequence - shouldn't happen
+   */
+  public function contributionUpdatePRE($contribution_id, $params) {
+    $settings = CRM_Membership_Settings::getSettings();
+    if (!$settings->getSetting('update_membership_status')) {
+      return;
+    }
+
+    $completed_status = civicrm_api3('OptionValue', 'getvalue', array('name' => 'Completed', 'option_group_id' => 'contribution_status', 'return' => 'value'));
+    $contribution = civicrm_api3('Contribution', 'getsingle', array('id' => $contribution_id));
+    if ($params['contribution_status_id'] != $completed_status) {
+      return;
+    }
+    if ($params['contribution_status_id'] == $contribution['contribution_status_id']) {
+      return;
+    }
+
+    $this->contribution_status_monitoring_stack[$contribution_id] = $contribution;
+  }
+
+  /**
+   * Contribution status monitor function.
+   *
+   * Monitor for contribution status changed to completed to update the membership end date.
+   *
+   * @param $contribution_id
+   * @param $object
+   * @throws Exception     only if something's wrong with the pre/post call sequence - shouldn't happen
+   */
+  public function contributionUpdatePOST($contribution_id, $object) {
+    $settings = CRM_Membership_Settings::getSettings();
+    if (!$settings->getSetting('update_membership_status')) {
+      return;
+    }
+
+    if (!isset($this->contribution_status_monitoring_stack[$contribution_id])) {
+      return;
+    }
+
+    $membershipPayments = civicrm_api3('MembershipPayment', 'get', array('contribution_id' => $contribution_id, 'options' => array('limit' => 0)));
+    foreach($membershipPayments['values'] as $membershipPayment) {
+      $this->membershipPaymentCreatePOST($contribution_id, $membershipPayment['membership_id']);
+    }
+
+    unset($this->contribution_status_monitoring_stack[$contribution_id]);
   }
 }

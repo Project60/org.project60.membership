@@ -144,7 +144,21 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
         'synchronise_payment_now',
         E::ts("Update Derived Fields on Save"));
 
+    // add cancellation fields
+    $this->addElement('select',
+        "membership_cancellation_date_field",
+        E::ts("Cancel Date Field"),
+        $this->getDateFieldOptions(),
+        array('class' => 'crm-select2'));
 
+    $this->addElement('select',
+        "membership_cancellation_reason_field",
+        E::ts("Cancel Reason Field"),
+        $this->getSelectFieldOptions(),
+        array('class' => 'crm-select2'));
+
+
+    // logic fields
     $this->addElement('select',
         "paid_via_end_with_status",
         E::ts("End with Statuses"),
@@ -216,6 +230,8 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $settings->setSetting('payment_frequency_field',    $values['payment_frequency_field'], FALSE);
     $settings->setSetting('payment_type_field',         $values['payment_type_field'], FALSE);
     $settings->setSetting('payment_type_field_mapping', $values['payment_type_field_mapping'], FALSE);
+    $settings->setSetting('membership_cancellation_date_field', $values['membership_cancellation_date_field'], FALSE);
+    $settings->setSetting('membership_cancellation_reason_field', $values['membership_cancellation_reason_field'], FALSE);
 
     if (is_array($values['live_statuses']) && !empty($values['live_statuses'])) {
       $settings->setSetting('live_statuses', $values['live_statuses'], FALSE);
@@ -386,6 +402,35 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
           'is_active'       => 1,
           'is_searchable'   => 1,
           'is_view'         => $read_only ? '1' : '0',
+          'return'          => 'id,label'));
+      foreach ($custom_fields['values'] as $custom_field) {
+        $options[$custom_field['id']] = $custom_field['label'];
+      }
+    }
+
+    return $options;
+  }
+
+  /**
+   * Get all eligible fields to be used as date
+   * @return array options
+   */
+  protected function getDateFieldOptions() {
+    $options = array('' => E::ts('Disabled'));
+    $custom_group_ids = $this->getEligibleCustomGroups();
+
+    // find all custom fields that are
+    //  1) attached to a membership
+    //  2) of type money
+    //  3) indexed
+
+    // if there is eligible groups, look for fields
+    if (!empty($custom_group_ids)) {
+      $custom_fields = civicrm_api3('CustomField', 'get', array(
+          'custom_group_id' => array('IN' => $custom_group_ids),
+          'data_type'       => 'Date',
+          'is_active'       => 1,
+          'is_searchable'   => 1,
           'return'          => 'id,label'));
       foreach ($custom_fields['values'] as $custom_field) {
         $options[$custom_field['id']] = $custom_field['label'];

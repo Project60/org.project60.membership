@@ -25,7 +25,7 @@ function civicrm_api3_contribution_recur_render($params) {
   $recurring_contributions = civicrm_api3('ContributionRecur', 'get', $params);
   $logic = CRM_Membership_PaidByLogic::getSingleton();
   foreach ($recurring_contributions['values'] as &$recurring_contribution) {
-    $logic->renderRecurringContribution($recurring_contribution);
+    $logic->renderRecurringContribution($recurring_contribution, $params['membership_id']);
   }
   return $recurring_contributions;
 }

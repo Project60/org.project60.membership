@@ -13,8 +13,37 @@
 | written permission from the original author(s).        |
 +-------------------------------------------------------*}
 
+{literal}
+<style type="text/css">
+
+  td.p60-paid-via-centered {
+    text-align: center;
+  }
+
+  tr.p60-paid-via-row {
+    margin: 100px !important;
+  }
+
+  tr.p60-paid-via-row td {
+    text-align: center;
+    vertical-align: middle;
+    line-height: 120% !important;
+  }
+
+  tr.p60-paid-via-row.p60-paid-via-row-selected td {
+    background-color: lightgreen !important;
+  }
+
+  tr.p60-paid-via-row.p60-paid-via-row-not-eligible td {
+    color: grey !important;
+  }
+
+
+</style>
+{/literal}
+
 <div id="help">
-  {ts}Please select the recurring payment to be connected to this membership below.{/ts}
+  {ts domain="org.project60.membership"}Please select the recurring payment to be connected to this membership below.{/ts}
 </div>
 
 {$form.selected_contribution_rcur_id.html}
@@ -24,20 +53,21 @@
   <thead>
     <tr class="sticky">
       <th>&nbsp;</th>
-      <th>{ts}ID{/ts}</th>
-      <th>{ts}Annual{/ts}</th>
-      <th>{ts}Payment Mode{/ts}</th>
-      <th>{ts}Finacial Type{/ts}</th>
-      <th>{ts}Paid By{/ts}</th>
-      <th>{ts}status{/ts}</th>
+      <th>{ts domain="org.project60.membership"}ID{/ts}</th>
+      <th>{ts domain="org.project60.membership"}Annual{/ts}</th>
+      <th>{ts domain="org.project60.membership"}Payment Mode{/ts}</th>
+      <th>{ts domain="org.project60.membership"}Type{/ts}</th>
+      <th>{ts domain="org.project60.membership"}Contact{/ts}</th>
+      <th>{ts domain="org.project60.membership"}status{/ts}</th>
     </tr>
   </thead>
   <tbody id='p60_paid_via_options'>
     <tr class="p60-paid-via-row p60-paid-via-row-eligible sticky" id="p60_paid_via_0">
-      <td><img class="p60-paid-via-checkmark" src="{$config->resourceBase}i/check.gif" alt="{ts}Selected{/ts}"/></td>
-      <td>[0]</td>
-      <td>{0.00|crmMoney}</td>
-      <td colspan="4">{ts}manual{/ts}</td>
+      <td><img class="p60-paid-via-checkmark" src="{$config->resourceBase}i/check.gif" alt="{ts domain="org.project60.membership"}Selected{/ts}"/></td>
+      <td></td>
+      <td>?</td>
+      <td><strong>{ts domain="org.project60.membership"}manual{/ts}</strong></td>
+      <td colspan="3"></td>
     </tr>
   </tbody>
 </table>
@@ -49,8 +79,9 @@
 
 <script type="text/javascript">
 var owner_id  = "{$membership.contact_id}";
+var membership_id  = "{$membership.id}";
 var paid_by   = "{$membership.paid_by}"; // TODO
-var checkmark = '<img class="p60-paid-via-checkmark" src="{$config->resourceBase}i/check.gif" alt="{ts}Selected{/ts}"/>';
+var checkmark = '<img class="p60-paid-via-checkmark" src="{$config->resourceBase}i/check.gif" alt="{ts domain="org.project60.membership"}Selected{/ts}"/>';
 
 {literal}
 function p60m_updateSelection() {
@@ -76,6 +107,7 @@ function p60m_updateSelection() {
 function addRecurring(contact_id) {
   CRM.api3('ContributionRecur', 'render', {
     'sequential': 1,
+    'membership_id': membership_id,
     'contact_id': contact_id
   }).done(function(result) {
     for (var i in result.values) {
@@ -83,13 +115,13 @@ function addRecurring(contact_id) {
       var rcont = result.values[i];
       cj("#p60_paid_via_options").append('\
       <tr id="p60_paid_via_' + rcont.id + '" class="p60-paid-via-row ' + rcont.classes + '">\
-        <td>' + checkmark + '</td>\
-        <td>[' + rcont.id + ']</td>\
-        <td>' + rcont.display_annual + '</td>\
-        <td>' + rcont.display_cycle + '</td>\
-        <td>' + rcont.financial_type + '</td>\
+        <td class="p60-paid-via-checkmark-cell">' + checkmark + '</td>\
+        <td title="' + rcont.display_reference + '">[' + rcont.id + ']</td>\
+        <td title="' + rcont.display_reference + '">' + rcont.display_annual.replace(' ', '&nbsp;') + '</td>\
+        <td title="' + rcont.display_reference + '">' + rcont.display_cycle + '</td>\
+        <td class="p60-paid-via-centered">' + rcont.financial_type.replace(' ', '&nbsp;') + ' ' + rcont.display_type.replace(' ', '&nbsp;') + '</td>\
         <td><span class="icon crm-icon ' + rcont.contact.contact_type + '-icon"></span>' + rcont.contact.display_name + '</td>\
-        <td>' + rcont.display_status + '</td>\
+        <td class="p60-paid-via-centered">' + rcont.display_status + '</td>\
       </tr>');
     }
 

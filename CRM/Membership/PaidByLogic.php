@@ -174,7 +174,7 @@ class CRM_Membership_PaidByLogic
           'id'                     => $contribution_recur['id'],
           'contribution_status_id' => '1'  // "completed"
       ));
-      CRM_Core_Session::setStatus(E::ts("Connected contribution [%1] was terminated."), E::ts("Payment terminated."), 'info');
+      CRM_Core_Session::setStatus(E::ts("Connected contribution [%1] was terminated.", array(1 => $contribution_recur['id'])), E::ts("Payment terminated."), 'info');
     } catch (Exception $ex) {
       // if there's any problem: make sure the user is warned
       $message = E::ts("The connected recurring contribution [%1] couldn't be ended: %2.", array(
@@ -367,7 +367,7 @@ class CRM_Membership_PaidByLogic
     }
 
     // no type yet? try payment instrument...
-    if (!$type && !empty($contribution_recur['payment_instrument_id'])) {
+    if (!empty($contribution_recur['payment_instrument_id'])) {
       $label = civicrm_api3('OptionValue', 'getvalue', array(
           'return' => 'label',
           'value' => $contribution_recur['payment_instrument_id'],
@@ -745,7 +745,7 @@ class CRM_Membership_PaidByLogic
     if (isset($derived_fields['diff_amount_field']) && isset($derived_fields['annual_amount_field'])) {
       $joins[] = "LEFT JOIN {$derived_fields['diff_amount_field']['table_name']} diff_amount ON diff_amount.entity_id = membership.id";
       $joins[] = "LEFT JOIN {$derived_fields['annual_amount_field']['table_name']} annual_amount ON annual_amount.entity_id = membership.id";
-      $updates[] = "diff_amount.{$derived_fields['diff_amount_field']['column_name']} = {$current_annual} - annual_amount.{$derived_fields['annual_amount_field']['column_name']}";
+      $updates[] = "diff_amount.{$derived_fields['diff_amount_field']['column_name']} = annual_amount.{$derived_fields['annual_amount_field']['column_name']} - {$current_annual}";
     }
 
     // UPDATE payment_frequency_field

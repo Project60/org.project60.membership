@@ -57,7 +57,7 @@ msgstr "Beitrag Feld"
 #: CRM/Admin/Form/Setting/MembershipExtension.php
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "Annual Gap Field"
-msgstr "Jahresfehlbetrag Feld"
+msgstr "Jahresdifferenz Feld"
 
 #: CRM/Admin/Form/Setting/MembershipExtension.php
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl

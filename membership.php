@@ -31,6 +31,14 @@ function membership_civicrm_postProcess($formName, &$form) {
     // so that is confusing.
     $paidByLogic = CRM_Membership_PaidByLogic::getSingleton();
     $paidByLogic->replaceStatusMessages();
+
+  } elseif ($form instanceof CRM_Member_Form_Membership) {
+    // update derived fields
+    $membership_id = $form->getEntityId();
+    if ($membership_id) {
+      $logic = CRM_Membership_PaidByLogic::getSingleton();
+      $logic->updateDerivedFields($membership_id);
+    }
   }
 }
 
@@ -190,7 +198,6 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
     if (!empty($objectId) && ($op == 'create' || $op == 'edit')) {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->membershipUpdatePOST($objectId, $objectRef);
-      $logic->updateDerivedFields($objectId);
     }
   }
   if ($objectName == 'MembershipPayment' && $op == 'create') {
@@ -201,13 +208,34 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
     $logic = CRM_Membership_PaidByLogic::getSingleton();
     $logic->contributionUpdatePOST($objectId, $objectRef);
   }
+
+  // update derived fields:
+  if (!empty($objectId) && ($op == 'create' || $op == 'edit')) {
+    switch ($objectName) {
+      case 'Membership':
+        // update membership
+        $logic = CRM_Membership_PaidByLogic::getSingleton();
+        $logic->updateDerivedFields($objectId);
+        break;
+      case 'ContributionRecur':
+        // update
+        $logic = CRM_Membership_PaidByLogic::getSingleton();
+        $membership_ids = $logic->getMembershipIDs($objectId);
+        foreach ($membership_ids as $membership_id) {
+          $logic->updateDerivedFields($objectId);
+        }
+        break;
+      default:
+        // do nothing
+    }
+  }
 }
 
 
 /**
  * Implements hook_civicrm_buildForm().
  *
- * Insertj
+ * Insert
  *
  * @param string $formName
  * @param CRM_Core_Form $form

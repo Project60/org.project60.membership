@@ -14,6 +14,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use CRM_Membership_ExtensionUtil as E;
+
 require_once 'CRM/Core/Form.php';
 
 /**
@@ -28,7 +30,7 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
 
 
   function buildQuickForm() {
-    CRM_Utils_System::setTitle(ts('Assign Contributions to Membership'));
+    CRM_Utils_System::setTitle(E::ts('Assign Contributions to Membership'));
 
     // assign some values to the form
     $membership_type_data = array();
@@ -49,7 +51,7 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
     // add form elements
     $field = $this->addElement('text', 
                       'contact',
-                      ts('Contact'),
+                      E::ts('Contact'),
                       array('class' => 'huge crm-form-contact-reference', 'data-api-entity' => 'Contact'));
     $customUrls['contact'] = CRM_Utils_System::url('civicrm/ajax/rest', "entity=MembershipPayment&action=getlist&json=1", FALSE, NULL, FALSE);
     $this->assign('customUrls', $customUrls);
@@ -57,7 +59,7 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
     // add contact selector
     $this->addElement('select', 
                       'membership',
-                      ts('Membership'), 
+                      E::ts('Membership'),
                       array(), 
                       array('class' => 'huge crm-select2'));
 
@@ -68,7 +70,7 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
     $this->assign('contribution_count',    count($this->_contributionIds));
 
     // call the (overwritten) Form's method, so the continue button is on the right...
-    CRM_Core_Form::addDefaultButtons(ts('Assign'));
+    CRM_Core_Form::addDefaultButtons(E::ts('Assign'));
   }
 
 
@@ -122,11 +124,11 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
         }
       }
 
-      CRM_Core_Session::setStatus(ts("%1 contributions have been newly assigned, %2 have been re-assigned. %3 contributions were already assigned to the selected membership.", array(1 => $newly_assigned, 2 => $reassigned, 3 => $already_assigned)), ts('Success'), 'info');
+      CRM_Core_Session::setStatus(E::ts("%1 contributions have been newly assigned, %2 have been re-assigned. %3 contributions were already assigned to the selected membership.", array(1 => $newly_assigned, 2 => $reassigned, 3 => $already_assigned)), ts('Success'), 'info');
 
     } else {
       // something went wrong
-      CRM_Core_Session::setStatus(ts("Invalid values."), ts('Error'), 'error');
+      CRM_Core_Session::setStatus(E::ts("Invalid values."), E::ts('Error'), 'error');
     }
   }
 

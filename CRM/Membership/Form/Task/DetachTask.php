@@ -26,7 +26,7 @@ require_once 'CRM/Core/Form.php';
 class CRM_Membership_Form_Task_DetachTask extends CRM_Contribute_Form_Task {
 
   function buildQuickForm() {
-    CRM_Utils_System::setTitle(ts('Detach Contributions from Membership'));
+    CRM_Utils_System::setTitle(E::ts('Detach Contributions from Membership'));
 
     // compile an info text
     $infotext = E::ts("%1 of the %2 contributions are currently attached to a membership.", array(
@@ -35,7 +35,7 @@ class CRM_Membership_Form_Task_DetachTask extends CRM_Contribute_Form_Task {
     $this->assign('infotext', $infotext);
 
     // call the (overwritten) Form's method, so the continue button is on the right...
-    CRM_Core_Form::addDefaultButtons(ts('Detach'));
+    CRM_Core_Form::addDefaultButtons(E::ts('Detach'));
   }
 
   function postProcess() {

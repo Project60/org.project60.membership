@@ -167,7 +167,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
     $this->addElement('checkbox',
         "update_membership_status",
-        ts("Extend membership when contribution is completed"));
+        E::ts("Extend membership when contribution is completed"));
 
     $this->addElement('checkbox',
         "hide_auto_renewal",

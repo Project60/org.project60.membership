@@ -258,7 +258,7 @@ class CRM_Membership_PaidByLogic
       ));
       return $contribution_recur;
     } catch (Exception $e) {
-      CRM_Core_Session::setStatus(ts("Couldn't load 'paid via' data."), ts('Error'), 'error');
+      CRM_Core_Session::setStatus(E::ts("Couldn't load 'paid via' data."), ts('Error'), 'error');
       return NULL;
     }
   }
@@ -302,7 +302,7 @@ class CRM_Membership_PaidByLogic
   public function renderRecurringContribution(&$contribution_recur, $membership_id)
   {
     if (empty($contribution_recur)) {
-      return ts('<i>None</i>');
+      return E::ts('<i>None</i>');
     }
 
     // generate a type string
@@ -311,7 +311,7 @@ class CRM_Membership_PaidByLogic
     $reference = $this->renderRecurringContributionReference($contribution_recur);
     $in_use = $this->getPaidViaUseCount($contribution_recur['id'], $membership_id);
     $annual = $this->calculateAnnual($contribution_recur);
-    $text = ts("%1: %2", array(1 => $type, 2 => $cycle));
+    $text = E::ts("%1: %2", array(1 => $type, 2 => $cycle));
 
     // get contact
     $contact = $this->renderContact($contribution_recur['contact_id']);

@@ -55,32 +55,61 @@ class CRM_Membership_NumberLogic {
      * @throws API_Exception
      */
     public static function getCurrentMembershipNumbers($contact_ids, $membership_type_ids = NULL) {
-        $contact_id_2_membership_number = array();
+      $contact_id_2_membership_number = array();
 
-        // load field and group
-        $settings = CRM_Membership_Settings::getSettings();
-        $number_field_id = $settings->getSetting('membership_number_field');
-        if (empty($number_field_id)) {
-          return $contact_id_2_membership_number;
+      // load field and group
+      $settings = CRM_Membership_Settings::getSettings();
+      $number_field_id = $settings->getSetting('membership_number_field');
+      if (empty($number_field_id)) {
+        return $contact_id_2_membership_number;
+      }
+      $field = civicrm_api3('CustomField', 'getsingle', array(
+          'id'     => $number_field_id,
+          'return' => 'column_name,custom_group_id'));
+      $group = civicrm_api3('CustomGroup', 'getsingle', array(
+          'id'     => $field['custom_group_id'],
+          'return' => 'table_name'));
+
+      // build SQL query
+      $contact_id_list = implode(',', $contact_ids);
+      $active_status_list = implode(',', $settings->getLiveStatusIDs());
+
+      $MEMBERSHIP_TYPE_CONDITION = '';
+      if (!empty($membership_type_ids)) {
+        $membership_type_id_list = implode(',', $membership_type_ids);
+        $MEMBERSHIP_TYPE_CONDITION = "AND membership.membership_type_id IN ({$membership_type_id_list})";
+      }
+
+      $unprocessed_contact_ids = $contact_ids;
+      $query = "
+      SELECT 
+        membership.contact_id                                 AS contact_id,
+        GROUP_CONCAT(membership.status_id 
+          ORDER BY membership.status_id, membership.id DESC)  AS membership_status,
+        GROUP_CONCAT(number_table.{$field['column_name']}
+          ORDER BY membership.status_id, membership.id DESC)  AS membership_numbers
+      FROM civicrm_membership membership 
+      LEFT JOIN {$group['table_name']} number_table ON number_table.entity_id = membership.id
+      WHERE membership.contact_id IN ({$contact_id_list})
+        AND membership.status_id IN ({$active_status_list})
+        {$MEMBERSHIP_TYPE_CONDITION}
+      GROUP BY membership.contact_id;";
+      $data = CRM_Core_DAO::executeQuery($query);
+      while ($data->fetch()) {
+        $numbers = explode(',', $data->membership_numbers);
+        $contact_id_2_membership_number[$data->contact_id] = $numbers[0];
+
+        // remove from $unprocessed_contact_ids
+        $index = array_search($data->contact_id, $unprocessed_contact_ids);
+        if ($index !== FALSE) {
+          unset($unprocessed_contact_ids[$index]);
         }
-        $field = civicrm_api3('CustomField', 'getsingle', array(
-            'id'     => $number_field_id,
-            'return' => 'column_name,custom_group_id'));
-        $group = civicrm_api3('CustomGroup', 'getsingle', array(
-            'id'     => $field['custom_group_id'],
-            'return' => 'table_name'));
+      }
 
-        // build SQL query
-        $contact_id_list = implode(',', $contact_ids);
-        $active_status_list = implode(',', $settings->getLiveStatusIDs());
-
-        $MEMBERSHIP_TYPE_CONDITION = '';
-        if (!empty($membership_type_ids)) {
-          $membership_type_id_list = implode(',', $membership_type_ids);
-          $MEMBERSHIP_TYPE_CONDITION = "AND membership.membership_type_id IN ({$membership_type_id_list})";
-        }
-
-        $query = "
+      // fallback 1: check other active states
+      if (!empty($unprocessed_contact_ids)) {
+        $contact_id_list = implode(',', $unprocessed_contact_ids);
+        $fallback_query = "
         SELECT 
           membership.contact_id                                 AS contact_id,
           GROUP_CONCAT(membership.status_id 
@@ -89,19 +118,57 @@ class CRM_Membership_NumberLogic {
             ORDER BY membership.status_id, membership.id DESC)  AS membership_numbers
         FROM civicrm_membership membership 
         LEFT JOIN {$group['table_name']} number_table ON number_table.entity_id = membership.id
+        LEFT JOIN civicrm_membership_status status    ON status.id = membership.status_id
         WHERE membership.contact_id IN ({$contact_id_list})
-          AND membership.status_id IN ({$active_status_list})
+          AND status.is_current_member = 1
           {$MEMBERSHIP_TYPE_CONDITION}
         GROUP BY membership.contact_id;";
-//        error_log($query);
-        $data = CRM_Core_DAO::executeQuery($query);
-        while ($data->fetch()) {
-          // TODO: evaluate the status?
-          //$status = explode(',', $data->membership_status);
-          $numbers = explode(',', $data->membership_numbers);
-          $contact_id_2_membership_number[$data->contact_id] = $numbers[0];
+        $fallback_data = CRM_Core_DAO::executeQuery($fallback_query);
+        while ($fallback_data->fetch()) {
+          if (!isset($contact_id_2_membership_number[$fallback_data->contact_id])) {
+            $numbers = explode(',', $fallback_data->membership_numbers);
+            $contact_id_2_membership_number[$fallback_data->contact_id] = $numbers[0];
+          }
+
+          // remove from $unprocessed_contact_ids
+          $index = array_search($fallback_data->contact_id, $unprocessed_contact_ids);
+          if ($index !== FALSE) {
+            unset($unprocessed_contact_ids[$index]);
+          }
         }
-        return $contact_id_2_membership_number;
+      }
+
+      // fallback 2: any other membership
+      if (!empty($unprocessed_contact_ids)) {
+        $contact_id_list = implode(',', $unprocessed_contact_ids);
+        $fallback_query = "
+          SELECT 
+            membership.contact_id                                 AS contact_id,
+            GROUP_CONCAT(membership.status_id 
+              ORDER BY membership.status_id, membership.id DESC)  AS membership_status,
+            GROUP_CONCAT(number_table.{$field['column_name']}
+              ORDER BY membership.status_id, membership.id DESC)  AS membership_numbers
+          FROM civicrm_membership membership 
+          LEFT JOIN {$group['table_name']} number_table ON number_table.entity_id = membership.id
+          WHERE membership.contact_id IN ({$contact_id_list})
+            {$MEMBERSHIP_TYPE_CONDITION}
+          GROUP BY membership.contact_id;";
+        $fallback_data = CRM_Core_DAO::executeQuery($fallback_query);
+        while ($fallback_data->fetch()) {
+          if (!isset($contact_id_2_membership_number[$fallback_data->contact_id])) {
+            $numbers = explode(',', $fallback_data->membership_numbers);
+            $contact_id_2_membership_number[$fallback_data->contact_id] = $numbers[0];
+          }
+
+          // remove from $unprocessed_contact_ids
+          $index = array_search($fallback_data->contact_id, $unprocessed_contact_ids);
+          if ($index !== FALSE) {
+            unset($unprocessed_contact_ids[$index]);
+          }
+        }
+      }
+
+      return $contact_id_2_membership_number;
     }
 
     /**

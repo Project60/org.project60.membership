@@ -24,13 +24,13 @@ use CRM_Membership_ExtensionUtil as E;
 class CRM_Membership_Form_PaidBy extends CRM_Core_Form {
 
   public function buildQuickForm() {
-    CRM_Utils_System::setTitle(ts('Change Membership Payment'));
+    CRM_Utils_System::setTitle(E::ts('Change Membership Payment'));
 
     $settings = CRM_Membership_Settings::getSettings();
     $logic    = CRM_Membership_PaidByLogic::getSingleton();
     $paid_via = $settings->getPaidViaField();
     if (!$paid_via) {
-      CRM_Core_Session::setStatus(ts("Paid Via Field not enabled!"), ts('Error'), 'error');
+      CRM_Core_Session::setStatus(E::ts("Paid Via Field not enabled!"), E::ts('Error'), 'error');
       return;
     }
 

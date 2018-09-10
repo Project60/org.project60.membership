@@ -58,7 +58,7 @@ class CRM_Membership_UiMods {
       $settings = CRM_Membership_Settings::getSettings();
       $paid_via_field = $settings->getPaidViaField();
       if ($paid_via_field && $settings->getSetting('hide_auto_renewal')) {
-        CRM_Core_Smarty::singleton()->assign('auto_renewal_label', ts('Auto Renew'));
+        CRM_Core_Smarty::singleton()->assign('auto_renewal_label', E::ts('Auto Renew'));
         CRM_Core_Region::instance('page-body')->add(array(
             'template' => 'CRM/Membership/Snippets/HideAutoRenewal.tpl',
         ));

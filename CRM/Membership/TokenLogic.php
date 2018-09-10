@@ -248,7 +248,7 @@ class CRM_Membership_TokenLogic {
         if ($field_id) {
           $field_spec = $settings->getFieldInfo($field_id);
           if ($field_spec) {
-            $joins[] = "LEFT JOIN {$field_spec['table_name']} AS {$custom_token_used} ON {$custom_token_used}.entity_id = membership.id";
+            $joins[] = "LEFT JOIN {$field_spec['table_name']} AS {$custom_token_used} ON {$custom_token_used}.entity_id = c2m.membership_id";
             if (!empty($field_spec['option_group_id'])) {
               // join option group
               $joins[] = "LEFT JOIN civicrm_option_value {$custom_token_used}_ov ON {$custom_token_used}_ov.value = {$custom_token_used}.{$field_spec['column_name']} AND {$custom_token_used}_ov.option_group_id = {$field_spec['option_group_id']}";

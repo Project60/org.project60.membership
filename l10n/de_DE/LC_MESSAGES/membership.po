@@ -57,7 +57,7 @@ msgstr "Beitrag Feld"
 #: CRM/Admin/Form/Setting/MembershipExtension.php
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "Annual Gap Field"
-msgstr "Jahresfehlbetrag Feld"
+msgstr "Jahresdifferenz Feld"
 
 #: CRM/Admin/Form/Setting/MembershipExtension.php
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
@@ -365,7 +365,7 @@ msgstr "(ungültiger Rythmus)"
 
 #: CRM/Membership/PaidByLogic.php
 msgid "on the %1."
-msgstr "am 1."
+msgstr "am %1."
 
 #: CRM/Membership/PaidByLogic.php
 msgid "%1 %2 %3"

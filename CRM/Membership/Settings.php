@@ -189,7 +189,7 @@ class CRM_Membership_Settings {
         // load the field data
         $field_info = civicrm_api3('CustomField', 'getsingle', array(
             'id'     => $field_id,
-            'return' => 'column_name,id,label,custom_group_id'));
+            'return' => 'column_name,id,label,custom_group_id,option_group_id'));
         $field_info['key'] = 'custom_' . $field_id;
 
         // add some of the group data as well

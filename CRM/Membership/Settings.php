@@ -26,7 +26,9 @@ class CRM_Membership_Settings {
   protected $settings_bucket = NULL;
 
   /** cached data on the paid_via field */
-  protected $field_cache = array();
+  protected $paid_via_field = NULL;
+  protected $paid_by_field = NULL;
+  protected $field_cache = NULL;
 
   /**
    * CRM_Membership_Settings constructor.
@@ -133,9 +135,55 @@ class CRM_Membership_Settings {
   }
 
   /**
+   * Put the requested field IDs in the cache
    *
+   * @param $ids
    */
-  protected function getFieldInfo($field_id) {
+  public function cacheFields($field_ids) {
+    $fields_to_load = array();
+    foreach ($field_ids as $field_id) {
+      if (!isset($this->field_cache[$field_id])) {
+        $fields_to_load[] = $field_id;
+      }
+    }
+
+    if (!empty($fields_to_load)) {
+      $field_infos = civicrm_api3('CustomField', 'get', array(
+          'id'         => array('IN' => $fields_to_load),
+          'sequential' => 0,
+          'return'     => 'column_name,id,label,custom_group_id'));
+
+      $groups_to_load = array();
+      foreach ($field_infos['values'] as $field_info) {
+        $groups_to_load[] = $field_info['custom_group_id'];
+      }
+
+      $group_data = civicrm_api3('CustomGroup', 'get', array(
+          'id'         => array('IN' => $groups_to_load),
+          'sequential' => 0,
+          'return'     => 'id,table_name'));
+
+      // finally: fill the cache
+      foreach ($fields_to_load as $field_id) {
+        if (isset($field_infos['values'][$field_id])) {
+          $field = $field_infos['values'][$field_id];
+          $field['key'] = 'custom_' . $field_id;
+          $field['table_name'] = $group_data['values'][$field['custom_group_id']]['table_name'];
+
+          $this->field_cache[$field_id] = $field;
+
+        } else {
+          $this->field_cache[$field_id] = 'MISSING';
+        }
+      }
+    }
+  }
+
+  /**
+   * Get an info block for the given field ID
+   */
+  public function getFieldInfo($field_id)
+  {
     if ($field_id) {
       if (!isset($this->field_cache[$field_id])) {
         // load the field data
@@ -154,6 +202,38 @@ class CRM_Membership_Settings {
       return $this->field_cache[$field_id];
     }
     return NULL;
+  }
+
+  /**
+   * Get the derived fields from the settings
+   *
+   * @return array with the settings names mapped to the custom field objects
+   */
+  public function getDerivedFields() {
+    $settings = CRM_Membership_Settings::getSettings();
+    $field_keys = array('paid_via_field', 'annual_amount_field', 'installment_amount_field', 'diff_amount_field', 'payment_frequency_field', 'payment_type_field');
+    $active_field_ids = array();
+    foreach ($field_keys as $field_key) {
+      $field_id = $settings->getSetting($field_key);
+      if ($field_id) {
+        $active_field_ids[] = $field_id;
+      }
+    }
+
+    $settings->cacheFields($active_field_ids);
+
+    $active_fields = array();
+    foreach ($field_keys as $field_key) {
+      $field_id = $settings->getSetting($field_key);
+      if ($field_id) {
+        $field = $settings->getFieldInfo($field_id);
+        if ($field) {
+          $active_fields[$field_key] = $field;
+        }
+      }
+    }
+
+    return $active_fields;
   }
 
 

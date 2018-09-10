@@ -189,8 +189,8 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
     // catch if a membership is set to a certain status
     if (!empty($objectId) && ($op == 'create' || $op == 'edit')) {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
-
       $logic->membershipUpdatePOST($objectId, $objectRef);
+      $logic->updateDerivedFields($objectId);
     }
   }
   if ($objectName == 'MembershipPayment' && $op == 'create') {

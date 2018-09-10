@@ -136,7 +136,11 @@ class CRM_Membership_PaidByLogic
         'id' => $membership_id,
         $field_name => (int)$contribution_recur_id));
 
+    // update derived fields
+    $this->updateDerivedFields($membership_id);
+
     // TODO: further changes?
+
   }
 
   /**
@@ -230,7 +234,6 @@ class CRM_Membership_PaidByLogic
       civicrm_api3('MembershipPayment', 'create', array('membership_id' => $membership_dao->membership_id, 'contribution_id' => $contribution_id));
     }
   }
-
 
   /**
    * render a textual representation of the field value
@@ -621,7 +624,8 @@ class CRM_Membership_PaidByLogic
    * @param $object
    * @throws Exception     only if something's wrong with the pre/post call sequence - shouldn't happen
    */
-  public function contributionUpdatePOST($contribution_id, $object) {
+  public function contributionUpdatePOST($contribution_id, $object)
+  {
     $settings = CRM_Membership_Settings::getSettings();
     if (!$settings->getSetting('update_membership_status')) {
       return;
@@ -632,10 +636,110 @@ class CRM_Membership_PaidByLogic
     }
 
     $membershipPayments = civicrm_api3('MembershipPayment', 'get', array('contribution_id' => $contribution_id, 'options' => array('limit' => 0)));
-    foreach($membershipPayments['values'] as $membershipPayment) {
+    foreach ($membershipPayments['values'] as $membershipPayment) {
       $this->membershipPaymentCreatePOST($contribution_id, $membershipPayment['membership_id']);
     }
 
     unset($this->contribution_status_monitoring_stack[$contribution_id]);
+  }
+
+  //   DERIVED FIELDS
+
+  /**
+   * Recalculate all derived fields with on big SQL statement
+   *
+   * @param array|int $membership_ids
+   */
+  public function updateDerivedFields($membership_ids = NULL) {
+    $settings = CRM_Membership_Settings::getSettings();
+    $derived_fields = $settings->getDerivedFields();
+    if (empty($derived_fields) || empty($derived_fields['paid_via_field'])) return;
+
+    // start building the query
+    $joins = $updates = $wheres = array();
+
+    // are we doing this for some memberships only?
+    if ($membership_ids) {
+      if (is_array($membership_ids)) {
+        $wheres[] = "membership.id IN (" . implode(',', $membership_ids) . ')';
+      } elseif (is_numeric($membership_ids)) {
+        $wheres[] = "membership.id = " . (int) $membership_ids;
+      }
+    }
+
+    // join contribution recur
+    $joins[] = "LEFT JOIN {$derived_fields['paid_via_field']['table_name']} paid_via ON paid_via.entity_id = membership.id";
+    $joins[] = "LEFT JOIN civicrm_contribution_recur recur ON recur.id = paid_via.{$derived_fields['paid_via_field']['column_name']}";
+
+    // calculate recurring annual amount
+    $unit_year  = "IF(recur.frequency_unit = 'year', (recur.amount / recur.frequency_interval), 0.0)";
+    $unit_month = "IF(recur.frequency_unit = 'month', (recur.amount * 12.0 / recur.frequency_interval), {$unit_year})";
+    $current_annual = "IF(recur.id IS NULL, 0.0, {$unit_month})";
+
+    // UPDATE installment_amount_field
+    if (isset($derived_fields['installment_amount_field'])) {
+      $joins[] = "LEFT JOIN {$derived_fields['installment_amount_field']['table_name']} installment_amount ON installment_amount.entity_id = membership.id";
+      $updates[] = "installment_amount.{$derived_fields['installment_amount_field']['column_name']} = IF(recur.amount IS NULL, 0.00, recur.amount)";
+    }
+
+    // UPDATE diff_amount_field
+    if (isset($derived_fields['diff_amount_field']) && isset($derived_fields['annual_amount_field'])) {
+      $joins[] = "LEFT JOIN {$derived_fields['diff_amount_field']['table_name']} diff_amount ON diff_amount.entity_id = membership.id";
+      $joins[] = "LEFT JOIN {$derived_fields['annual_amount_field']['table_name']} annual_amount ON annual_amount.entity_id = membership.id";
+      $updates[] = "diff_amount.{$derived_fields['diff_amount_field']['column_name']} = {$current_annual} - annual_amount.{$derived_fields['annual_amount_field']['column_name']}";
+    }
+
+    // UPDATE payment_frequency_field
+    if (isset($derived_fields['payment_frequency_field'])) {
+      $intv_year  = "IF(recur.frequency_unit = 'year', recur.frequency_interval * 12, 0)";
+      $interval = "IF(recur.frequency_unit = 'month', recur.frequency_interval, {$intv_year})";
+      $joins[] = "LEFT JOIN {$derived_fields['payment_frequency_field']['table_name']} payment_frequency ON payment_frequency.entity_id = membership.id";
+      $updates[] = "payment_frequency.{$derived_fields['payment_frequency_field']['column_name']} = {$interval}";
+    }
+
+    // UPDATE payment_type_field
+    if (isset($derived_fields['payment_type_field'])) {
+      $payment_type_value = "recur.payment_instrument_id";
+
+      // apply mapping
+      $mapping_raw = $settings->getSetting('payment_type_field_mapping');
+      if (!empty($mapping_raw)) {
+        $mappings = explode(',', $mapping_raw);
+        foreach ($mappings as $mapping) {
+          $from_to = explode(':', $mapping);
+          $from = (int) $from_to[0];
+          $to   = (int) $from_to[1];
+          if ($from && $to) {
+            $payment_type_value = "IF(recur.payment_instrument_id = {$from}, {$to}, {$payment_type_value})";
+          }
+        }
+      }
+
+      $joins[] = "LEFT JOIN {$derived_fields['payment_type_field']['table_name']} payment_type ON payment_type.entity_id = membership.id";
+      $updates[] = "payment_type.{$derived_fields['payment_type_field']['column_name']} = {$payment_type_value}";
+    }
+
+    // check if there's anything to do
+    if (empty($updates)) {
+      return;
+    }
+
+    // compile query
+    $update_query = "\nUPDATE civicrm_membership membership";
+    foreach ($joins as $join) {
+      $update_query .= "\n" . $join;
+    }
+
+    if ($updates) {
+      $update_query .= "\n SET " . implode(", \n     ", $updates);
+    }
+
+    if ($wheres) {
+      $update_query .= "\n WHERE (" . implode(') AND (', $wheres) . ')';
+    }
+
+    // execute!
+    //CRM_Core_Error::debug_log_message($update_query);
+    CRM_Core_DAO::executeQuery($update_query);
   }
 }

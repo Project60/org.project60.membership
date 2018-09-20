@@ -69,6 +69,15 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
     $this->assign('default_contact_label', $default_contact[1]);
     $this->assign('contribution_count',    count($this->_contributionIds));
 
+    // add paid by field
+    $settings = CRM_Membership_Settings::getSettings();
+    $paid_by_field_id = $settings->getPaidByFieldID();
+    if ($paid_by_field_id) {
+      $this->assign('paid_by_field', "custom_{$paid_by_field_id}");
+    } else {
+        $this->assign('paid_by_field', "");
+    }
+
     // call the (overwritten) Form's method, so the continue button is on the right...
     CRM_Core_Form::addDefaultButtons(E::ts('Assign'));
   }

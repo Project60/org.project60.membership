@@ -46,11 +46,12 @@
 
 
 <script type="text/javascript">
-var membership_types    = {$membership_types};
-var membership_statuses = {$membership_statuses};
+let membership_types    = {$membership_types};
+let membership_statuses = {$membership_statuses};
 
-var default_contact_id    = {$default_contact_id};
-var default_contact_label = "{$default_contact_label}";
+let default_contact_id    = {$default_contact_id};
+let default_contact_label = "{$default_contact_label}";
+let paid_by_field         = "{$paid_by_field}";
 
 {literal}
 
@@ -59,25 +60,45 @@ cj("#contact").change(function() {
   cj("[name=membership] option").remove();
 
   // load memberships of new contact
-  var contact_id = cj("#contact").val();
+  let contact_id = cj("#contact").val();
 
+  // get contact's memberships
   CRM.api3('Membership', 'get', {
     "contact_id": contact_id
-
   }).done(function(result) {
     // do something
-    for (membership_id in result.values) {
-      var membership = result.values[membership_id];
-      var label = "[" + membership['id'] + "] ";
+    for (let membership_id in result.values) {
+      let membership = result.values[membership_id];
+      let label = "[" + membership['id'] + "] ";
       label += membership_types[membership['membership_type_id']];
       label += " (" + membership_statuses[membership['status_id']] + "): ";
       label += membership['start_date'] + " - " + membership['end_date'];
 
       // add as an option
-      cj("[name=membership]").append(new Option(label, membership_id, true, true));
+      cj("[name=membership]").append(new Option(label, membership_id, false, false));
       cj("[name=membership]").select2('val', membership_id);
     }
   });
+
+  // get paid_by memberships
+  if (paid_by_field.length > 0) {
+      CRM.api3('Membership', 'get', {
+          [paid_by_field]: contact_id
+      }).done(function(result2) {
+          // do something
+          for (let membership_id in result2.values) {
+              let membership = result2.values[membership_id];
+              let label = "[" + membership['id'] + "][" + membership['contact_id'] + "] ";
+              label += membership_types[membership['membership_type_id']];
+              label += " (" + membership_statuses[membership['status_id']] + "): ";
+              label += membership['start_date'] + " - " + membership['end_date'];
+
+              // add as an option
+              cj("[name=membership]").append(new Option(label, membership_id, false, false));
+              cj("[name=membership]").select2('val', membership_id);
+          }
+      });
+  }
 });
 
 // set the default contact (if any)

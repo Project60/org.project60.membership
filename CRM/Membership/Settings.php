@@ -97,7 +97,7 @@ class CRM_Membership_Settings {
    * @return int
    */
   public function getPaidByFieldID() {
-    if (isset($this->settings_bucket['paid_by_field'])) {
+    if (!empty($this->settings_bucket['paid_by_field'])) {
       return (int) $this->settings_bucket['paid_by_field'];
     } else {
       return NULL;
@@ -118,7 +118,7 @@ class CRM_Membership_Settings {
    * @return int
    */
   public function getPaidViaFieldID() {
-    if (isset($this->settings_bucket['paid_via_field'])) {
+    if (!empty($this->settings_bucket['paid_via_field'])) {
       return (int) $this->settings_bucket['paid_via_field'];
     } else {
       return NULL;

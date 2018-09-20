@@ -33,18 +33,10 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
     CRM_Utils_System::setTitle(E::ts('Assign Contributions to Membership'));
 
     // assign some values to the form
-    $membership_type_data = array();
-    $membership_types = civicrm_api3('MembershipType', 'getlist');
-    foreach ($membership_types['values'] as $membership_type) {
-      $membership_type_data[$membership_type['id']] = $membership_type['label'];
-    }
+    $membership_type_data = $this->getFullList('MembershipType', 'name');
     $this->assign('membership_types', json_encode($membership_type_data));
 
-    $membership_status_data = array();
-    $membership_statuses = civicrm_api3('MembershipStatus', 'getlist');
-    foreach ($membership_statuses['values'] as $membership_status) {
-      $membership_status_data[$membership_status['id']] = $membership_status['label'];
-    }
+    $membership_status_data = $this->getFullList('MembershipStatus');
     $this->assign('membership_statuses', json_encode($membership_status_data));
 
 
@@ -75,7 +67,7 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
     if ($paid_by_field_id) {
       $this->assign('paid_by_field', "custom_{$paid_by_field_id}");
     } else {
-        $this->assign('paid_by_field', "");
+      $this->assign('paid_by_field', "");
     }
 
     // call the (overwritten) Form's method, so the continue button is on the right...
@@ -170,5 +162,24 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
     }
 
     return self::$default_contact;
+  }
+
+  /**
+   * Get an id=>label list of entries
+   *
+   * @param $entity string CiviCRM entity
+   * @param $label_field string which attribute should be used as label
+   * @return array list
+   * @throws Exception
+   */
+  protected function getFullList($entity, $label_field = 'label') {
+    $list = array();
+    $query = civicrm_api3($entity, 'get', array(
+        'option.limit' => 0,
+        'return'       => "id,{$label_field}"));
+    foreach ($query['values'] as $entry) {
+      $list[$entry['id']] = $entry[$label_field];
+    }
+    return $list;
   }
 }

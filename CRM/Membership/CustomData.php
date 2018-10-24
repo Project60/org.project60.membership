@@ -14,7 +14,7 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
-define('CUSTOM_DATA_HELPER_VERSION', '0.5.1');
+define('CUSTOM_DATA_HELPER_VERSION', '0.6');
 define('CUSTOM_DATA_HELPER_LOG_LEVEL', 0);
 
 // log levels
@@ -28,6 +28,7 @@ class CRM_Membership_CustomData {
   protected static $custom_group2name       = NULL;
   protected static $custom_group2table_name = NULL;
   protected static $custom_group_cache      = array();
+  protected static $custom_group_spec_cache = array();
   protected static $custom_field_cache      = array();
 
   protected $ts_domain = NULL;
@@ -380,6 +381,44 @@ class CRM_Membership_CustomData {
   }
 
   /**
+   * Get the specs/definition of the field
+   * @param int $field_id
+   * @return array field specs
+   */
+  public static function getFieldSpecs($field_id) {
+    // just to be on the safe side
+    self::cacheCustomFields(array($field_id));
+
+    // get custom field
+    $custom_field = self::$custom_field_cache[$field_id];
+    if ($custom_field) {
+      return $custom_field;
+    } else {
+      return NULL;
+    }
+  }
+
+  /**
+   * Get the specs/definition of the group
+   *
+   * @param int|string $group_id group id or string
+   * @return array group specs
+   */
+  public static function getGroupSpecs($group_id) {
+    // just to be on the safe side
+    self::cacheCustomGroupSpecs([$group_id]);
+
+    // get custom field
+    $custom_group = self::$custom_group_spec_cache[$group_id];
+    if ($custom_group) {
+      return $custom_group;
+    } else {
+      return NULL;
+    }
+  }
+
+
+  /**
    * internal function to replace "<custom_group_name>.<custom_field_name>"
    * in the data array with the custom_XX notation.
    *
@@ -491,6 +530,34 @@ class CRM_Membership_CustomData {
       }
     }
   }
+
+  /**
+   * Precache a list of custom fields
+   *
+   * @param array $custom_group_ids list of custom group IDs or names
+   */
+  public static function cacheCustomGroupSpecs($custom_group_ids) {
+    // first: check if they are already cached
+    $fields_to_load = array();
+    foreach ($custom_group_ids as $group_id) {
+      if (!array_key_exists($group_id, self::$custom_group_spec_cache)) {
+        $groups_to_load[] = $group_id;
+      }
+    }
+
+    // load missing fields
+    if (!empty($groups_to_load)) {
+      $loaded_groups = civicrm_api3('CustomGroup', 'get', array(
+          'id'           => array('IN' => $groups_to_load),
+          'option.limit' => 0,
+      ));
+      foreach ($loaded_groups['values'] as $group) {
+        self::$custom_group_spec_cache[$group['id']] = $group;
+        self::$custom_group_spec_cache[$group['name']] = $group;
+      }
+    }
+  }
+
 
   /**
    * Get a mapping: custom_group_id => custom_group_name
@@ -628,5 +695,76 @@ class CRM_Membership_CustomData {
     // cache the groups used
     $group_table_name = self::getGroupTable($group_name);
     return "LEFT JOIN `{$group_table_name}` AS {$table_alias} ON {$table_alias}.entity_id = {$join_entity_id}";
+  }
+
+
+
+  /**
+   * Get the current field value from CiviCRM's pre-hook structure
+   *
+   * @param $params pre-hook data
+   * @param $field_id custom field ID
+   * @return mixed the current value
+   */
+  public static function getPreHookCustomDataValue($params, $field_id) {
+    if ($field_id) {
+      if (!empty($params['custom'][$field_id][-1])) {
+        $field_data = $params['custom'][$field_id][-1];
+        return $field_data['value'];
+      } else {
+        // unlikely, but worth a shot:
+        return CRM_Utils_Array::value("custom_{$field_id}", $params, NULL);
+      }
+    }
+    return NULL;
+  }
+
+
+  /**
+   * Set a field value in CiviCRM's pre-hook structure right in the pre hook data
+   *
+   * @param $params pre-hook data
+   * @param $field_id custom field ID
+   * @param $value the new value
+   */
+  public static function setPreHookCustomDataValue(&$params, $field_id, $value) {
+    if ($field_id) {
+      if (isset($params['custom'])) {
+        if (!empty($params['custom'][$field_id][-1])) {
+          // update custom field data record
+          $params['custom'][$field_id][-1]['value'] = $value;
+        } else {
+          // add custom field data record
+          $params['custom'][$field_id][-1] = self::generatePreHookCustomDataRecord($field_id, $value);
+        }
+      } else {
+        // this shouldn't happen based on the pre_hook...
+        // not likely to succeed, but worth a shot:
+        $params["custom_{$field_id}"] = $value;
+      }
+    }
+  }
+
+  /**
+   * @param $field_id
+   * @param $value
+   * @return array
+   */
+  protected static function generatePreHookCustomDataRecord($field_id, $value) {
+    if ($field_id) {
+      $field_specs = self::getFieldSpecs($field_id);
+      $group_specs = self::getGroupSpecs($field_specs['custom_group_id']);
+      return               [
+          'value'           => $value,
+          'type'            => CRM_Utils_Array::value('data_type', $field_specs, 'String'),
+          'custom_field_id' => $field_id,
+          'custom_group_id' => CRM_Utils_Array::value('custom_group_id', $field_specs, NULL),
+          'table_name'      => CRM_Utils_Array::value('table_name', $group_specs, NULL),
+          'column_name'     => CRM_Utils_Array::value('column_name', $field_specs, NULL),
+          'is_multiple'     => CRM_Utils_Array::value('is_multiple', $group_specs, 0),
+      ];
+    } else {
+      return NULL;
+    }
   }
 }

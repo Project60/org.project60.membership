@@ -186,39 +186,12 @@ class CRM_Membership_NumberLogic {
         $generator = $settings->getSetting('membership_number_generator');
         if ($field_id && $generator) {
             // the configuration sais we should generate a number
-            $value = self::getFieldValue($params, $field_id);
+            $value = CRM_Membership_CustomData::getPreHookCustomDataValue($params, $field_id);
             if (empty($value)) {
                 // generate!
                 $value = self::generateNumber($generator, $params);
-                self::setFieldValue($params, $field_id, $value);
+                CRM_Membership_CustomData::setPreHookCustomDataValue($params, $field_id, $value);
             }
-        }
-    }
-
-    /**
-     * Get the current field value from CiviCRM's pre-hook structure
-     *
-     * @param $params pre-hook data
-     * @param $field_id custom field ID
-     * @return mixed the current value
-     */
-    protected static function getFieldValue($params, $field_id) {
-        if (!empty($params['custom'][$field_id][-1])) {
-            $field_data = $params['custom'][$field_id][-1];
-            return $field_data['value'];
-        }
-    }
-
-    /**
-     * Set the current field value in CiviCRM's pre-hook structure
-     *
-     * @param $params pre-hook data
-     * @param $field_id custom field ID
-     * @param $value the new value
-     */
-    protected static function setFieldValue(&$params, $field_id, $value) {
-        if (!empty($params['custom'][$field_id][-1])) {
-            $params['custom'][$field_id][-1]['value'] = $value;
         }
     }
 

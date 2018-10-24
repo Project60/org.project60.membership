@@ -75,9 +75,11 @@
 {/htxt}
 
 {htxt id='id-cancel-date'}
+  <p>{ts domain='org.project60.membership'}The core membership entity only has an end date, but if you want to keep track of the date somebody cancelled the membership, you can create a new custom field of type Date. You can then select it here to make this date available as a token.{/ts}</p>
 {/htxt}
 
 {htxt id='id-cancel-reason'}
+  <p>{ts domain='org.project60.membership'}The core membership entity doesn't have a field for the cancel reason, but if you want record this data, you can create a new custom field of type Text. You can then select it here to make this date available as a token.{/ts}</p>
 {/htxt}
 
 {htxt id='id-hide-auto-renewal'}

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: SystopiaMemberships\n"
-"POT-Creation-Date: 2018-08-17 17:32+0200\n"
+"POT-Creation-Date: 2018-10-24 15:25+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bjoern Endres <Bjoern.Endres@didonai.com>\n"
 "Language-Team: SYSTOPIA <endres@systopia.de>\n"
@@ -80,10 +80,12 @@ msgid "Update Derived Fields on Save"
 msgstr "Ablgeleitete Felder neu berechnen"
 
 #: CRM/Admin/Form/Setting/MembershipExtension.php
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "Cancel Date Field"
 msgstr "Kündigungsdatum Feld"
 
 #: CRM/Admin/Form/Setting/MembershipExtension.php
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "Cancel Reason Field"
 msgstr "Kündigungsgrund Feld"
 
@@ -620,6 +622,29 @@ msgstr ""
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid "Additionally, the following special tokens are currently available:"
 msgstr "Des weiteren sind hier folgende Spezialtoken verfügbar:"
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid ""
+"The core membership entity only has an end date, but if you want to keep "
+"track of the date somebody cancelled the membership, you can create a new "
+"custom field of type Date. You can then select it here to make this date "
+"available as a token."
+msgstr ""
+"Die CiviCRM Mitgliedschaft hat zwar ein Enddatum, aber das Kündigungsdatum "
+"kann nicht gesondert aufgezeichnet werden. Man kann dafür ein "
+"benutzerdefiniertes Feld vom Typ \"Datum\" anlegen und dieses hier "
+"einstellen um das Datum als Token zur Verfügung zu haben."
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid ""
+"The core membership entity doesn't have a field for the cancel reason, but "
+"if you want record this data, you can create a new custom field of type "
+"Text. You can then select it here to make this date available as a token."
+msgstr ""
+"Die CiviCRM Mitgliedschaft zeichnet den Kündigungsgrund nicht auf. Man kann "
+"dafür ein benutzerdefiniertes Feld vom Typ \"String\" (auch Auswahlfelder) "
+"anlegen und dieses hier einstellen um den Kündigungsgrund als Token zur "
+"Verfügung zu haben."
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""

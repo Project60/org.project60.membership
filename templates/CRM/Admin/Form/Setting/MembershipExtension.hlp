@@ -74,6 +74,12 @@
   </p>
 {/htxt}
 
+{htxt id='id-cancel-date'}
+{/htxt}
+
+{htxt id='id-cancel-reason'}
+{/htxt}
+
 {htxt id='id-hide-auto-renewal'}
   <p>{ts domain='org.project60.membership'}The built-in auto renewal feature interferes with the P60 membership concept, so we recommend not to use it. If you activate this option the fields will be hidden from the UI and the column in the tab and the search result will be freed up for something else.{/ts}</p>
 {/htxt}

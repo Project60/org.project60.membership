@@ -58,11 +58,11 @@
       <h3>{ts domain="org.project60.membership"}Membership Cancellation{/ts}</h3>
       <table>
         <tr>
-          <td>{$form.membership_cancellation_date_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Membership Number Field{/ts}", {literal}{"id":"id-number","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.membership_cancellation_date_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Cancel Date Field{/ts}", {literal}{"id":"id-cancel-date","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.membership_cancellation_date_field.html}</td>
         </tr>
         <tr>
-          <td>{$form.membership_cancellation_reason_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Show Number in SummaryView{/ts}", {literal}{"id":"id-number-show","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.membership_cancellation_reason_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Cancel Reason Field{/ts}", {literal}{"id":"id-cancel-reason","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.membership_cancellation_reason_field.html}</td>
         </tr>
       </table>

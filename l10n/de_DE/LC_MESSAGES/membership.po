@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: SystopiaMemberships\n"
-"POT-Creation-Date: 2018-10-24 15:25+0200\n"
+"POT-Creation-Date: 2018-11-14 10:39+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bjoern Endres <Bjoern.Endres@didonai.com>\n"
 "Language-Team: SYSTOPIA <endres@systopia.de>\n"
@@ -107,8 +107,24 @@ msgid "Paid by Field"
 msgstr "Fremdzahler Feld"
 
 #: CRM/Admin/Form/Setting/MembershipExtension.php
+msgid "Record annual fee changes"
+msgstr "Beitragsänderungen aufzeichen"
+
+#: CRM/Admin/Form/Setting/MembershipExtension.php
 msgid "Disabled"
 msgstr "nicht aktiviert"
+
+#: CRM/Membership/FeeChangeLogic.php
+msgid "Membership Fee Increase"
+msgstr "Beitragserhöhung"
+
+#: CRM/Membership/FeeChangeLogic.php
+msgid "Membership Fee Reduction"
+msgstr "Beitragssenkungn"
+
+#: CRM/Membership/FeeChangeLogic.php resources/fee_update_custom_group.json
+msgid "Membership Fee Update"
+msgstr "Mitgliedsbeitragsanpassung"
 
 #: CRM/Membership/Form/PaidBy.php
 msgid "Change Membership Payment"
@@ -669,6 +685,14 @@ msgstr ""
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""
+"If active, any change of the annual amount (determined by the two fields "
+"above) will be recorded as an activity."
+msgstr ""
+"Wenn diese Funktion aktiviert wird, werden Beitragsänderungen (aus den "
+"beiden Feldern oben) als Aktivitäten aufgezeichnet."
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid ""
 "Select a read-only monetary field to display the installment amount as "
 "provided by the paid-via recurring contribution."
 msgstr ""
@@ -715,30 +739,42 @@ msgid ""
 "You can simply use the built-in payment_instrument group, or specifiy a "
 "mapping below."
 msgstr ""
+"Hier kann ein benutzerdefiniertes Feld angegeben werden, um die Zahlungsart "
+"abzubilden. Standardmäßig wird dieses Feld mit den Werten der System-"
+"Zahlungsarten befüllt, man kann aber unten auch eine Abbildung auf eine "
+"eigenen (eingeschränkten) Wertebereich angeben."
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""
 "You can enter a string to map the payment instrument id of your recurring "
 "contribution in the field above to the values of your option group."
 msgstr ""
+"Eine hier eingetragene Abbildung wandelt IDS von Systemzahlungsmethoden in "
+"die Werte der oben verwendeten Optionsgruppe um."
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""
 "The format is a comma separated list of \"payment_instrument_id:"
 "option_group_value\" mappings, e.g. \"1:3,2:2,5:4,6:4\"."
 msgstr ""
+"Das Formt ist eine per Komma separierte von \"payment_instrument_id:"
+"option_group_value\" , also zum Beispiel \"1:3,2:2,5:4,6:4\"."
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""
 "This is not a setting, but will rebuild all information derived from the "
 "paid-via field when you press the save button."
 msgstr ""
+"Dies ist keine Einstellung, sondern löst die Neuberechnung der abgeleiteten "
+"Feldern beim Drücken des \"Speichern\" Buttons aus."
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""
 "If you check this box, all your derived fields will be re-calculated based "
 "on the currently linked recurring payment."
 msgstr ""
+"Wenn dies aktiviert ist, werden die abgeleiteten Felder auf Basis der "
+"aktuelle verlinkten Zahlungsverträge neu berechnet."
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "General Settings"
@@ -777,6 +813,10 @@ msgstr "Zahlungsanbindung"
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "Paid Via Field"
 msgstr "Zahlungsvertrag Feld"
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Record Fee Updates"
+msgstr "Beitragsänderungen aufzeichnen"
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "End with status"
@@ -940,6 +980,18 @@ msgstr "Mitglieds-Nr."
 #: templates/CRM/Membership/Snippets/PaidByField.tpl
 msgid "change"
 msgstr "ändern"
+
+#: resources/fee_update_custom_group.json
+msgid "Previous Annual Amount"
+msgstr "Vorheriger Jahresbeitrag"
+
+#: resources/fee_update_custom_group.json
+msgid "Future Annual Amount"
+msgstr "Zukünftiger Jahresbeitrag"
+
+#: resources/fee_update_custom_group.json
+msgid "Annual Amount Increase"
+msgstr "Jahresbeitragserhöhung"
 
 #~ msgid "Not membership related"
 #~ msgstr "Kein Bezug zu Mitgliedschaften"

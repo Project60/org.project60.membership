@@ -90,6 +90,10 @@
   <p>{ts domain='org.project60.membership'}Select an editable monetary field where you define the annual expected membership fees, should they deviate from the amount defined by the membership type.{/ts}</p>
 {/htxt}
 
+{htxt id='id-record-fee-updates'}
+  <p>{ts domain='org.project60.membership'}If active, any change of the annual amount (determined by the two fields above) will be recorded as an activity.{/ts}</p>
+{/htxt}
+
 {htxt id='id-installment-amount-field'}
   <p>{ts domain='org.project60.membership'}Select a read-only monetary field to display the installment amount as provided by the paid-via recurring contribution.{/ts}</p>
 {/htxt}

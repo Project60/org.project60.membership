@@ -529,20 +529,35 @@ class CRM_Membership_PaidByLogic
    *
    * return string rendered version
    */
-  protected function calculateAnnual(&$contribution_recur)
-  {
+  protected function calculateAnnual(&$contribution_recur) {
+    // calculate format
+    $amount = self::calculateAnnualTotal($contribution_recur);
+
+    // format
+    $contribution_recur['annual'] = number_format($amount, 2, '.', '');
+
+    return CRM_Utils_Money::format($amount, $contribution_recur['currency']);
+  }
+
+  /**
+   * Calculate the annual total of this recurring contribution,
+   *  based on the fields frequency_unit, frequency_interval and amount
+   *
+   * @param array $contribution_recur
+   * @return float the annual amount
+   */
+  public static function calculateAnnualTotal($contribution_recur) {
+    if (!$contribution_recur['frequency_interval']) {
+      return 0.0;
+    }
+
     $multiplier = 0;
     if ($contribution_recur['frequency_unit'] == 'month') {
       $multiplier = 12.0;
     } elseif ($contribution_recur['frequency_unit'] == 'year') {
       $multiplier = 1.0;
     }
-
-    // calcualte and format
-    $contribution_recur['annual'] = (float)$contribution_recur['amount'] * (float)$multiplier / (float)$contribution_recur['frequency_interval'];
-    $contribution_recur['annual'] = number_format($contribution_recur['annual'], 2, '.', '');
-
-    return CRM_Utils_Money::format($contribution_recur['annual'], $contribution_recur['currency']);
+    return (float)$contribution_recur['amount'] * (float)$multiplier / (float)$contribution_recur['frequency_interval'];
   }
 
   /**

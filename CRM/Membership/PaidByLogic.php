@@ -34,6 +34,9 @@ class CRM_Membership_PaidByLogic
   /** stores the pre/post hook records for contribution status changed */
   protected $contribution_status_monitoring_stack = array();
 
+  /** stores the ids of new memberships */
+  protected $new_membership_id_stack = array();
+
   /**
    * Contains a list of memberships which have been renewed by
    * the logic in this class.
@@ -610,6 +613,17 @@ class CRM_Membership_PaidByLogic
     }
   }
 
+  /**
+   * Records new membership ids.
+   *
+   * @param $membership_id integer Membership ID
+   * @param $object        object  Membership BAO object (?)
+   * @throws Exception     only if something's wrong with the pre/post call sequence - shouldn't happen
+   */
+  public function createMembershipUpdatePOST($membership_id, $object) {
+    $this->new_membership_id_stack[] = $membership_id;
+  }
+
 
   /**
    * MEMBERSHIP STATUS MONITORING
@@ -658,6 +672,11 @@ class CRM_Membership_PaidByLogic
     $contribution = civicrm_api3('Contribution', 'getsingle', array('id' => $contribution_id));
     if ($contribution['contribution_status_id'] != $completed_status) {
       return; // Do not calculate the new end date as the contribution is not yet completed.
+    }
+
+    // Check whether this is a new membership
+    if (in_array($membership_id, $this->new_membership_id_stack)) {
+      return; // This is a new membership no need to recalculate the end date
     }
 
     // Calculate new end date and set this as the new membership end date.

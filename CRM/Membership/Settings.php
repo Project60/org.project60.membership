@@ -93,7 +93,7 @@ class CRM_Membership_Settings {
   }
 
   /**
-   * Get the field ID of the selected paid_via field
+   * Get the field ID of the selected paid_by field
    * @return int
    */
   public function getPaidByFieldID() {
@@ -105,7 +105,7 @@ class CRM_Membership_Settings {
   }
 
   /**
-   * Get the field data of the paid_via field
+   * Get the field data of the paid_by field
    * or NULL if none set;
    */
   public function getPaidByField() {

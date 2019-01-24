@@ -95,7 +95,8 @@ class CRM_Membership_FeeChangeLogic {
     $settings = CRM_Membership_Settings::getSettings();
 
     // make sure we should spring into action:
-    if (empty($settings->getSetting('record_fee_updates'))) {
+    $record_fee_updates = $settings->getSetting('record_fee_updates');
+    if (empty($record_fee_updates)) {
       // recording fee changes disabled
       return NULL;
     }
@@ -192,7 +193,8 @@ class CRM_Membership_FeeChangeLogic {
       return NULL;
     }
 
-    if (empty($settings->getSetting('record_fee_updates'))) {
+    $record_fee_updates = $settings->getSetting('record_fee_updates');
+    if (empty($record_fee_updates)) {
       // recording fee changes disabled
       return NULL;
     }

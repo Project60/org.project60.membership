@@ -328,7 +328,7 @@ class CRM_Membership_FeeChangeLogic {
           'return' => 'value']);
 
       // make sure the fields are there
-      $custom_data = new CRM_Membership_CustomData();
+      $custom_data = new CRM_Membership_CustomData('org.project60.membership');
       $custom_data->syncCustomGroup(__DIR__ . '/../../resources/fee_update_custom_group.json');
 
       return $this->_activity_type_id;

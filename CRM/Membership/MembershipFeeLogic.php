@@ -91,24 +91,139 @@ class CRM_Membership_MembershipFeeLogic {
    * @return float expected amount for current period
    */
   public function calculateExpectedFeeForCurrentPeriod($membership_id) {
+    $membership = $this->getMembership($membership_id);
     list($from_date, $to_date) = $this->getCurrentPeriod($membership_id);
     $changes = [];
+    $phase_start = $from_date;
+    $annual_amount = $this->getAnnualAmount($membership_id);
 
+    // collect the phases (e.g. amount changes)
     $change_activity_type_id = CRM_Membership_FeeChangeLogic::getSingleton()->getActivityTypeID();
     if ($change_activity_type_id) {
+      // get field info
+      $field_before = CRM_Membership_CustomData::getCustomField('p60membership_fee_update', 'annual_amount_before');
+      $field_after  = CRM_Membership_CustomData::getCustomField('p60membership_fee_update', 'annual_amount_after');
       $change_query = CRM_Core_DAO::executeQuery("
         SELECT
-          change.activity_date_time AS change_time
+          change.activity_date_time             AS change_date,
+          before.{$field_before['column_name']} AS amount_before,
+          after.{$field_after['column_name']}   AS amount_after
         FROM civicrm_activity change
+        LEFT JOIN {$field_before['table_name']} before ON before.entity_id = change.id
+        LEFT JOIN {$field_after['table_name']}  after  ON after.entity_id  = change.id
         WHERE change.activity_type_id = {$change_activity_type_id}
           AND change.activity_status_id IN ()
           AND DATE(change.activity_date_time) >= DATE('{$from_date}')
           AND DATE(change.activity_date_time) <= DATE('{$to_date}') 
         ORDER BY change.activity_date_time ASC;");
+      while ($change_query->fetch()) {
+        // changes only take effect the next phase
+        $next_phase_start = $this->alignDate($change_query->change_date, TRUE);
+        $changes[] = [
+            $phase_start,
+            $next_phase_start,
+            $change_query->amount_before,
+            $change_query->amount_after];
+        $phase_start = $next_phase_start;
+      }
+    }
+    $changes[] = [$phase_start, $membership['end_date'], $annual_amount, $annual_amount];
+
+    // todo accumulate the amounts for each phase
+    $expected_amount = 0.0;
+    foreach ($changes as $change) {
+      $aligned_time_units  = $this->getAlignedTimeUnitCountPerYear();
+      $phase_from          = $change[0];
+      $phase_to            = $change[1];
+      $phase_annual_amount = $change[2];
+
+      // calculate expected amount and add
+      $unit_diff = $this->getDateUnitDiff($phase_from, $phase_to);
+      $expected_phase_amount = ((float) $phase_annual_amount / (float) $aligned_time_units) * (float) $unit_diff;
+      $expected_amount += $expected_phase_amount;
     }
 
-    // TODO: changes
-    return 0.0;
+    return $expected_amount;
+  }
+
+  /**
+   * Get the distance in whole time units
+   *
+   * @param $from_date string start date
+   * @param $to_date   string end date
+   * @return int number of time units
+   */
+  protected function getDateUnitDiff($from_date, $to_date) {
+    $date = strtotime($from_date);
+    $target = strtotime($to_date);
+    $counter = 0;
+    while ($date < $target) {
+      $counter += 1;
+      $target = strtotime("+1 {$this->parameters['time_unit']}", $target);
+    }
+    return $counter;
+  }
+
+
+  /**
+   * Align the given date based on the 'time_unit' setting
+   * @param $date string date
+   * @param $forward bool align forwards? otherwise backwards.
+   *
+   * @return  string aligned date
+   */
+  protected function alignDate($date, $forward) {
+    $sign = $forward ? '+' : '-';
+
+    switch ($this->parameters['time_unit']) {
+      case 'day':
+        $modifier = 'd';
+        break;
+      case 'week':
+        $modifier = 'W';
+        break;
+      case 'year':
+        $modifier = 'Y';
+        break;
+      default:
+      case 'month':
+        $modifier = 'm';
+        break;
+    }
+
+    // now move forward (or backward) as long as we're in the zone
+    $last_valid = strtotime($date);
+    $frame_target = date($modifier, $last_valid);
+    while (TRUE) {
+      $candidate = strtotime("{$sign}1 day", $last_valid);
+      if ($frame_target == date($modifier, $candidate)) {
+        // still in the same frame, we take it!
+        $last_valid = $candidate;
+      } else {
+        // we left the frame, break!
+        break;
+      }
+    }
+    return date('Y-m-d', $last_valid);
+  }
+
+  /**
+   * Get the amount of time units per year,
+   *  based on the 'time_unit' setting
+   * @return int time units per year
+   */
+  protected function getAlignedTimeUnitCountPerYear() {
+    switch ($this->parameters['time_unit']) {
+      case 'day':
+        return 365;
+      case 'week':
+        return 52;
+      case 'year':
+        return 1;
+      default:
+      case 'month':
+        return 12;
+    }
   }
 
   /**

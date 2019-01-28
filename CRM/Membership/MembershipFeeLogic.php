@@ -49,6 +49,7 @@ class CRM_Membership_MembershipFeeLogic {
         'cutoff_today'                   => 1,
         'log_level'                      => 'info',
         'log_target'                     => 'civicrm',
+        'time_unit'                      => 'month',
     ];
 
     // overwrite with passed parameters
@@ -153,13 +154,13 @@ class CRM_Membership_MembershipFeeLogic {
    * @param $to_date   string end date
    * @return int number of time units
    */
-  protected function getDateUnitDiff($from_date, $to_date) {
+  public function getDateUnitDiff($from_date, $to_date) {
     $date = strtotime($from_date);
     $target = strtotime($to_date);
     $counter = 0;
     while ($date < $target) {
       $counter += 1;
-      $target = strtotime("+1 {$this->parameters['time_unit']}", $target);
+      $date = strtotime("+1 {$this->parameters['time_unit']}", $date);
     }
     return $counter;
   }
@@ -167,12 +168,13 @@ class CRM_Membership_MembershipFeeLogic {
 
   /**
    * Align the given date based on the 'time_unit' setting
-   * @param $date string date
-   * @param $forward bool align forwards? otherwise backwards.
+   * @param $date          string date
+   * @param $forward       bool align forwards? otherwise backwards.
+   * @param $one_more_day  bool add one day in the end? To tip it over the edge to the next period
    *
    * @return  string aligned date
    */
-  protected function alignDate($date, $forward) {
+  public function alignDate($date, $forward, $one_more_day = FALSE) {
     $sign = $forward ? '+' : '-';
 
     switch ($this->parameters['time_unit']) {
@@ -201,9 +203,13 @@ class CRM_Membership_MembershipFeeLogic {
         $last_valid = $candidate;
       } else {
         // we left the frame, break!
+        if ($one_more_day) {
+          $last_valid = $candidate;
+        }
         break;
       }
     }
+
     return date('Y-m-d', $last_valid);
   }
 

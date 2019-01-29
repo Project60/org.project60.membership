@@ -37,15 +37,49 @@ class MembershipFeeLogicTest extends MembershipTestBase  {
     parent::tearDown();
   }
 
+  /**
+   * Test whether the calculated amount is right
+   */
   public function testCalculateExpectedAmount() {
+    // test simple memberships
     $logic = new CRM_Membership_MembershipFeeLogic(['time_unit' => 'month']);
-    $membership = $this->createMembership([
-        'start_date'    => date('Y-m-01'),
-        'annual_amount' => 60.00
-    ]);
-    $this->assertEquals('2019-12-31', $membership['end_date'], "Calculated end date differs.");
-    $this->assertEquals(60.00, $logic->calculateExpectedFeeForCurrentPeriod($membership['id'], "Calculated fee off"));
+    $this->_testCalculateExpectedAmount($logic, ['start_date' => date('Y-m-01')], 60.00,60.00);
+    $this->_testCalculateExpectedAmount($logic, ['start_date' => date('Y-m-01')], 0.00,0.00);
+    $this->_testCalculateExpectedAmount($logic, ['start_date' => date('Y-m-01')], 0.00,-50.00);
+
+    // test simple, shortened memberships
+    $logic = new CRM_Membership_MembershipFeeLogic(['time_unit' => 'month']);
+    $this->_testCalculateExpectedAmount($logic, ['start_date' => '2019-01-01', 'end_date' => '2019-06-30'], 30.00,60.00);
+    $this->_testCalculateExpectedAmount($logic, ['start_date' => '2019-06-01', 'end_date' => '2019-06-30'], 5.00,60.00);
   }
+
+  /**
+   * Test whether the expected amount is correctly calculated for the given values
+   *
+   * @param $logic            CRM_Membership_MembershipFeeLogic contains the base parameters
+   * @param $expected_amount  string annual amount
+   * @param $start_date       string start date
+   * @param $annual_amount    string annual amount
+   * @param $changes          array changes: [[date, from_amount, to_amount]]
+   *
+   * @return array $membership
+   */
+  public function _testCalculateExpectedAmount($logic, $membership_data, $expected_amount, $annual_amount, $changes = []) {
+    if (!empty($start_date)) {
+      $membership_data['start_date'] = $start_date;
+    }
+    if ($annual_amount !== NULL) {
+      $membership_data['annual_amount'] = $annual_amount;
+    }
+    $membership = $this->createMembership($membership_data);
+
+    // add change activities
+    foreach ($changes as $change) {
+      $this->createChangeActivity($membership['id'], $change[0], $change[1], $change[2]);
+    }
+    $this->assertEquals($expected_amount, $logic->calculateExpectedFeeForCurrentPeriod($membership['id'], "Calculated fee off"));
+    return $membership;
+}
 
   /**
    * Test the align function

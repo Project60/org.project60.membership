@@ -146,7 +146,7 @@ class CRM_Membership_MembershipFeeLogic {
       $expected_amount += $expected_phase_amount;
     }
 
-    return $expected_amount;
+    return max(0.0, $expected_amount);
   }
 
   /**

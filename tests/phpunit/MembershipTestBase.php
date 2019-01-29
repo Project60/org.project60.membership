@@ -80,7 +80,7 @@ class MembershipTestBase extends \PHPUnit_Framework_TestCase implements Headless
       $params['start_date'] = date('Y-m-d');
     }
 
-    if (empty($params['annual_amount'])) {
+    if (!isset($params['annual_amount'])) {
       $params['annual_amount'] = '60.00';
     }
     $annual_amount_field = $this->getAnnualAmountField();
@@ -185,5 +185,37 @@ class MembershipTestBase extends \PHPUnit_Framework_TestCase implements Headless
       $first_type = reset($type_query['values']);
       return $first_type['id'];
     }
+  }
+
+  /**
+   * Create a change activity
+   *
+   * @param $membership
+   * @param $change_date
+   * @param $old_amount
+   * @param $new_amount
+   * @throws CiviCRM_API3_Exception
+   */
+  public function createChangeActivity($membership, $change_date, $old_amount, $new_amount) {
+    $change_logic = CRM_Membership_FeeChangeLogic::getSingleton();
+    $activity_data = [
+        'activity_type_id'   => $change_logic->getActivityTypeID(),
+        'target_id'          => $membership['contact_id'],
+        'subject'            => "TEST",
+        'activity_date_time' => $change_date,
+        'source_contact_id'  => CRM_Core_Session::getLoggedInContactID(),
+        'source_record_id'   => $membership['id'],
+
+        // custom data
+        'p60membership_fee_update.annual_amount_before'   => number_format($old_amount, 2, '.', ''),
+        'p60membership_fee_update.annual_amount_after'    => number_format($new_amount, 2, '.', ''),
+        'p60membership_fee_update.annual_amount_increase' => number_format(($new_amount-$old_amount), 2, '.', ''),
+    ];
+
+    // normalise
+    CRM_Membership_CustomData::resolveCustomFields($activity_data);
+
+    // create activity
+    civicrm_api3('Activity', 'create', $activity_data);
   }
 }

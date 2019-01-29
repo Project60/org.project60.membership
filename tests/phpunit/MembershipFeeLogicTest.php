@@ -37,6 +37,15 @@ class MembershipFeeLogicTest extends MembershipTestBase  {
     parent::tearDown();
   }
 
+  public function testCalculateExpectedAmount() {
+    $logic = new CRM_Membership_MembershipFeeLogic(['time_unit' => 'month']);
+    $membership = $this->createMembership([
+        'start_date'    => date('Y-m-01'),
+        'annual_amount' => 60.00
+    ]);
+    $this->assertEquals('2019-12-31', $membership['end_date'], "Calculated end date differs.");
+    $this->assertEquals(60.00, $logic->calculateExpectedFeeForCurrentPeriod($membership['id'], "Calculated fee off"));
+  }
 
   /**
    * Test the align function

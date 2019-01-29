@@ -217,7 +217,7 @@ class CRM_Membership_Settings {
   /**
    * Get the fields from the settings (if enabled)
    *
-   * @param $field_keys list of field keys in settings
+   * @param $field_keys array of field keys in settings
    * @return array with the settings names mapped to the custom field objects
    */
   public function getFields($field_keys) {

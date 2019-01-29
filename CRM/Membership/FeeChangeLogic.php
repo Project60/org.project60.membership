@@ -66,7 +66,7 @@ class CRM_Membership_FeeChangeLogic {
    */
   public function membershipFeeUpdatePOST($membership_id, $contribution_recur_id = NULL) {
     $before_record = array_pop($this->monitoring_stack);
-    if ($membership_id) {
+    if ($before_record && $membership_id) {
       // this is a membership POST -> the changes will happen in the custom hook,
       //  so we move the party to the pending_records
       foreach ($before_record['membership_ids'] as $membership_id) {

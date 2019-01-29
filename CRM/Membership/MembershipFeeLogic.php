@@ -46,10 +46,11 @@ class CRM_Membership_MembershipFeeLogic {
         'missing_fee_grace'              => 0.99,
         'missing_fee_payment_instrument' => 5, // EFT
         'missing_fee_update'             => 1, // YES
-        'cutoff_today'                   => 1,
+        'cutoff_today'                   => FALSE,
         'log_level'                      => 'info',
         'log_target'                     => 'civicrm',
         'time_unit'                      => 'month',
+        'change_status_ids'              => '1,2',
     ];
 
     // overwrite with passed parameters
@@ -104,19 +105,20 @@ class CRM_Membership_MembershipFeeLogic {
       // get field info
       $field_before = CRM_Membership_CustomData::getCustomField('p60membership_fee_update', 'annual_amount_before');
       $field_after  = CRM_Membership_CustomData::getCustomField('p60membership_fee_update', 'annual_amount_after');
-      $change_query = CRM_Core_DAO::executeQuery("
+      $before_after_table = CRM_Membership_CustomData::getGroupTable('p60membership_fee_update');
+      $change_query_sql = "
         SELECT
-          change.activity_date_time             AS change_date,
-          before.{$field_before['column_name']} AS amount_before,
-          after.{$field_after['column_name']}   AS amount_after
-        FROM civicrm_activity change
-        LEFT JOIN {$field_before['table_name']} before ON before.entity_id = change.id
-        LEFT JOIN {$field_after['table_name']}  after  ON after.entity_id  = change.id
-        WHERE change.activity_type_id = {$change_activity_type_id}
-          AND change.activity_status_id IN ()
-          AND DATE(change.activity_date_time) >= DATE('{$from_date}')
-          AND DATE(change.activity_date_time) <= DATE('{$to_date}') 
-        ORDER BY change.activity_date_time ASC;");
+          change_record.activity_date_time            AS change_date,
+          before_after.{$field_before['column_name']} AS amount_before,
+          before_after.{$field_after['column_name']}  AS amount_after
+        FROM civicrm_activity change_record
+        LEFT JOIN {$before_after_table}  before_after ON before_after.entity_id = change_record.id
+        WHERE change_record.activity_type_id = {$change_activity_type_id}
+          AND change_record.status_id IN ({$this->parameters['change_status_ids']})
+          AND DATE(change_record.activity_date_time) >= DATE('{$from_date}')
+          AND DATE(change_record.activity_date_time) <= DATE('{$to_date}') 
+        ORDER BY change_record.activity_date_time ASC;";
+      $change_query = CRM_Core_DAO::executeQuery($change_query_sql);
       while ($change_query->fetch()) {
         // changes only take effect the next phase
         $next_phase_start = $this->alignDate($change_query->change_date, TRUE);
@@ -280,7 +282,7 @@ class CRM_Membership_MembershipFeeLogic {
     $from_date    = max($start_date, $period_start);
 
     // get to_date
-    $to_date = strtotime($membership['start_date']);
+    $to_date = strtotime($membership['end_date']);
     if ($this->parameters['cutoff_today']) {
       $to_date = min(strtotime('now'), $to_date);
     }
@@ -327,6 +329,40 @@ class CRM_Membership_MembershipFeeLogic {
     }
   }
 
+  /**
+   * Get the annual amount for the given membership ID
+   *
+   * @param $membership_id
+   */
+  public function getAnnualAmount($membership_id) {
+    $membership = $this->getMembership($membership_id);
+
+    $settings = CRM_Membership_Settings::getSettings();
+    $annual_amount_field_id = $settings->getSetting('annual_amount_field');
+    if ($annual_amount_field_id) {
+      $annual_amount_field = $settings->getFieldInfo($annual_amount_field_id);
+      if (isset($membership[$annual_amount_field['key']])) {
+        // value already provided by API result
+        $amount = $membership[$annual_amount_field['key']];
+        return $amount;
+
+      } else {
+        // value not provided by API
+        $amount = CRM_Core_DAO::singleValueQuery("SELECT `{$annual_amount_field['column_name']}` FROM `{$annual_amount_field['table_name']}` WHERE entity_id = {$membership_id};");
+        if ($amount !== NULL) {
+          return $amount;
+        }
+      }
+    }
+
+    // if no specific amount is provided, we use the membership type's
+    $mtype = $this->getMembershipType($membership['membership_type_id']);
+    if (!empty($mtype['minimum_fee'])) {
+      return $mtype['minimum_fee'];
+    }
+
+    return 0.00;
+  }
 
   /**
    * Get the contact_id of the contact paying for the given membership
@@ -401,7 +437,7 @@ class CRM_Membership_MembershipFeeLogic {
     if ($this->membership_types === NULL) {
       $this->membership_types = [];
       $types = civicrm_api3('MembershipType', 'get', ['option.limit' => 0]);
-      foreach ($types as $type) {
+      foreach ($types['values'] as $type) {
         $this->membership_types[$type['id']] = $type;
       }
     }

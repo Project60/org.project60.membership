@@ -5,7 +5,7 @@
   "name": "p60membership_fee_update",
   "title": "Membership Fee Update",
   "extends": "Activity",
-  "extends_entity_column_value": "p60membership_fee_update",
+  "extends_entity_column_value": ["p60membership_fee_update"],
   "style": "Inline",
   "collapse_display": "0",
   "is_active": "1",

@@ -115,13 +115,14 @@ class CRM_Membership_MembershipFeeLogic {
         LEFT JOIN {$before_after_table}  before_after ON before_after.entity_id = change_record.id
         WHERE change_record.activity_type_id = {$change_activity_type_id}
           AND change_record.status_id IN ({$this->parameters['change_status_ids']})
+          AND change_record.source_record_id = {$membership_id}
           AND DATE(change_record.activity_date_time) >= DATE('{$from_date}')
           AND DATE(change_record.activity_date_time) <= DATE('{$to_date}') 
         ORDER BY change_record.activity_date_time ASC;";
       $change_query = CRM_Core_DAO::executeQuery($change_query_sql);
       while ($change_query->fetch()) {
-        // changes only take effect the next phase
-        $next_phase_start = $this->alignDate($change_query->change_date, TRUE);
+        // changes only take effect on the beginning of the next phase
+        $next_phase_start = $this->alignDate($change_query->change_date, TRUE, TRUE);
         $changes[] = [
             $phase_start,
             $next_phase_start,

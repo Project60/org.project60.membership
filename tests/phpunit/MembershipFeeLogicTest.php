@@ -51,6 +51,14 @@ class MembershipFeeLogicTest extends MembershipTestBase  {
     $logic = new CRM_Membership_MembershipFeeLogic(['time_unit' => 'month']);
     $this->_testCalculateExpectedAmount($logic, ['start_date' => '2019-01-01', 'end_date' => '2019-06-30'], 30.00,60.00);
     $this->_testCalculateExpectedAmount($logic, ['start_date' => '2019-06-01', 'end_date' => '2019-06-30'], 5.00,60.00);
+
+    // memberships with up/downgrades
+    $this->_testCalculateExpectedAmount($logic, ['start_date' => date('2019-01-01')], 90.00,120.00,
+        [['2019-06-10', 60.00, 120.00]]);
+    $this->_testCalculateExpectedAmount($logic, ['start_date' => date('2019-01-01')], 90.00,60.00,
+        [['2019-06-10', 120.00, 60.00]]);
+    $this->_testCalculateExpectedAmount($logic, ['start_date' => date('2019-01-01')], 90.00,120.00,
+        [['2019-03-11', 60.00, 120.00], ['2019-06-11', 120.00, 60.00], ['2019-09-11', 60.00, 120.00]]);
   }
 
   /**
@@ -75,7 +83,7 @@ class MembershipFeeLogicTest extends MembershipTestBase  {
 
     // add change activities
     foreach ($changes as $change) {
-      $this->createChangeActivity($membership['id'], $change[0], $change[1], $change[2]);
+      $this->createChangeActivity($membership, $change[0], $change[1], $change[2]);
     }
     $this->assertEquals($expected_amount, $logic->calculateExpectedFeeForCurrentPeriod($membership['id'], "Calculated fee off"));
     return $membership;

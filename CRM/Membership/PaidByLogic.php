@@ -678,6 +678,14 @@ class CRM_Membership_PaidByLogic
     if (in_array($membership_id, $this->new_membership_id_stack)) {
       return; // This is a new membership no need to recalculate the end date
     }
+    
+    //Check whether this is the first contribution of the membership
+    $contributionCount = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM civicrm_membership_payment WHERE membership_id = %1", array(1=>array($membership_id, 'Integer')));
+    if ($contributionCount <= 1) {
+      // This is the first contribution of the membership do not update
+      // status and end date.
+      return;
+    }
 
     // Calculate new end date and set this as the new membership end date.
     $membership = civicrm_api3('Membership', 'getsingle', array('id' => $membership_id));

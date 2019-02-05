@@ -25,8 +25,8 @@ class CRM_Membership_MembershipFeeLogic {
 
   protected $parameters = NULL;
   protected $cached_membership = NULL;
-  protected $membership_types  = NULL;
-  protected $log_file  = NULL;
+  protected $membership_types = NULL;
+  protected $log_file = NULL;
 
   /**
    * CRM_Membership_MembershipFeeLogic constructor.
@@ -65,7 +65,7 @@ class CRM_Membership_MembershipFeeLogic {
    *
    * @param $membership_id
    */
-  public function process($membership_id) {
+  public function process($membership_id, $dry_run = FALSE) {
     $this->log("Processing membership [{$membership_id}]", 'debug');
     $fees_expected = $this->calculateExpectedFeeForCurrentPeriod($membership_id);
     $fees_paid     = $this->receivedFeeForCurrentPeriod($membership_id);
@@ -75,13 +75,13 @@ class CRM_Membership_MembershipFeeLogic {
     if ($missing < $this->parameters['missing_fee_grace']) {
       // paid enough
       if (!empty($this->parameters['extend_if_paid'])) {
-        $this->extendMembership($membership_id);
+        $this->extendMembership($membership_id, $dry_run);
       }
 
     } else {
       // paid too little
       if (!empty($this->parameters['create_invoice'])) {
-        $this->updatedMissingFeeContribution($membership_id, $missing);
+        $this->updatedMissingFeeContribution($membership_id, $missing, $dry_run);
       }
     }
   }
@@ -133,7 +133,7 @@ class CRM_Membership_MembershipFeeLogic {
     }
     $changes[] = [$phase_start, $membership['end_date'], $annual_amount, $annual_amount];
 
-    // todo accumulate the amounts for each phase
+    // accumulate the amounts for each phase
     $expected_amount = 0.0;
     foreach ($changes as $change) {
       $aligned_time_units  = $this->getAlignedTimeUnitCountPerYear();
@@ -252,7 +252,11 @@ class CRM_Membership_MembershipFeeLogic {
       $contribution_type_id = 2; // membership fee
     }
 
-    // run the query
+    // get the payment identifier stuff
+    $identifier = $this->getOutstandingPaymentIdentifier($membership['id'], $membership['end_date']);
+    $identifier_pattern = $this->getOutstandingPaymentIdentifier('%', '%');
+
+    // sum up all current payments
     $amount = CRM_Core_DAO::singleValueQuery("
       SELECT SUM(payment.total_amount)
       FROM civicrm_contribution payment
@@ -260,8 +264,16 @@ class CRM_Membership_MembershipFeeLogic {
       WHERE cp.membership_id = {$membership_id}
         AND payment.contribution_status_id IN ({$this->parameters['contribution_status']})
         AND payment.financial_type_id IN ({$contribution_type_id})
+        AND payment.trxn_id NOT LIKE '{$identifier_pattern}'
         AND DATE(payment.receive_date) >= DATE('{$from_date}')
         AND DATE(payment.receive_date) <= DATE('{$to_date}')");
+
+    // add the outstanding payment contribution if found
+    $amount += CRM_Core_DAO::singleValueQuery("
+      SELECT total_amount
+      FROM civicrm_contribution
+      WHERE trxn_id = '{$identifier}'
+        AND contribution_status_id IN ({$this->parameters['contribution_status']})");
 
     return $amount;
   }
@@ -293,24 +305,42 @@ class CRM_Membership_MembershipFeeLogic {
   }
 
   /**
+   * Generate an outstanding membership payment identifier
+   *
+   * @param $membership_id  string membership ID value
+   * @param $end_date       string end date of the current period
+   * @return string
+   */
+  public function getOutstandingPaymentIdentifier($membership_id, $end_date) {
+    if ($end_date != '%') {
+      $end_date = date('Ymd', strtotime($end_date));
+    }
+    return "P60M-{$membership_id}-{$end_date}";
+  }
+
+  /**
    * Create a contribution with the missing amount
    * The txrn_id of that contribution is 'P60M-[membership_id]-[end_date]', e.g. 'P60M-1234-20181231'
    */
-  public function updatedMissingFeeContribution($membership_id, $missing_amount) {
+  public function updatedMissingFeeContribution($membership_id, $missing_amount, $dry_run = FALSE) {
     $membership = $this->getMembership($membership_id);
-    $identifier = "P60M-{$membership_id}-" . date('Ymd', strtotime($membership['end_date']));
+    $identifier = $this->getOutstandingPaymentIdentifier($membership_id, $membership['end_date']);
     try {
       $contribution = civicrm_api3('Contribution', 'getsingle', ['trxn_id' => $identifier]);
       if ($contribution['total_amount'] == $missing_amount) {
         $this->log("Contribution {$identifier} found, already has the right amount.", 'debug');
       } else {
         if ($contribution['contribution_status_id'] == 2) {
-          $this->log("Contribution {$identifier} found, will be adjusted.", 'debug');
-          civicrm_api3('Contribution', 'create', [
-              'id'           => $contribution['id'],
-              'total_amount' => $missing_amount,
-          ]);
-          $this->log("Contribution {$identifier} was found and adjusted.", 'debug');
+          if ($dry_run) {
+            $this->log("DRY RUN: Contribution {$identifier} found, would be adjusted.", 'debug');
+          } else {
+            $this->log("Contribution {$identifier} found, will be adjusted.", 'debug');
+            civicrm_api3('Contribution', 'create', [
+                'id'           => $contribution['id'],
+                'total_amount' => $missing_amount,
+            ]);
+            $this->log("Contribution {$identifier} was found and adjusted.", 'debug');
+          }
         }
       }
     } catch (Exception $ex) {
@@ -318,15 +348,22 @@ class CRM_Membership_MembershipFeeLogic {
       $this->log("Contribution {$identifier} doesn't exist yet.", 'debug');
       $mtype = $this->getMembershipType($membership['membership_type_id']);
       $contact_id = $this->getPayingContactID($membership_id);
-      civicrm_api3('Contribution', 'create', [
-          'contact_id'             => $contact_id,
-          'total_amount'           => $missing_amount,
-          'financial_type_id'      => $mtype['contribution_type_id'],
-          'payment_instrument_id'  => $this->parameters['missing_fee_payment_instrument'],
-          'receive_date'           => date('YmdHis'),
-          'contribution_status_id' => 2, // Pending
-          ]);
-      $this->log("Contribution {$identifier} created.", 'debug');
+      if ($dry_run) {
+        $this->log("DRY RUN: Contribution {$identifier} would be created.", 'debug');
+      } else {
+        $contribution = civicrm_api3('Contribution', 'create', [
+            'contact_id'             => $contact_id,
+            'total_amount'           => $missing_amount,
+            'financial_type_id'      => $mtype['contribution_type_id'],
+            'payment_instrument_id'  => $this->parameters['missing_fee_payment_instrument'],
+            'receive_date'           => date('YmdHis'),
+            'contribution_status_id' => 2, // Pending
+        ]);
+        $this->log("Contribution {$identifier} created.", 'debug');
+
+        // connect to membership
+        CRM_Core_DAO::executeQuery("INSERT IGNORE INTO civicrm_membership_payment (contribution_id,membership_id) VALUES ({$contribution['id']}, {$membership_id});");
+      }
     }
   }
 
@@ -363,6 +400,35 @@ class CRM_Membership_MembershipFeeLogic {
     }
 
     return 0.00;
+  }
+
+  /**
+   * Extend the membership by one period
+   *
+   * @param $membership_id integer membership ID
+   * @param $dry_run       bool    set TRUE to only log changes, but not execute them
+   */
+  public function extendMembership($membership_id, $dry_run = FALSE) {
+    $membership = $this->getMembership($membership_id);
+    $mtype = $this->getMembershipType($membership['membership_type_id']);
+
+    // extend membership
+    $current_end_date = strtotime($membership['end_date']);
+    $next_end_date = strtotime("+{$mtype['duration_interval']} {$mtype['duration_unit']}", $current_end_date);
+    $next_end_date = $this->alignDate($next_end_date, TRUE);
+
+    if ($dry_run) {
+      $this->log("Would extend membership [{$membership_id}] until {$next_end_date}");
+    } else {
+      civicrm_api3('Membership', 'create', [
+          'id'       => $membership_id,
+          'end_date' => $next_end_date
+      ]);
+      $this->log("Extended membership [{$membership_id}] until {$next_end_date}");
+
+      // add activity
+      // TODO: add activity
+    }
   }
 
   /**

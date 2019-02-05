@@ -66,11 +66,11 @@ class MembershipFeeLogicTest extends MembershipTestBase  {
    *
    * @param $logic            CRM_Membership_MembershipFeeLogic contains the base parameters
    * @param $expected_amount  string annual amount
-   * @param $start_date       string start date
    * @param $annual_amount    string annual amount
    * @param $changes          array changes: [[date, from_amount, to_amount]]
    *
    * @return array $membership
+   * @throws Exception
    */
   public function _testCalculateExpectedAmount($logic, $membership_data, $expected_amount, $annual_amount, $changes = []) {
     if (!empty($start_date)) {

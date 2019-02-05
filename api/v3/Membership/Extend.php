@@ -17,8 +17,11 @@
 /**
  * This job will check all memberships for new membership payments. It will
  * look for payments for each cycle and stop if one is missing. It will, however
- * not go back beyond the last payment 
- * 
+ * not go back beyond the last payment
+ *
+ * CAUTION: This job does not take into account the (new) configured custom fields,
+ *           or the changed fees
+ *
  * @param membership_type_ids      only check memberships with the given membership types
  *                           default is ALL
  * @param precision        precision in which to accept membership payments

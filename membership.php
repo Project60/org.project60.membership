@@ -194,11 +194,12 @@ function membership_civicrm_pre($op, $objectName, $id, &$params) {
  */
 function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   if ($objectName == 'Membership') {
-    $logic = CRM_Membership_PaidByLogic::getSingleton();
     if (!empty($objectId) && $op == 'create') {
+      $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->createMembershipUpdatePOST($objectId, $objectRef);
       $logic->membershipUpdatePOST($objectId, $objectRef);
     } elseif (!empty($objectId) && $op == 'edit') {
+      $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->membershipUpdatePOST($objectId, $objectRef);
     }
   }

@@ -569,15 +569,16 @@ class CRM_Membership_PaidByLogic
    */
   public function membershipUpdatePre($membership_id, &$update) {
     // simply store the update params on the stack, will be evaluated in membershipUpdatePOST
-    $update['membership_id'] = $membership_id; // just to be on the save side :)
-    array_push($this->monitoring_stack, $update);
+    $membershipParams = $update;
+    $membershipParams['membership_id'] = $membership_id; // just to be on the save side :)
+    array_push($this->monitoring_stack, $membershipParams);
 
     // Check whether we have need to reset the end date after we have done a renewal.
     // Read the explanation at the variable declaration of $renewed_memberships of this class.
     if (isset($this->renewed_memberships[$membership_id])) {
-      if (isset($update['end_date'])) {
+      if (isset($membershipParams['end_date'])) {
         // Create a replament for the status messages.
-        $formattedOriginalEndDate = CRM_Utils_Date::customFormat($update['end_date'], '%B %E%f, %Y');
+        $formattedOriginalEndDate = CRM_Utils_Date::customFormat($membershipParams['end_date'], '%B %E%f, %Y');
         $formattedNewEndDate = CRM_Utils_Date::customFormat($this->renewed_memberships[$membership_id]['end_date'],'%B %E%f, %Y');
         // Retrieve displayNamne
         $displayName = CRM_Core_DAO::singleValueQuery("

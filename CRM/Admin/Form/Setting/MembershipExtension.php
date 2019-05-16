@@ -23,6 +23,8 @@ use CRM_Membership_ExtensionUtil as E;
  */
 class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting {
 
+  const CUSTOM_MEMBERSHIP_TOKEN_COUNT = 5;
+
   protected $_eligibleCustomGroups = NULL;
 
   public function buildQuickForm( ) {
@@ -179,6 +181,18 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
         $this->getPaidByOptions(),
         array('class' => 'crm-select2'));
 
+
+    // add extra tokens
+    $this->assign('custom_token_indices', range(1, self::CUSTOM_MEMBERSHIP_TOKEN_COUNT));
+    $all_custom_fields = $this->getAllCustomFields();
+    for ($i = 1; $i <= self::CUSTOM_MEMBERSHIP_TOKEN_COUNT; $i++) {
+      $this->addElement('select',
+          "custom_token_{$i}",
+          E::ts("Additional Token %1", [1 => $i]),
+          $all_custom_fields,
+          array('class' => 'crm-select2'));
+    }
+
     parent::buildQuickForm();
   }
 
@@ -232,6 +246,12 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $settings->setSetting('payment_type_field_mapping', $values['payment_type_field_mapping'], FALSE);
     $settings->setSetting('membership_cancellation_date_field', $values['membership_cancellation_date_field'], FALSE);
     $settings->setSetting('membership_cancellation_reason_field', $values['membership_cancellation_reason_field'], FALSE);
+
+    // set custom tokens
+    for ($i = 1; $i <= self::CUSTOM_MEMBERSHIP_TOKEN_COUNT; $i++) {
+      $key = "custom_token_{$i}";
+      $settings->setSetting($key, $values[$key], FALSE);
+    }
 
     if (is_array($values['live_statuses']) && !empty($values['live_statuses'])) {
       $settings->setSetting('live_statuses', $values['live_statuses'], FALSE);
@@ -402,6 +422,35 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
           'is_active'       => 1,
           'is_searchable'   => 1,
           'is_view'         => $read_only ? '1' : '0',
+          'return'          => 'id,label'));
+      foreach ($custom_fields['values'] as $custom_field) {
+        $options[$custom_field['id']] = $custom_field['label'];
+      }
+    }
+
+    return $options;
+  }
+
+
+  /**
+   * Get all membership custom fields
+   *
+   * @return array options
+   */
+  protected function getAllCustomFields() {
+    $options = array('' => E::ts('None'));
+    $custom_group_ids = $this->getEligibleCustomGroups();
+
+    // find all custom fields that are
+    //  1) attached to a membership
+    //  2) of type money
+    //  3) indexed
+
+    // if there is eligible groups, look for fields
+    if (!empty($custom_group_ids)) {
+      $custom_fields = civicrm_api3('CustomField', 'get', array(
+          'custom_group_id' => array('IN' => $custom_group_ids),
+          'is_active'       => 1,
           'return'          => 'id,label'));
       foreach ($custom_fields['values'] as $custom_field) {
         $options[$custom_field['id']] = $custom_field['label'];

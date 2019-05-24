@@ -132,6 +132,19 @@
        </table>
        <br/>
      </div>
+
+     <div class="crm-block crm-form-block crm-form-title-here-form-block">
+       <h3>{ts domain="org.project60.membership"}Additional Tokens{/ts} <a onclick='CRM.help("{ts domain="org.project60.membership"}Additional Tokens{/ts}", {literal}{"id":"id-additional-tokens","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></h3>
+       <table>
+         {foreach from=$custom_token_indices item=custom_token_index}
+         {capture assign=field_key}custom_token_{$custom_token_index}{/capture}
+         <tr class="p60-additional-tokens">
+           <td>{$form.$field_key.label}</td>
+           <td>{$form.$field_key.html}</td>
+         </tr>
+         {/foreach}
+       </table>
+       <br/>
    </div>
 </div>
 

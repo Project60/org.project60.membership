@@ -126,3 +126,7 @@
 {htxt id='id-update-now'}
   <p>{ts domain='org.project60.membership'}If you check this box, all your derived fields will be re-calculated based on the currently linked recurring payment.{/ts}</p>
 {/htxt}
+
+{htxt id='id-additional-tokens'}
+  <p>{ts domain='org.project60.membership'}You can define arbitrary membership custom fields to be added to the membership token list.{/ts}</p>
+{/htxt}

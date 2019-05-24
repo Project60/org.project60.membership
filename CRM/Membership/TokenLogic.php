@@ -26,6 +26,7 @@ class CRM_Membership_TokenLogic {
   protected static $singleton = NULL;
 
   protected $_membershipTypes = NULL;
+  protected $_customTokenFields = NULL;
 
 
   public static function getSingleton() {
@@ -68,6 +69,13 @@ class CRM_Membership_TokenLogic {
       if ($settings->getSetting($custom_token . '_field')) {
         $active_custom_tokens[$custom_token] = $custom_token_name;
       }
+    }
+
+    // add user-defined custom tokens
+    $custom_token_fields = $this->getCustomTokenFields();
+    foreach ($custom_token_fields as $custom_token_field_info) {
+      $custom_token_name = "custom_{$custom_token_field_info['column_name']}";
+      $active_custom_tokens[$custom_token_name] = $custom_token_field_info['label'];
     }
 
     return $active_custom_tokens;
@@ -240,6 +248,7 @@ class CRM_Membership_TokenLogic {
       }
     }
 
+    // add internal tokens
     if ($custom_tokens_used) {
       $settings = CRM_Membership_Settings::getSettings();
       foreach ($custom_tokens_used as $custom_token_used) {
@@ -259,6 +268,14 @@ class CRM_Membership_TokenLogic {
           }
         }
       }
+    }
+
+    // add custom tokens
+    $custom_token_fields = $this->getCustomTokenFields();
+    foreach ($custom_token_fields as $custom_token_field_info) {
+      $custom_token_name = "custom_{$custom_token_field_info['column_name']}";
+      $joins[] = "LEFT JOIN {$custom_token_field_info['table_name']} AS {$custom_token_name} ON {$custom_token_name}.entity_id = c2m.membership_id";
+      $selects[] = "{$custom_token_name}.{$custom_token_field_info['column_name']} AS {$custom_token_name}";
     }
 
     $select_list = implode(",\n      ", $selects);
@@ -306,6 +323,34 @@ class CRM_Membership_TokenLogic {
     } else {
       return $token_value;
     }
+  }
+
+  /**
+   * Get a list of the fields selected to become custom tokens
+   *
+   * @return array list of CustomField metadata
+   */
+  public function getCustomTokenFields() {
+    if ($this->_customTokenFields === NULL) {
+      $this->_customTokenFields = [];
+
+      // first: get from the settings
+      $custom_field_ids = [];
+      $settings = CRM_Membership_Settings::getSettings();
+      for ($i = 1; $i <= CRM_Admin_Form_Setting_MembershipExtension::CUSTOM_MEMBERSHIP_TOKEN_COUNT; $i++) {
+        $potential_field_id = (int) $settings->getSetting("custom_token_{$i}");
+        if ($potential_field_id) {
+          $custom_field_ids[] = $potential_field_id;
+        }
+      }
+
+      // now load the fields
+      $settings->cacheFields($custom_field_ids);
+      foreach ($custom_field_ids as $custom_field_id) {
+        $this->_customTokenFields[] = $settings->getFieldInfo($custom_field_id);
+      }
+    }
+    return $this->_customTokenFields;
   }
 
 }

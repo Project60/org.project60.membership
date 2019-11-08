@@ -458,7 +458,7 @@ class CRM_Membership_MembershipFeeLogic {
   /**
    * @param string $level
    */
-  protected function log($message, $level = 'info') {
+  public function log($message, $level = 'info') {
     static $levels = ['debug' => 10, 'info' => 20, 'error' => 30, 'off' => 100];
     $req_level = CRM_Utils_Array::value($level, $levels, 10);
     $min_level = $this->parameters['log_level'];

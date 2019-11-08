@@ -24,9 +24,26 @@ function civicrm_api3_membership_process($params) {
   $logic = new CRM_Membership_MembershipFeeLogic($params);
 
   // get membership IDs
-  if (!empty($params['membership_id'])) {
-
+  if (empty($params['membership_id'])) {
+    $membership_ids = NULL;
+  } else {
+    $membership_ids = explode(',', $params['membership_id']);
   }
+
+  // TODO: find IDs if not given
+
+  // run membership IDs
+  $processor = new CRM_Membership_MembershipFeeLogic($params);
+
+  foreach ($membership_ids as $membership_id_raw) {
+    $membership_id = (int) $membership_id_raw;
+    if ($membership_id) {
+      $processor->process($membership_id, !empty($params['dry_run']));
+    } else {
+      $processor->log("Skipped illegal membership ID '{$membership_id_raw}'");
+    }
+  }
+
 
 
 }

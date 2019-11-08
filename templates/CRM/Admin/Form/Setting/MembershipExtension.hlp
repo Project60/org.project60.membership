@@ -14,6 +14,11 @@
 +-------------------------------------------------------*}
 
 
+{htxt id='id-sync-timeframe'}
+  <p>{ts domain='org.project60.membership'}This defines which contributions will be considered for synchronisation by defining a time frame. This is optional{/ts}</p>
+  <p>{ts domain='org.project60.membership'}You can enter any valid <code>strtotime()</code> string like "2017-01-01" or "now - 2 days". You can find a documentation <a href="https://www.php.net/manual/en/datetime.formats.php">here</a>{/ts}</p>
+{/htxt}
+
 {htxt id='id-sync-range'}
   <p>{ts domain='org.project60.membership'}If a membership payment is received within this number of days before the current starting date, the start and the join date will be extended to the payment's received date.{/ts}</p>
 {/htxt}

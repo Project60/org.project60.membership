@@ -163,6 +163,10 @@
       <h3>{ts domain="org.project60.membership"}General{/ts}</h3>
       <table>
         <tr>
+          <td>{$form.sync_minimum_date.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Sync Timeframe{/ts}", {literal}{"id":"id-sync-timeframe","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.sync_minimum_date.html}&nbsp;-&nbsp;{$form.sync_maximum_date.html}</td>
+        </tr>
+        <tr>
           <td>{$form.sync_range.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Backward Horizon{/ts}", {literal}{"id":"id-sync-range","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.sync_range.html}</td>
         </tr>
@@ -190,7 +194,7 @@
     </div>
 
     <div class="crm-block crm-form-block crm-form-title-here-form-block">
-      <h3>{ts domain="org.project60.membership""}Financial Type Mapping{/ts}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Financial Type Mapping{/ts}", {literal}{"id":"id-mapping","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership""}Help{/ts}" class="helpicon">&nbsp;</a></h3>
+      <h3>{ts domain="org.project60.membership"}Financial Type Mapping{/ts}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Financial Type Mapping{/ts}", {literal}{"id":"id-mapping","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership""}Help{/ts}" class="helpicon">&nbsp;</a></h3>
       <table>
 {foreach from=$financial_types item=financial_type_name key=financial_type_id}
         {capture assign=itemid}syncmap_{$financial_type_id}{/capture}

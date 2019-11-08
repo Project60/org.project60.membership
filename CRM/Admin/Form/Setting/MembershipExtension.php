@@ -84,6 +84,13 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
                       $membership_statuses,
                       array('multiple' => "multiple", 'class' => 'crm-select2'));
 
+    // add from/to date restrictions for syncing
+    $this->addElement('text',
+        "sync_minimum_date",
+        E::ts("Only Synchronise Between"));
+    $this->addElement('text',
+        "sync_maximum_date",
+        E::ts("Only Synchronise Between"));
 
     // add membership number integration fields
     $this->addElement('select',
@@ -234,6 +241,8 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $settings->setSetting('sync_mapping',    $sync_mapping, FALSE);
     $settings->setSetting('sync_range',      $values['sync_range'], FALSE);
     $settings->setSetting('grace_period',    $values['grace_period'], FALSE);
+    $settings->setSetting('sync_minimum_date', $values['sync_minimum_date'], FALSE);
+    $settings->setSetting('sync_maximum_date', $values['sync_maximum_date'], FALSE);
     $settings->setSetting('membership_number_field',  $values['membership_number_field'], FALSE);
     $settings->setSetting('membership_number_generator',  $values['membership_number_generator'], FALSE);
     $settings->setSetting('membership_number_show', CRM_Utils_Array::value('membership_number_show', $values), FALSE);
@@ -265,11 +274,19 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     }
     $settings->write();
 
+    // issue warnings for strtotime fields
+    $settings->getStrtotimeDate('sync_minimum_date', TRUE);
+    $settings->getStrtotimeDate('sync_maximum_date', TRUE);
+
+
     // update fields if requested
     if (!empty($values['synchronise_payment_now'])) {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->updateDerivedFields();
     }
+
+    // stay on this page
+    CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/admin/setting/membership', 'reset=1'));
   }
 
 

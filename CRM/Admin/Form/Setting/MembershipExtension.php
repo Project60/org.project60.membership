@@ -181,8 +181,6 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
         $this->getPaidByOptions(),
         array('class' => 'crm-select2'));
 
-<<<<<<< HEAD
-
     // add extra tokens
     $this->assign('custom_token_indices', range(1, self::CUSTOM_MEMBERSHIP_TOKEN_COUNT));
     $all_custom_fields = $this->getAllCustomFields();
@@ -193,11 +191,10 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
           $all_custom_fields,
           array('class' => 'crm-select2'));
     }
-=======
+
     $this->addElement('checkbox',
         "record_fee_updates",
         E::ts("Record annual fee changes"));
->>>>>>> dev_28
 
     parent::buildQuickForm();
   }

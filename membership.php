@@ -168,6 +168,7 @@ function membership_civicrm_searchColumns( $objectName, &$headers, &$rows, &$sel
  * @access public
  */
 function membership_civicrm_pre($op, $objectName, $id, &$params) {
+  //CRM_Core_Error::debug_log_message("civicrm_pre $op, $objectName, $id");
   if ($objectName == 'Membership') {
     // generate new membership number when new membership is created
     if ($op == 'create' && empty($id)) {
@@ -179,11 +180,21 @@ function membership_civicrm_pre($op, $objectName, $id, &$params) {
     if (!empty($id) && ($op == 'create' || $op == 'edit')) {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->membershipUpdatePre($id, $params);
+
+      $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
+      $fee_logic->membershipFeeUpdatePRE($id);
     }
-  }
-  if ($objectName == 'Contribution' && $op == 'edit') {
+
+  } elseif ($objectName == 'Contribution' && $op == 'edit') {
     $logic = CRM_Membership_PaidByLogic::getSingleton();
     $logic->contributionUpdatePRE($id, $params);
+
+  } elseif ($objectName == 'ContributionRecur') {
+    // catch if a membership is set to a certain status
+    if (!empty($id) && ($op == 'create' || $op == 'edit')) {
+      $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
+      $fee_logic->membershipFeeUpdatePRE(NULL, $id);
+    }
   }
 }
 
@@ -193,6 +204,7 @@ function membership_civicrm_pre($op, $objectName, $id, &$params) {
  * @access public
  */
 function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+  //CRM_Core_Error::debug_log_message("civicrm_post $op, $objectName, $objectId");
   if ($objectName == 'Membership') {
     if (!empty($objectId) && $op == 'create') {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
@@ -201,6 +213,9 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
     } elseif (!empty($objectId) && $op == 'edit') {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->membershipUpdatePOST($objectId, $objectRef);
+
+      $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
+      $fee_logic->membershipFeeUpdatePOST($objectId);
     }
   }
   if ($objectName == 'MembershipPayment' && $op == 'create') {
@@ -227,10 +242,26 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
         foreach ($membership_ids as $membership_id) {
           $logic->updateDerivedFields($objectId);
         }
+        // monitor amount
+        $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
+        $fee_logic->membershipFeeUpdatePOST(NULL, $objectId);
         break;
       default:
         // do nothing
     }
+  }
+}
+
+/**
+ * CiviCRM Custom (post) Hook
+ *
+ * @access public
+ */
+function membership_civicrm_custom( $op, $groupID, $entityID, &$params ) {
+  //CRM_Core_Error::debug_log_message("civicrm_custom $op, $groupID, $entityID ");// . json_encode($params));
+  if ($op == 'create' || $op == 'edit' ) {
+    $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
+    $fee_logic->membershipFeeUpdateWrapup($groupID, $entityID, $params);
   }
 }
 

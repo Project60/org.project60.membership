@@ -181,6 +181,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
         $this->getPaidByOptions(),
         array('class' => 'crm-select2'));
 
+<<<<<<< HEAD
 
     // add extra tokens
     $this->assign('custom_token_indices', range(1, self::CUSTOM_MEMBERSHIP_TOKEN_COUNT));
@@ -192,6 +193,11 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
           $all_custom_fields,
           array('class' => 'crm-select2'));
     }
+=======
+    $this->addElement('checkbox',
+        "record_fee_updates",
+        E::ts("Record annual fee changes"));
+>>>>>>> dev_28
 
     parent::buildQuickForm();
   }
@@ -234,8 +240,9 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $settings->setSetting('membership_number_field',  $values['membership_number_field'], FALSE);
     $settings->setSetting('membership_number_generator',  $values['membership_number_generator'], FALSE);
     $settings->setSetting('membership_number_show', CRM_Utils_Array::value('membership_number_show', $values), FALSE);
-    $settings->setSetting('hide_auto_renewal', CRM_Utils_Array::value('membership_number_show', $values), FALSE);
+    $settings->setSetting('hide_auto_renewal', CRM_Utils_Array::value('hide_auto_renewal', $values), FALSE);
     $settings->setSetting('paid_via_field',  $values['paid_via_field'], FALSE);
+    $settings->setSetting('record_fee_updates', CRM_Utils_Array::value('record_fee_updates', $values), FALSE);
     $settings->setSetting('update_membership_status',  CRM_Utils_Array::value('update_membership_status', $values), FALSE);
     $settings->setSetting('paid_by_field',   $values['paid_by_field'], FALSE);
     $settings->setSetting('annual_amount_field',        $values['annual_amount_field'], FALSE);

@@ -18,6 +18,8 @@ require_once 'CRM/Core/Page.php';
 
 class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
 
+  const VIEW_CUTOFF = 2000;
+
   function run() {
     $settings = CRM_Membership_Settings::getSettings();
     $mapping  = $settings->getSyncMapping();
@@ -106,7 +108,7 @@ class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
       );
 
       // make sure, we don't run into memory issues:
-      if (count($data_list) >= 500) break;
+      if (count($data_list) >= self::VIEW_CUTOFF) break;
     }
     $results->free();
 

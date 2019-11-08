@@ -18,27 +18,19 @@
  * this job will connect all payments of a certain financial_type with the
  * corresponding membership.
  *
- * @param rebuild  if set to true or 1, the ill assigend contributions with the given financial type
- *                   will be detached from the membership and rematched wrt the given matching.
- *					 USE WITH CAUTION!
  * @return array API result
  */
 function civicrm_api3_membership_payment_synchronize($params) {
   $settings = CRM_Membership_Settings::getSettings();
   $mapping  = $settings->getSyncMapping();
 
-  // NEXT: read the 'rangeback' parameter
-  if (empty($params['rangeback'])) {
-  	$rangeback = (int) $settings->getSyncRange();
-  } else {
-  	$rangeback = (int) $params['rangeback'];
+  // pass override params
+  $settings_override = [];
+  if (!empty($params['rangeback'])) {
+    $settings_override['sync_range'] = (int) $params['rangeback'];
   }
-
-  // NEXT: read the 'gracedays' parameter
-  if (empty($params['gracedays'])) {
-    $gracedays = (int) $settings->getSyncGracePeriod();
-  } else {
-    $gracedays = (int) $params['gracedays'];
+  if (!empty($params['gracedays'])) {
+    $settings_override['grace_period'] = (int) $params['gracedays'];
   }
 
   // check if contribution_ids are given
@@ -68,7 +60,7 @@ function civicrm_api3_membership_payment_synchronize($params) {
   // if required, detach all ill assigned memberships for the given financial types first
   if (!empty($params['rebuild']) && ($params['rebuild']==1 || strtolower($params['rebuild'])=='true')) {
   	foreach ($mapping as $financial_type_id => $membership_type_ids) {
-      CRM_Membership_SynchroniseLogic::resetPayments($financial_type_id, $membership_type_ids, $contribution_ids);
+      CRM_Membership_SynchroniseLogic::resetPayments($financial_type_id, $membership_type_ids,  $contribution_ids);
   	}
   }
 
@@ -76,7 +68,7 @@ function civicrm_api3_membership_payment_synchronize($params) {
   $results = array('mapped'=>array(), 'no_membership' => array(), 'ambiguous'=>array(), 'errors'=>array());
   foreach ($mapping as $financial_type_id => $membership_type_ids) {
     if (empty($membership_type_ids)) continue;
-  	$new_results = CRM_Membership_SynchroniseLogic::synchronizePayments($financial_type_id, $membership_type_ids, $rangeback, $gracedays, $contribution_ids);
+  	$new_results = CRM_Membership_SynchroniseLogic::synchronizePayments($financial_type_id, $membership_type_ids,$settings_override, $contribution_ids);
   	foreach ($new_results as $key => $new_values)
   		$results[$key] += $new_values;
   }
@@ -109,7 +101,7 @@ function _civicrm_api3_membership_payment_synchronize_spec(&$params) {
     'api.required' => 0,
     'type'         => CRM_Utils_Type::T_INT,
     'title'        => 'Rebuild Mapping',
-    'description'  => 'Caution: Will first remove the existing assignments!',
+    'description'  => 'Caution: Will first remove all existing assignments!',
     );
   $params['contribution_ids'] = array(
     'name'         => 'contribution_ids',

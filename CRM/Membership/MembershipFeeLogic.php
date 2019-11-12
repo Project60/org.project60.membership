@@ -64,6 +64,10 @@ class CRM_Membership_MembershipFeeLogic {
    *  based on the fees paid
    *
    * @param $membership_id
+   * @return string action: extended - membership was extended
+   *                        paid     - membership was paid for, but not extended due to settings
+   *                        invoiced - membership was not fully paid for, and an invoice contribution was created
+   *                        not_paid - membership was not fully paid for
    */
   public function process($membership_id, $dry_run = FALSE) {
     $this->log("Processing membership [{$membership_id}]", 'debug');
@@ -76,12 +80,18 @@ class CRM_Membership_MembershipFeeLogic {
       // paid enough
       if (!empty($this->parameters['extend_if_paid'])) {
         $this->extendMembership($membership_id, $dry_run);
+        return 'extended';
+      } else {
+        return 'paid';
       }
 
     } else {
       // paid too little
       if (!empty($this->parameters['create_invoice'])) {
         $this->updatedMissingFeeContribution($membership_id, $missing, $dry_run);
+        return 'invoiced';
+      } else {
+        return 'not_paid';
       }
     }
   }

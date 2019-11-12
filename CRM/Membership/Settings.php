@@ -352,4 +352,22 @@ class CRM_Membership_Settings {
     }
     return $mapping;
   }
+
+  /**
+   * Get the last membership ID as processed by the Membership.process API command when used with the 'limit' parameter
+   *
+   * @return int membership ID
+   */
+  public function getLastProcessedMembershipID() {
+    return (int) Civi::settings()->get('p60_membership_last_processed_id');
+  }
+
+  /**
+   * Set the last membership ID processed by the Membership.process API command when used with the 'limit' parameter
+   *
+   * @param $id int membership ID
+   */
+  public function setLastProcessedMembershipID($id) {
+    Civi::settings()->set('p60_membership_last_processed_id', (int) $id);
+  }
 }

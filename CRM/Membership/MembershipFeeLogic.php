@@ -43,6 +43,7 @@ class CRM_Membership_MembershipFeeLogic {
         'extend_if_paid'                 => 0,
         'create_invoice'                 => 0,
         'contribution_status'            => '1',
+        'membership_period_shift'        => -10, // shift the membership period the contribution is assigned to. With -10 a payment made at the end of december would be counted towards the next year
         'missing_fee_grace'              => 0.99,
         'missing_fee_payment_instrument' => 5, // EFT
         'missing_fee_update'             => 1, // YES
@@ -87,6 +88,7 @@ class CRM_Membership_MembershipFeeLogic {
 
     } else {
       // paid too little
+      $this->log("Membership [{$membership_id}] is missing fee amount of: {$missing}");
       if (!empty($this->parameters['create_invoice'])) {
         $this->updatedMissingFeeContribution($membership_id, $missing, $dry_run);
         return 'invoiced';
@@ -256,15 +258,11 @@ class CRM_Membership_MembershipFeeLogic {
 
     // get contribution type
     $membership = $this->getMembership($membership_id);
-    $mtype = $this->getMembershipType($membership['membership_type_id']);
-    $contribution_type_id = $mtype['contribution_type_id'];
-    if (empty($contribution_type_id)) {
-      $contribution_type_id = 2; // membership fee
-    }
 
     // get the payment identifier stuff
     $identifier = $this->getOutstandingPaymentIdentifier($membership['id'], $membership['end_date']);
     $identifier_pattern = $this->getOutstandingPaymentIdentifier('%', '%');
+    $assignment_shift_days = (int) $this->parameters['membership_period_shift'];
 
     // sum up all current payments
     $amount_sql = "
@@ -273,11 +271,10 @@ class CRM_Membership_MembershipFeeLogic {
       LEFT JOIN civicrm_membership_payment cp ON cp.contribution_id = payment.id
       WHERE cp.membership_id = {$membership_id}
         AND payment.contribution_status_id IN ({$this->parameters['contribution_status']})
-        AND payment.financial_type_id IN ({$contribution_type_id})
         AND (payment.trxn_id IS NULL OR payment.trxn_id NOT LIKE '{$identifier_pattern}')
-        AND DATE(payment.receive_date) >= DATE('{$from_date}')
-        AND DATE(payment.receive_date) <= DATE('{$to_date}')";
-    //Civi::log()->debug($amount_sql);
+        AND DATE(payment.receive_date) >= (DATE('{$from_date}') + INTERVAL {$assignment_shift_days} DAY)
+        AND DATE(payment.receive_date) <= (DATE('{$to_date}')   + INTERVAL {$assignment_shift_days} DAY)";
+    Civi::log()->debug($amount_sql);
     $amount = CRM_Core_DAO::singleValueQuery($amount_sql);
 
     // add the outstanding payment contribution if found
@@ -430,13 +427,13 @@ class CRM_Membership_MembershipFeeLogic {
     $next_end_date = $this->alignDate($next_end_date, TRUE);
 
     if ($dry_run) {
-      $this->log("Would extend membership [{$membership_id}] of contact [{$membership['contact_id']} until {$next_end_date}");
+      $this->log("Would extend membership [{$membership_id}] of contact [{$membership['contact_id']}] until {$next_end_date}");
     } else {
       civicrm_api3('Membership', 'create', [
           'id'       => $membership_id,
           'end_date' => $next_end_date
       ]);
-      $this->log("Extended membership [{$membership_id}] of contact [{$membership['contact_id']} until {$next_end_date}");
+      $this->log("Extended membership [{$membership_id}] of contact [{$membership['contact_id']}] until {$next_end_date}");
 
       // add activity??
       // TODO: add activity

@@ -207,7 +207,7 @@ class CRM_Membership_MembershipFeeLogic {
     }
 
     // now move forward (or backward) as long as we're in the zone
-    $last_valid = strtotime($date);
+    $last_valid = is_string($date) ? strtotime($date) : $date;
     $frame_target = date($modifier, $last_valid);
     while (TRUE) {
       $candidate = strtotime("{$sign}1 day", $last_valid);
@@ -267,16 +267,18 @@ class CRM_Membership_MembershipFeeLogic {
     $identifier_pattern = $this->getOutstandingPaymentIdentifier('%', '%');
 
     // sum up all current payments
-    $amount = CRM_Core_DAO::singleValueQuery("
+    $amount_sql = "
       SELECT SUM(payment.total_amount)
       FROM civicrm_contribution payment
       LEFT JOIN civicrm_membership_payment cp ON cp.contribution_id = payment.id
       WHERE cp.membership_id = {$membership_id}
         AND payment.contribution_status_id IN ({$this->parameters['contribution_status']})
         AND payment.financial_type_id IN ({$contribution_type_id})
-        AND payment.trxn_id NOT LIKE '{$identifier_pattern}'
+        AND (payment.trxn_id IS NULL OR payment.trxn_id NOT LIKE '{$identifier_pattern}')
         AND DATE(payment.receive_date) >= DATE('{$from_date}')
-        AND DATE(payment.receive_date) <= DATE('{$to_date}')");
+        AND DATE(payment.receive_date) <= DATE('{$to_date}')";
+    //Civi::log()->debug($amount_sql);
+    $amount = CRM_Core_DAO::singleValueQuery($amount_sql);
 
     // add the outstanding payment contribution if found
     $amount += CRM_Core_DAO::singleValueQuery("
@@ -428,15 +430,15 @@ class CRM_Membership_MembershipFeeLogic {
     $next_end_date = $this->alignDate($next_end_date, TRUE);
 
     if ($dry_run) {
-      $this->log("Would extend membership [{$membership_id}] until {$next_end_date}");
+      $this->log("Would extend membership [{$membership_id}] of contact [{$membership['contact_id']} until {$next_end_date}");
     } else {
       civicrm_api3('Membership', 'create', [
           'id'       => $membership_id,
           'end_date' => $next_end_date
       ]);
-      $this->log("Extended membership [{$membership_id}] until {$next_end_date}");
+      $this->log("Extended membership [{$membership_id}] of contact [{$membership['contact_id']} until {$next_end_date}");
 
-      // add activity
+      // add activity??
       // TODO: add activity
     }
   }

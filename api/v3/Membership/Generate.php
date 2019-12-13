@@ -80,6 +80,14 @@ function civicrm_api3_membership_generate($params) {
     $to_date = date('Y-m-d', strtotime($params['to_date']));
   }
 
+  // make sure there is a contact ID set
+  $userContactID = CRM_Core_Session::getLoggedInContactID();
+  if (empty($userContactID)) {
+    // TODO: have a fallback setting for user
+    $session = CRM_Core_Session::singleton();
+    $session->set('userID', 47218);
+  }
+
   // compile parameters
   $parameters = [
       'dry_run' => !empty($params['dry_run']),

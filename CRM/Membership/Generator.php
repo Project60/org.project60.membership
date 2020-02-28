@@ -31,15 +31,8 @@ class CRM_Membership_Generator {
    * @return array API3 result
    */
   public static function generateFeeUpdateActivities($from_date, $to_date, $params) {
+    Civi::log()->debug("Calling generateFeeUpdateActivities({$from_date}-{$to_date}), params: " . json_encode($params));
     $settings = CRM_Membership_Settings::getSettings();
-
-    // set default crunch_limit
-    //  (minimum time between changes so they would be considered a real update, and not just an error and a correction)
-    if (isset($params['crunch_limit'])) {
-      $crunch_limit = "+ {$params['crunch_limit']}";
-    } else {
-      $crunch_limit = "+ 5 days";
-    }
 
     // check if it's turned on
     $fields = $settings->getFields(['annual_amount_field']);
@@ -67,23 +60,36 @@ class CRM_Membership_Generator {
     Civi::log()->debug(sprintf("Main query took %.2fs", (microtime(true)-$timestamp)));
 
     // processing loop:
-    $records_written  = 0;
-    $membership_id    = NULL;
-    $last_fee_amount  = NULL;
-    $last_timestamp   = NULL;
-    $fee_changes      = [];
+    $records_written     = 0;
+    $memberships_written = -1;
+    $membership_limit    = empty($params['limit']) ? PHP_INT_MAX : (int) $params['limit'];
+    $membership_id       = NULL;
+    $last_fee_amount     = NULL;
+    $last_timestamp      = NULL;
+    $fee_data_points     = [];
     while ($event->fetch()) {
+      // ignore zero fee events
+      if (empty($event->annual_fee)) continue;
+
       // first: check if the membership has changed:
       if ($membership_id != $event->membership_id) {
         // new case: first write out the collected data of the last one:
-        $records_written += self::writeFeeUpdateRecords($membership_id, $fee_changes, $params);
+        $new_records_written = self::writeFeeUpdateRecords($membership_id, $fee_data_points, $params);
+        $records_written += $new_records_written;
+        if ($new_records_written > 0) {
+          $memberships_written += 1;
+        }
 
         // then: reset case and move on
         $membership_id   = $event->membership_id;
         $last_fee_amount = $event->annual_fee;
-        $last_timestamp  = strtotime($event->log_date);
-        $fee_changes     = [];
-        continue;
+        $fee_data_points = [];
+
+        if ($memberships_written >= $membership_limit) {
+          break;
+        } else {
+          continue;
+        }
       }
 
       // record changes
@@ -91,12 +97,7 @@ class CRM_Membership_Generator {
       if ($last_fee_amount != $new_fee_amount) {
         // this is a change event
         $new_timestamp  = strtotime($event->log_date);
-
-        // see if this is more than 'crunch_limit' after the last record
-        if ($new_timestamp > strtotime($crunch_limit, $last_timestamp)) {
-          // it's far enough apart -> attach record
-          $fee_changes[] = [$new_timestamp, $new_fee_amount];
-        }
+        $fee_data_points[] = [$new_timestamp, $new_fee_amount];
 
         // update stats
         $last_timestamp  = $new_timestamp;
@@ -105,7 +106,7 @@ class CRM_Membership_Generator {
     }
 
     // if we get here, that was the last line:
-    $records_written += self::writeFeeUpdateRecords($membership_id, $fee_changes, $params);
+    $records_written += self::writeFeeUpdateRecords($membership_id, $fee_data_points, $params);
 
     return civicrm_api3_create_success("Written {$records_written} change records.");
   }
@@ -114,25 +115,38 @@ class CRM_Membership_Generator {
   /**
    * Extract and write out the change events
    *
-   * @param $membership_id integer membership ID
-   * @param $fee_records   array   list of fee change events
-   * @param $params        array   configuration
+   * @param $membership_id   integer membership ID
+   * @param $fee_data_points array   list of fee data points
+   * @param $params          array   configuration
    * @return int number of records written
    */
-  protected static function writeFeeUpdateRecords($membership_id, $fee_records, $params) {
+  protected static function writeFeeUpdateRecords($membership_id, $fee_data_points, $params) {
     $change_counter = 0;
     $membership_id  = (int) $membership_id;
-    if (empty($membership_id) || empty($fee_records)) {
+    if (empty($membership_id) || count($fee_data_points) < 2) {
       return 0;
     }
 
     // init the logic
+    Civi::log()->debug("Fee data points [{$membership_id}]: " . json_encode($fee_data_points));
     $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
     $contact_id = CRM_Core_DAO::singleValueQuery("SELECT contact_id FROM civicrm_membership WHERE id = {$membership_id};");
 
+    // if there is a crunch limit set (minimum time between changes so they would be
+    // considered a real update, and not just an error and a correction), do the crunching
+    if (!empty($params['crunch_limit'])) {
+      $crunch_limit             = strtotime("now + {$params['crunch_limit']}") - strtotime("now");
+      $crunched_fee_data_points = self::crunchFeeDataPoints($fee_data_points, $crunch_limit);
+      while (count($crunched_fee_data_points) != count($fee_data_points)) {
+        $fee_data_points          = $crunched_fee_data_points;
+        $crunched_fee_data_points = self::crunchFeeDataPoints($fee_data_points, $crunch_limit);
+      }
+      Civi::log()->debug("Crunched data points [{$membership_id}]: " . json_encode($fee_data_points));
+    }
+
     // go through the changes
     $last_record = NULL;
-    foreach ($fee_records as $fee_record) {
+    foreach ($fee_data_points as $fee_record) {
       if ($last_record === NULL) {
         // this is the first record
         $last_record = $fee_record;
@@ -165,5 +179,40 @@ class CRM_Membership_Generator {
 
     // we're done
     return $change_counter;
+  }
+
+  /**
+   * join data points if they're too closely together
+   *
+   * @param $fee_data_points array data points
+   * @param $crunch_limit    int   strtotime difference
+   * @return array crunched data points
+   */
+  protected static function crunchFeeDataPoints($fee_data_points, $crunch_limit) {
+    if (count($fee_data_points) <= 2) return $fee_data_points;
+
+    // for readability
+    $AMOUNT = 0; $TIMESTAMP = 1;
+
+    $crunched_data_points = [];
+    $current_data_point = $fee_data_points[0];
+    $last_timestamp     = $current_data_point[$TIMESTAMP];
+    for ($i = 1; $i < count($fee_data_points)-1; $i++) {
+      $next_data_point   = $fee_data_points[$i];
+      $next_timestamp = $next_data_point[$TIMESTAMP];
+      if ($next_timestamp <= ($last_timestamp + $crunch_limit)) {
+        // crunch
+        $current_data_point[$AMOUNT] = $next_data_point[$AMOUNT];
+        $last_timestamp = $next_data_point[$TIMESTAMP];
+      } else {
+        // write data point and move to the next one
+        $crunched_data_points[] = $current_data_point;
+        $current_data_point = $next_data_point;
+        $last_timestamp = $current_data_point[$TIMESTAMP];
+      }
+    }
+    $crunched_data_points[] = $current_data_point;
+    $crunched_data_points[] = $fee_data_points[count($fee_data_points)-1];
+    return $crunched_data_points;
   }
 }

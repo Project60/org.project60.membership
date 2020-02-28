@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: CRM/Admin/Form/Setting/MembershipExtension.php
 msgid "Configuration - Project60 Membership Extension"
@@ -120,7 +120,7 @@ msgstr "Beitragserhöhung"
 
 #: CRM/Membership/FeeChangeLogic.php
 msgid "Membership Fee Reduction"
-msgstr "Beitragssenkungn"
+msgstr "Beitragssenkung"
 
 #: CRM/Membership/FeeChangeLogic.php resources/fee_update_custom_group.json
 msgid "Membership Fee Update"

@@ -135,12 +135,22 @@ class CRM_Membership_Generator {
     // if there is a crunch limit set (minimum time between changes so they would be
     // considered a real update, and not just an error and a correction), do the crunching
     if (!empty($params['crunch_limit'])) {
-      $crunch_limit             = strtotime("now + {$params['crunch_limit']}") - strtotime("now");
-      $crunched_fee_data_points = self::crunchFeeDataPoints($fee_data_points, $crunch_limit);
-      while (count($crunched_fee_data_points) != count($fee_data_points)) {
-        $fee_data_points          = $crunched_fee_data_points;
-        $crunched_fee_data_points = self::crunchFeeDataPoints($fee_data_points, $crunch_limit);
+      // simply drop data points that are followed closely followed by the next one
+      $crunch_limit = strtotime("now + {$params['crunch_limit']}") - strtotime("now");
+      $TIMESTAMP = 0;
+      $crunched_data_points = [];
+      $last_data_point = NULL;
+      foreach ($fee_data_points as $next_data_point) {
+        if ($last_data_point) {
+          if ($next_data_point[$TIMESTAMP] < $last_data_point[$TIMESTAMP] + $crunch_limit) {
+            // these are too close together, drop previous one
+            array_pop($crunched_data_points);
+          }
+        }
+        $last_data_point = $next_data_point;
+        array_push($crunched_data_points, $next_data_point);
       }
+      $fee_data_points = $crunched_data_points;
       Civi::log()->debug("Crunched data points [{$membership_id}]: " . json_encode($fee_data_points));
     }
 
@@ -179,40 +189,5 @@ class CRM_Membership_Generator {
 
     // we're done
     return $change_counter;
-  }
-
-  /**
-   * join data points if they're too closely together
-   *
-   * @param $fee_data_points array data points
-   * @param $crunch_limit    int   strtotime difference
-   * @return array crunched data points
-   */
-  protected static function crunchFeeDataPoints($fee_data_points, $crunch_limit) {
-    if (count($fee_data_points) <= 2) return $fee_data_points;
-
-    // for readability
-    $AMOUNT = 0; $TIMESTAMP = 1;
-
-    $crunched_data_points = [];
-    $current_data_point = $fee_data_points[0];
-    $last_timestamp     = $current_data_point[$TIMESTAMP];
-    for ($i = 1; $i < count($fee_data_points)-1; $i++) {
-      $next_data_point   = $fee_data_points[$i];
-      $next_timestamp = $next_data_point[$TIMESTAMP];
-      if ($next_timestamp <= ($last_timestamp + $crunch_limit)) {
-        // crunch
-        $current_data_point[$AMOUNT] = $next_data_point[$AMOUNT];
-        $last_timestamp = $next_data_point[$TIMESTAMP];
-      } else {
-        // write data point and move to the next one
-        $crunched_data_points[] = $current_data_point;
-        $current_data_point = $next_data_point;
-        $last_timestamp = $current_data_point[$TIMESTAMP];
-      }
-    }
-    $crunched_data_points[] = $current_data_point;
-    $crunched_data_points[] = $fee_data_points[count($fee_data_points)-1];
-    return $crunched_data_points;
   }
 }

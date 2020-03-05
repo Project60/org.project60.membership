@@ -48,6 +48,9 @@ class CRM_Membership_Generator {
     }
 
     // generate query
+    $restrict_to_membership_id = (int) CRM_Utils_Array::value('membership_id', $params, 0);
+    $AND_RESTRICT_TO_MEMBERSHIP_IDS = $restrict_to_membership_id ? "AND entity_id IN ({$restrict_to_membership_id})" : "";
+
     $timestamp = microtime(true);
     $event = CRM_Core_DAO::executeQuery("
       SELECT 
@@ -56,6 +59,7 @@ class CRM_Membership_Generator {
        log_date                             AS log_date
       FROM `log_{$annual_fee_field['table_name']}`
       WHERE log_action <> 'Delete'
+      {$AND_RESTRICT_TO_MEMBERSHIP_IDS}
       ORDER BY entity_id ASC, log_date ASC;");
     Civi::log()->debug(sprintf("Main query took %.2fs", (microtime(true)-$timestamp)));
 
@@ -68,6 +72,7 @@ class CRM_Membership_Generator {
     $last_timestamp      = NULL;
     $fee_data_points     = [];
     while ($event->fetch()) {
+      //Civi::log()->debug("Looking at [{$event->membership_id}]: {$event->annual_fee} on {$event->log_date}");
       // ignore zero fee events
       if (empty($event->annual_fee)) continue;
 
@@ -83,7 +88,7 @@ class CRM_Membership_Generator {
         // then: reset case and move on
         $membership_id   = $event->membership_id;
         $last_fee_amount = $event->annual_fee;
-        $fee_data_points = [];
+        $fee_data_points = [[strtotime($event->log_date), $event->annual_fee]];
 
         if ($memberships_written >= $membership_limit) {
           break;
@@ -121,6 +126,7 @@ class CRM_Membership_Generator {
    * @return int number of records written
    */
   protected static function writeFeeUpdateRecords($membership_id, $fee_data_points, $params) {
+    //Civi::log()->debug("Called writeFeeUpdateRecords with [{$membership_id}]: " . json_encode($fee_data_points));
     $change_counter = 0;
     $membership_id  = (int) $membership_id;
     if (empty($membership_id) || count($fee_data_points) < 2) {
@@ -131,13 +137,30 @@ class CRM_Membership_Generator {
     Civi::log()->debug("Fee data points [{$membership_id}]: " . json_encode($fee_data_points));
     $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
     $contact_id = CRM_Core_DAO::singleValueQuery("SELECT contact_id FROM civicrm_membership WHERE id = {$membership_id};");
+    $TIMESTAMP = 0;
+    $AMOUNT = 1;
+
+    // remove leading zero data points
+    $no_leading_zero_data_points = [];
+    foreach ($fee_data_points as $fee_data_point) {
+      if (($fee_data_point[$AMOUNT] == 0)
+          && count($no_leading_zero_data_points) == 0) {
+        Civi::log()->debug("Dropped leading zero data point in [{$membership_id}]");
+        continue;
+      }
+      $no_leading_zero_data_points[] = $fee_data_point;
+    }
+    $fee_data_points = $no_leading_zero_data_points;
+    if (count($fee_data_points) < 2) {
+      return 0;
+    }
+
 
     // if there is a crunch limit set (minimum time between changes so they would be
     // considered a real update, and not just an error and a correction), do the crunching
     if (!empty($params['crunch_limit'])) {
       // simply drop data points that are followed closely followed by the next one
       $crunch_limit = strtotime("now + {$params['crunch_limit']}") - strtotime("now");
-      $TIMESTAMP = 0;
       $crunched_data_points = [];
       $last_data_point = NULL;
       foreach ($fee_data_points as $next_data_point) {

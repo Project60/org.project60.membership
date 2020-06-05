@@ -210,8 +210,18 @@ class CRM_Membership_Settings {
    * @return array with the settings names mapped to the custom field objects
    */
   public function getDerivedFields() {
-    $settings = CRM_Membership_Settings::getSettings();
     $field_keys = array('paid_via_field', 'annual_amount_field', 'installment_amount_field', 'diff_amount_field', 'payment_frequency_field', 'payment_type_field');
+    return $this->getFields($field_keys);
+  }
+
+  /**
+   * Get the fields from the settings (if enabled)
+   *
+   * @param $field_keys list of field keys in settings
+   * @return array with the settings names mapped to the custom field objects
+   */
+  public function getFields($field_keys) {
+    $settings = CRM_Membership_Settings::getSettings();
     $active_field_ids = array();
     foreach ($field_keys as $field_key) {
       $field_id = $settings->getSetting($field_key);

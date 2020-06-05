@@ -86,6 +86,10 @@
            <td>{$form.annual_amount_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Annual Amount Field{/ts}", {literal}{"id":"id-annual-amount-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.annual_amount_field.html}</td>
          </tr>
+         <tr class="p60-record-fee-updates">
+           <td>{$form.record_fee_updates.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Record Fee Updates{/ts}", {literal}{"id":"id-record-fee-updates","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.record_fee_updates.html}</td>
+         </tr>
          <tr>
            <td>{$form.paid_via_end_with_status.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}End with status{/ts}", {literal}{"id":"id-paid-via-end-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.paid_via_end_with_status.html}</td>

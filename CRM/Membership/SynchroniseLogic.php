@@ -23,18 +23,23 @@ class CRM_Membership_SynchroniseLogic {
    * this function will execute the synchronization
    *   for ONE financial_type_id => membership_type_id mapping
    */
-  public static function synchronizePayments($financial_type_id, $membership_type_ids, $rangeback=0, $gracedays=0, $contribution_ids = []) {
-    $settings = CRM_Membership_Settings::getSettings();
-    $results = array('mapped'=>[], 'no_membership' => [], 'ambiguous'=>[], 'errors'=>[]);
-    $membership_type_id_list = implode(',', $membership_type_ids);
-    $membership_status_ids = $settings->getLiveStatusIDs();
-    $membership_status_id_list = implode(',', $membership_status_ids);
+  public static function synchronizePayments($financial_type_id, $membership_type_ids, $settings_override = [], $contribution_ids = []) {
     $contribution_receive_date = [];
     $membership_start_date = [];
     $membership_join_date = [];
-    $eligible_states = "1";   // completed
 
-    // get a mapping of memberships that are linked to recuring-contributions
+    // get settings
+    $settings = CRM_Membership_Settings::getSettings();
+    $results = array('mapped'=>[], 'no_membership' => [], 'ambiguous'=>[], 'errors'=>[]);
+    $membership_type_id_list = implode(',', $membership_type_ids);
+    $eligible_contribution_states = CRM_Utils_Array::value('eligible_contribution_states', $settings_override, [1]);
+    $rangeback = CRM_Utils_Array::value('sync_range', $settings_override, $settings->getSyncRange());
+    $gracedays = CRM_Utils_Array::value('grace_period', $settings_override, $settings->getSyncGracePeriod());
+    $minimum_date = CRM_Utils_Array::value('sync_minimum_date', $settings_override, $settings->getStrtotimeDate('sync_minimum_date'));
+    $maximum_date = CRM_Utils_Array::value('sync_maximum_date', $settings_override, $settings->getStrtotimeDate('sync_maximum_date'));
+    $membership_status_ids = CRM_Utils_Array::value('live_statuses', $settings_override,$settings->getLiveStatusIDs());
+
+    // get a mapping of memberships that are linked to recurring-contributions
     $paid_via_field = $settings->getPaidViaField();
     $paid_via_column = $paid_via_field['column_name'];
     $paid_via_mapping = [];
@@ -50,7 +55,7 @@ class CRM_Membership_SynchroniseLogic {
     }
 
     // include 'paid_by' information
-    $JOIN_PAID_BY_TABLE = $OR_CONTACT_IS_PAID_BY = '';
+    $JOIN_PAID_BY_TABLE = '';
     $paid_by_field = $settings->getPaidByField();
     if ($paid_by_field) {
       // there is a paid_by field set up -> use it
@@ -58,17 +63,18 @@ class CRM_Membership_SynchroniseLogic {
     }
 
     // add contribution restrictions
-    $AND_IN_CONTRIBUTION_ID_LIST = $AND_CONTRIBUTION_MIN_DATE = $AND_CONTRIBUTION_MAX_DATE = '';
+    $AND_IN_CONTRIBUTION_ID_LIST = $AND_CONTRIBUTION_MIN_DATE = $AND_CONTRIBUTION_MAX_DATE = $AND_CONTRIBUTION_STATUS = '';
     if (!empty($contribution_ids)) {
       $contribution_id_list = implode(',', $contribution_ids);
       $AND_IN_CONTRIBUTION_ID_LIST = "AND civicrm_contribution.id IN ({$contribution_id_list})";
     }
-
-    $minimum_date = $settings->getStrtotimeDate('sync_minimum_date');
+    if (!empty($eligible_contribution_states)) {
+      $eligible_contribution_state_list = implode(',', $eligible_contribution_states);
+      $AND_CONTRIBUTION_STATUS = "AND civicrm_contribution.contribution_status_id IN ({$eligible_contribution_state_list})";
+    }
     if ($minimum_date) {
       $AND_CONTRIBUTION_MIN_DATE = "AND DATE(civicrm_contribution.receive_date) >= DATE('{$minimum_date}') ";
     }
-    $maximum_date = $settings->getStrtotimeDate('sync_maximum_date');
     if ($maximum_date) {
       $AND_CONTRIBUTION_MAX_DATE = "AND DATE(civicrm_contribution.receive_date) <= DATE('{$maximum_date}') ";
     }
@@ -84,15 +90,16 @@ class CRM_Membership_SynchroniseLogic {
       civicrm_contribution
     LEFT JOIN
       civicrm_membership_payment ON civicrm_contribution.id = civicrm_membership_payment.contribution_id
-    WHERE civicrm_contribution.financial_type_id = $financial_type_id
-      AND civicrm_contribution.contribution_status_id IN ($eligible_states)
+    WHERE civicrm_contribution.financial_type_id = {$financial_type_id}
       AND civicrm_membership_payment.membership_id IS NULL
+      {$AND_CONTRIBUTION_STATUS}
       {$AND_IN_CONTRIBUTION_ID_LIST}
       {$AND_CONTRIBUTION_MIN_DATE}
       {$AND_CONTRIBUTION_MAX_DATE};";
     Civi::log()->debug($find_new_payments_sql);
     $new_payments = CRM_Core_DAO::executeQuery($find_new_payments_sql);
     while ($new_payments->fetch()) {
+      // FOR EACH PAYMENT: GENERATE A QUERY TO FIND ELIGIBLE MEMBERSHIPS
       $contact_id = $new_payments->contact_id;
       $contribution_id = $new_payments->contribution_id;
       $contribution_recur_id = $new_payments->contribution_recur_id;
@@ -104,9 +111,15 @@ class CRM_Membership_SynchroniseLogic {
         continue;
       }
 
+      // add conditions
+      $OR_CONTACT_IS_PAID_BY = $AND_MEMBERSHIP_STATUS_SELECTION = '';
       if ($paid_by_field) {
         // there is a paid_by field set up -> use it
         $OR_CONTACT_IS_PAID_BY = "OR paid_by_table.{$paid_by_field['column_name']} = {$contact_id}";
+      }
+      if (!empty($membership_status_ids)) {
+        $membership_status_id_list = implode(',', $membership_status_ids);
+        $AND_MEMBERSHIP_STATUS_SELECTION = "AND status_id IN ({$membership_status_id_list})";
       }
 
       // add a subquery for the oldest membership ID
@@ -124,7 +137,7 @@ class CRM_Membership_SynchroniseLogic {
       FROM civicrm_membership
       {$JOIN_PAID_BY_TABLE}
       WHERE (civicrm_membership.contact_id = {$contact_id} {$OR_CONTACT_IS_PAID_BY})
-      AND status_id IN ($membership_status_id_list)
+      {$AND_MEMBERSHIP_STATUS_SELECTION}
       AND membership_type_id IN ($membership_type_id_list)
       AND ((start_date <= (DATE('{$date}') + INTERVAL {$rangeback} DAY)) OR (civicrm_membership.id = {$oldest_membership_id} AND join_date <= (DATE('{$date}') + INTERVAL {$rangeback} DAY)))
       AND ((end_date   >  (DATE('{$date}') - INTERVAL {$gracedays} DAY)) OR (end_date IS NULL))

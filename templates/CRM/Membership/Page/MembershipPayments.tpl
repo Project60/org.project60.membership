@@ -37,10 +37,12 @@
 		</div>
 	</div>
 	</div>
+	<br/>
+	<button type="submit" class="ui-button ui-corner-all ui-widget">
+		<span class="ui-button-icon ui-icon fa-refresh"></span>
+		<span class="ui-button-icon-space"> </span>{ts}Synchronize Now{/ts}
+	</button>
 
-	<span class="crm-button crm-button-type-upload">
-	<input type="submit" value="{ts}Synchronize{/ts}" class="validate form-submit default">
-	</span>
 </form>
 
 

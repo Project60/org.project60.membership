@@ -14,6 +14,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 
+use CRM_Membership_ExtensionUtil as E;
+
 /**
  * Settings logic for membership extension
  */
@@ -73,6 +75,32 @@ class CRM_Membership_Settings {
     if (isset($this->settings_bucket[$key])) {
       return $this->settings_bucket[$key];
     } else {
+      return NULL;
+    }
+  }
+
+  /**
+   * Get a date expression based on strtotime() parsing
+   *
+   * @param $key string settings key
+   * @param $warn boolean is set, an invalid string will cause a warning
+   * @return string|null setting as ISO time string (if set and valid)
+   */
+  public function getStrtotimeDate($key, $warn = FALSE) {
+    $value = $this->getSetting($key);
+    if (empty($value)) {
+      return NULL;
+    }
+
+    // there is a setting -> parse
+    $parsed_time = strtotime($value);
+    if ($parsed_time) {
+      return date('Y-m-d H:i:s', $parsed_time);
+    } else {
+      // this could not be parsed
+      if ($warn) {
+        CRM_Core_Session::setStatus(E::ts("The value '%1' is invalid and will be ignored.", [1 => $value]), E::ts("Invalid expression"), 'warn');
+      }
       return NULL;
     }
   }

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: SystopiaMemberships\n"
-"POT-Creation-Date: 2018-10-24 15:25+0200\n"
+"POT-Creation-Date: 2020-06-05 16:09+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bjoern Endres <Bjoern.Endres@didonai.com>\n"
 "Language-Team: SYSTOPIA <endres@systopia.de>\n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: CRM/Admin/Form/Setting/MembershipExtension.php
 msgid "Configuration - Project60 Membership Extension"
@@ -107,8 +107,16 @@ msgid "Paid by Field"
 msgstr "Fremdzahler Feld"
 
 #: CRM/Admin/Form/Setting/MembershipExtension.php
+msgid "Additional Token %1"
+msgstr "Zusatztoken %1"
+
+#: CRM/Admin/Form/Setting/MembershipExtension.php
 msgid "Disabled"
 msgstr "nicht aktiviert"
+
+#: CRM/Admin/Form/Setting/MembershipExtension.php
+msgid "None"
+msgstr "Keine"
 
 #: CRM/Membership/Form/PaidBy.php
 msgid "Change Membership Payment"
@@ -236,7 +244,7 @@ msgstr "Bitte geben Sie einen gültigen Betrag ein."
 
 #: CRM/Membership/Form/Report/OutstandingMembershipFees.php
 msgid "View Contact Summary for this Contact."
-msgstr "Kontakt anzeigen"
+msgstr "Kontakt anzeigen."
 
 #: CRM/Membership/Form/Task/AssignTask.php
 msgid "Assign Contributions to Membership"
@@ -271,7 +279,7 @@ msgstr "Erfolg"
 
 #: CRM/Membership/Form/Task/AssignTask.php
 msgid "Invalid values."
-msgstr "Ungültige Werte"
+msgstr "Ungültige Werte."
 
 #: CRM/Membership/Form/Task/DetachTask.php
 msgid "Detach Contributions from Membership"
@@ -287,7 +295,7 @@ msgstr "Loslösen"
 
 #: CRM/Membership/Form/Task/DetachTask.php
 msgid "%1 contributions have been detached from their memberships."
-msgstr "%1 Zuwendungen wurden von ihren Mitgliedschaften abgelöst"
+msgstr "%1 Zuwendungen wurden von ihren Mitgliedschaften abgelöst."
 
 #: CRM/Membership/PaidByLogic.php
 msgid "Connected membership [%1] was ended."
@@ -303,7 +311,7 @@ msgstr "Zahlungsvertrag beendet."
 
 #: CRM/Membership/PaidByLogic.php
 msgid "The connected recurring contribution [%1] couldn't be ended: %2."
-msgstr "Der anhängige Zahlungsvertrag [%1] konnte nicht beendet werden: %2"
+msgstr "Der anhängige Zahlungsvertrag [%1] konnte nicht beendet werden: %2."
 
 #: CRM/Membership/PaidByLogic.php
 msgid "Couldn't load 'paid via' data."
@@ -507,7 +515,7 @@ msgid ""
 "assigned to it."
 msgstr ""
 "Nur Mitgliedschaften, die in ein einem 'aktiven' Status sind, werden "
-"Mitgliedsbeiträge zugeordnet"
+"Mitgliedsbeiträge zugeordnet."
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""
@@ -584,7 +592,7 @@ msgid ""
 "You can select a membership custom field to contain the Membership Number"
 msgstr ""
 "Hier kann mein ein Feld selektieren, in dem die Mitglieds-Nummer gespeichert "
-"wird."
+"wird"
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""
@@ -715,30 +723,50 @@ msgid ""
 "You can simply use the built-in payment_instrument group, or specifiy a "
 "mapping below."
 msgstr ""
+"Hier kann man ein Feld selektieren, dass das Zahlungsinstrument des "
+"Zahlungsvetrags auf widerspiegelt. Man kann einfach die von CiviCRM "
+"definierte payment_instrument Gruppe verwenden, oder unten ein eigenes "
+"Mapping definieren."
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""
 "You can enter a string to map the payment instrument id of your recurring "
 "contribution in the field above to the values of your option group."
 msgstr ""
+"In diesem Feld kann man eine eigene Abbildung der CiviCRM-Zahlungsarten auf "
+"die verwendete OptionGroup definieren."
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""
 "The format is a comma separated list of \"payment_instrument_id:"
 "option_group_value\" mappings, e.g. \"1:3,2:2,5:4,6:4\"."
 msgstr ""
+"Das Format ist eine per Komma separierte Liste von \"payment_instrument_id:"
+"option_group_value\" Mappings, also z.B. \"1:3,2:2,5:4,6:4\"."
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""
 "This is not a setting, but will rebuild all information derived from the "
 "paid-via field when you press the save button."
 msgstr ""
+"Dies ist keine eigene Einstellung, sondern wird beim Speichern alle vom "
+"Zahlungsvertrag abgeleiteten Felder aktualisieren."
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""
 "If you check this box, all your derived fields will be re-calculated based "
 "on the currently linked recurring payment."
 msgstr ""
+"Wenn dieses Feld aktiviert ist, werden alle vom Zahlungsvertrag abgeleiteten "
+"Felder aktualisiert."
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid ""
+"You can define arbitrary membership custom fields to be added to the "
+"membership token list."
+msgstr ""
+"Hier kann mein ein beliebiges Feld auswählen, das als Mitgliedschafts-Token "
+"verfügbar sein soll."
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "General Settings"
@@ -791,6 +819,10 @@ msgid "Derived Fields"
 msgstr "Abgeleitete Felder"
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Additional Tokens"
+msgstr "Zusätzliche Tokens"
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "Payment Synchronisation Tool"
 msgstr "Mitgliedschaftsbeitrags-Zuordnung"
 
@@ -825,7 +857,7 @@ msgstr "Zuordnung der Zuwendungsarten"
 #: templates/CRM/Membership/Form/PaidBy.tpl
 msgid ""
 "Please select the recurring payment to be connected to this membership below."
-msgstr "Wählen Sie einen Zahlungsvertrag für die Mitgliedschaft"
+msgstr "Wählen Sie einen Zahlungsvertrag für die Mitgliedschaft."
 
 #: templates/CRM/Membership/Form/PaidBy.tpl
 msgid "ID"

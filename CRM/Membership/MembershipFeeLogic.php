@@ -72,6 +72,7 @@ class CRM_Membership_MembershipFeeLogic {
    */
   public function process($membership_id, $dry_run = FALSE) {
     $this->log("Processing membership [{$membership_id}]", 'debug');
+    $settings      = CRM_Membership_Settings::getSettings();
     $fees_expected = $this->calculateExpectedFeeForCurrentPeriod($membership_id);
     $fees_paid     = $this->receivedFeeForCurrentPeriod($membership_id);
     $this->log("Membership [{$membership_id}] paid {$fees_paid} of {$fees_expected}.", 'debug');

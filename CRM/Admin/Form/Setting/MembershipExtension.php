@@ -167,6 +167,13 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
         array('class' => 'crm-select2'));
 
 
+    // outstanding amounts fields
+    $this->addElement('select',
+      "missing_period_amount_field",
+      E::ts("Missing Amount (current period)"),
+      $this->getAmountFieldOptions(true),
+      []);
+
     // logic fields
     $this->addElement('select',
         "paid_via_end_with_status",
@@ -259,6 +266,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $settings->setSetting('payment_type_field_mapping', $values['payment_type_field_mapping'], FALSE);
     $settings->setSetting('membership_cancellation_date_field', $values['membership_cancellation_date_field'], FALSE);
     $settings->setSetting('membership_cancellation_reason_field', $values['membership_cancellation_reason_field'], FALSE);
+    $settings->setSetting('missing_period_amount_field', $values['missing_period_amount_field'], FALSE);
 
     // set custom tokens
     for ($i = 1; $i <= self::CUSTOM_MEMBERSHIP_TOKEN_COUNT; $i++) {

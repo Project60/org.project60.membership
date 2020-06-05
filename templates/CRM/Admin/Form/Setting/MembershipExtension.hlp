@@ -139,3 +139,7 @@
 {htxt id='id-additional-tokens'}
   <p>{ts domain='org.project60.membership'}You can define arbitrary membership custom fields to be added to the membership token list.{/ts}</p>
 {/htxt}
+
+{htxt id='id-missing-amount-field'}
+  <p>{ts domain='org.project60.membership'}Holds the outstanding amount for the current membership period. This is calcualted by the Membership.process job.{/ts}</p>
+{/htxt}

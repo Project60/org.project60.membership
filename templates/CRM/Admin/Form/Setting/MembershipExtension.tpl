@@ -138,6 +138,17 @@
      </div>
 
      <div class="crm-block crm-form-block crm-form-title-here-form-block">
+       <h3>{ts domain="org.project60.membership"}Late Payments{/ts}</h3>
+       <table>
+         <tr class="p60-paid-via-dependent">
+           <td>{$form.missing_period_amount_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Missing Amount (current period){/ts}", {literal}{"id":"id-missing-amount-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.missing_period_amount_field.html}</td>
+         </tr>
+       </table>
+       <br/>
+     </div>
+
+     <div class="crm-block crm-form-block crm-form-title-here-form-block">
        <h3>{ts domain="org.project60.membership"}Additional Tokens{/ts} <a onclick='CRM.help("{ts domain="org.project60.membership"}Additional Tokens{/ts}", {literal}{"id":"id-additional-tokens","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></h3>
        <table>
          {foreach from=$custom_token_indices item=custom_token_index}

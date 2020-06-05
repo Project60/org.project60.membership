@@ -93,7 +93,7 @@ class CRM_Membership_Settings {
   }
 
   /**
-   * Get the field ID of the selected paid_via field
+   * Get the field ID of the selected paid_by field
    * @return int
    */
   public function getPaidByFieldID() {
@@ -105,7 +105,7 @@ class CRM_Membership_Settings {
   }
 
   /**
-   * Get the field data of the paid_via field
+   * Get the field data of the paid_by field
    * or NULL if none set;
    */
   public function getPaidByField() {
@@ -217,7 +217,7 @@ class CRM_Membership_Settings {
   /**
    * Get the fields from the settings (if enabled)
    *
-   * @param $field_keys list of field keys in settings
+   * @param $field_keys array of field keys in settings
    * @return array with the settings names mapped to the custom field objects
    */
   public function getFields($field_keys) {

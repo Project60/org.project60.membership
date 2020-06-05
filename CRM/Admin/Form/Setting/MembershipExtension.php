@@ -184,7 +184,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $this->addElement('checkbox',
       "record_fee_updates",
       E::ts("Record annual fee changes"));
-
+    
     // add extra tokens
     $this->assign('custom_token_indices', range(1, self::CUSTOM_MEMBERSHIP_TOKEN_COUNT));
     $all_custom_fields = $this->getAllCustomFields();

@@ -273,8 +273,8 @@ class CRM_Membership_MembershipFeeLogic {
         AND payment.contribution_status_id IN ({$this->parameters['contribution_status']})
         AND (payment.trxn_id IS NULL OR payment.trxn_id NOT LIKE '{$identifier_pattern}')
         AND DATE(payment.receive_date) >= (DATE('{$from_date}') + INTERVAL {$assignment_shift_days} DAY)
-        AND DATE(payment.receive_date) <= (DATE('{$to_date}')   + INTERVAL {$assignment_shift_days} DAY)";
-    Civi::log()->debug($amount_sql);
+        AND DATE(payment.receive_date) <= (DATE('{$to_date}') + INTERVAL {$assignment_shift_days} DAY)";
+    //Civi::log()->debug($amount_sql);
     $amount = CRM_Core_DAO::singleValueQuery($amount_sql);
 
     // add the outstanding payment contribution if found

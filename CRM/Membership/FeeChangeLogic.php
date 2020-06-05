@@ -134,7 +134,7 @@ class CRM_Membership_FeeChangeLogic {
    * @param $before_record array before state
    * @param $after_record  array after state
    */
-  protected function processChange($before_record, $after_record) {
+  public function processChange($before_record, $after_record, $date = 'now') {
     // now we have two records - let's see if there's a difference
     if ($before_record && $after_record) { // if there's not two records it's not an update
       $membership_id_diff = array_diff($before_record['membership_ids'], $after_record['membership_ids']);
@@ -151,7 +151,7 @@ class CRM_Membership_FeeChangeLogic {
                 'activity_type_id'   => $this->getActivityTypeID(),
                 'target_id'          => array_intersect($before_record['contact_ids'], $after_record['contact_ids']),
                 'subject'            => ($amount_increase > 0) ? E::ts("Membership Fee Increase") : E::ts("Membership Fee Reduction"),
-                'activity_date_time' => date('YmdHis'),
+                'activity_date_time' => date('YmdHis', strtotime("$date")),
                 'source_contact_id'  => CRM_Core_Session::getLoggedInContactID(),
                 'source_record_id'   => reset($after_record['membership_ids']),
 

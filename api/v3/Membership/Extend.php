@@ -295,7 +295,7 @@ function _civicrm_api3_membership_extend_spec(&$params) {
 
 function _mebership_extend_helper_extract_intlist($raw_value) {
   if (empty($raw_value)) return '';
-  $bits = split(',', $raw_value);
+  $bits = explode(',', $raw_value);
   $elements = array();
   foreach ($bits as $value) {
     if ((int) $value) {

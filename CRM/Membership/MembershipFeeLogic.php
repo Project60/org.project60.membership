@@ -430,8 +430,9 @@ class CRM_Membership_MembershipFeeLogic {
       $this->log("Would extend membership [{$membership_id}] of contact [{$membership['contact_id']}] until {$next_end_date}");
     } else {
       civicrm_api3('Membership', 'create', [
-          'id'       => $membership_id,
-          'end_date' => $next_end_date
+          'id'            => $membership_id,
+          'end_date'      => $next_end_date,
+          'skipStatusCal' => 0,
       ]);
       $this->log("Extended membership [{$membership_id}] of contact [{$membership['contact_id']}] until {$next_end_date}");
 

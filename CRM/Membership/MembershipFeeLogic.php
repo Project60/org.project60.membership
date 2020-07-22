@@ -503,9 +503,9 @@ class CRM_Membership_MembershipFeeLogic {
       } else {
         if ($this->log_file == NULL) {
           $this->log_file = fopen($this->parameters['log_target'], 'a');
-          fwrite($this->log_file, "Timestamp: " . date('Y-m-d H:i:s'));
+          fwrite($this->log_file, "\nMembership.process started: " . date('Y-m-d H:i:s') . "\n");
         }
-        fwrite($this->log_file, $message);
+        fwrite($this->log_file, $message . "\n");
       }
     }
   }

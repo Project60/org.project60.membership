@@ -23,6 +23,7 @@ function civicrm_api3_membership_process($params) {
   $settings = CRM_Membership_Settings::getSettings();
   // set defaults
   $params['extend_if_paid'] = 1;
+  $params['log_target'] = CRM_Core_Config::singleton()->configAndLogDir . 'P60Membership_extension.log';
   $logic = new CRM_Membership_MembershipFeeLogic($params);
 
   // get membership IDs

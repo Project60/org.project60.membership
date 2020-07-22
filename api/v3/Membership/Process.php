@@ -29,16 +29,28 @@ function civicrm_api3_membership_process($params) {
   if (empty($params['membership_id'])) {
     $membership_ids = [];
   } else {
-    $membership_ids = explode(',', $params['membership_id']);
+    $membership_ids = array_map('intval', explode(',', $params['membership_id']));
     unset($params['limit']);
   }
+
 
   // Find membership IDs if not given:
   // - LIVE (by status ID)
   // - Within <end_date_offset> days after current end_date
+  // - using the membership_type_id restrictions (if given)
   if (empty($membership_ids)) {
     // build query
     $AND_STATUS_ID_LIVE = $AND_SKIP_LAST_PROCESSED = $LIMIT = '';
+
+    // restrict by membership_type_id
+    if (empty($params['membership_type_id'])) {
+      $AND_MEMBERSHIP_HAS_TYPES = '';
+    } else {
+      $membership_type_ids = array_map('intval', explode(',', $params['membership_type_id']));
+      $membership_type_id_list = implode(',', $membership_type_ids);
+      $AND_MEMBERSHIP_HAS_TYPES = "AND membership_type_id IN ({$membership_type_id_list})";
+    }
+
 
     // restrict by status
     $live_status_ids = $settings->getLiveStatusIDs();
@@ -58,6 +70,7 @@ function civicrm_api3_membership_process($params) {
       FROM civicrm_membership
       WHERE DATE(end_date) <= DATE(NOW() + INTERVAL {$params['end_date_offset']} DAY)
         {$AND_STATUS_ID_LIVE}
+        {$AND_MEMBERSHIP_HAS_TYPES}
         {$AND_SKIP_LAST_PROCESSED}
       ORDER BY id ASC
       {$LIMIT}";
@@ -115,6 +128,13 @@ function _civicrm_api3_membership_process_spec(&$params) {
       'type'         => CRM_Utils_Type::T_STRING,
       'title'        => 'Membership ID(s)',
       'description'  => 'ID of the membership to process, or a comma-separated list of such membership',
+  );
+  $params['membership_type_id'] = array(
+    'name'         => 'membership_type_id',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_STRING,
+    'title'        => 'Membership Type ID(s)',
+    'description'  => 'ID of the membership type IDs to process, or a comma-separated list of such membership types',
   );
   $params['dry_run'] = array(
       'name'         => 'dry_run',

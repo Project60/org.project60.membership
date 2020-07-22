@@ -72,10 +72,12 @@ class CRM_Membership_MembershipFeeLogic {
    */
   public function process($membership_id, $dry_run = FALSE) {
     $this->log("Processing membership [{$membership_id}]", 'debug');
+    $settings      = CRM_Membership_Settings::getSettings();
     $fees_expected = $this->calculateExpectedFeeForCurrentPeriod($membership_id);
     $fees_paid     = $this->receivedFeeForCurrentPeriod($membership_id);
     $this->log("Membership [{$membership_id}] paid {$fees_paid} of {$fees_expected}.", 'debug');
 
+    // process results
     $missing = $fees_expected - $fees_paid;
     if ($missing < $this->parameters['missing_fee_grace']) {
       // paid enough
@@ -89,6 +91,18 @@ class CRM_Membership_MembershipFeeLogic {
     } else {
       // paid too little
       $this->log("Membership [{$membership_id}] is missing fee amount of: {$missing}");
+
+      if ($this->parameters['missing_fee_update']) {
+        $missing_payment_field = $settings->getMissingAmountField();
+        if ($missing_payment_field) {
+          civicrm_api3('Membership', 'create', [
+            'id' => $membership_id,
+            $missing_payment_field['key'] => $missing
+          ]);
+        }
+      }
+
+
       if (!empty($this->parameters['create_invoice'])) {
         $this->updatedMissingFeeContribution($membership_id, $missing, $dry_run);
         return 'invoiced';
@@ -418,6 +432,7 @@ class CRM_Membership_MembershipFeeLogic {
    * @param $dry_run       bool    set TRUE to only log changes, but not execute them
    */
   public function extendMembership($membership_id, $dry_run = FALSE) {
+    $settings = CRM_Membership_Settings::getSettings();
     $membership = $this->getMembership($membership_id);
     $mtype = $this->getMembershipType($membership['membership_type_id']);
 
@@ -429,10 +444,19 @@ class CRM_Membership_MembershipFeeLogic {
     if ($dry_run) {
       $this->log("Would extend membership [{$membership_id}] of contact [{$membership['contact_id']}] until {$next_end_date}");
     } else {
-      civicrm_api3('Membership', 'create', [
-          'id'       => $membership_id,
-          'end_date' => $next_end_date
-      ]);
+      $membership_extension = [
+        'id'       => $membership_id,
+        'end_date' => $next_end_date
+      ];
+
+      // reset missing payment field to zero
+      $missing_payment_field = $settings->getMissingAmountField();
+      if ($missing_payment_field) {
+        $membership_extension[$missing_payment_field['key']] = 0.00;
+      }
+
+      // run update
+      civicrm_api3('Membership', 'create', $membership_extension);
       $this->log("Extended membership [{$membership_id}] of contact [{$membership['contact_id']}] until {$next_end_date}");
 
       // add activity??

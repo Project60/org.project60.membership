@@ -142,6 +142,28 @@ class CRM_Membership_Settings {
   }
 
   /**
+   * Get the field ID of the selected paid_by field
+   * @return int
+   */
+  public function getMissingAmountFieldID() {
+    if (!empty($this->settings_bucket['missing_period_amount_field'])) {
+      return (int) $this->settings_bucket['missing_period_amount_field'];
+    } else {
+      return NULL;
+    }
+  }
+
+  /**
+   * Get the field data of the missing
+   *   amount for an extension
+   */
+  public function getMissingAmountField() {
+    $field_id = $this->getMissingAmountFieldID();
+    return $this->getFieldInfo($field_id);
+  }
+
+
+  /**
    * Get the field ID of the selected paid_via field
    * @return int
    */

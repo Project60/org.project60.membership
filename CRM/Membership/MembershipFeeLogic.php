@@ -447,7 +447,10 @@ class CRM_Membership_MembershipFeeLogic {
       $membership_extension = [
         'id'            => $membership_id,
         'end_date'      => $next_end_date,
+        // the following 3 fields are needed to re-calculate the status
         'skipStatusCal' => 0,
+        'start_date'    => date('Y-m-d', strtotime($membership['start_date'])),
+        'join_date'     => date('Y-m-d', strtotime($membership['join_date'])),
       ];
 
       // reset missing payment field to zero

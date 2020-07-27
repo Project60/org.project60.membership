@@ -76,7 +76,7 @@ class CRM_Membership_FeeChangeLogic {
         return;
 
       case 0: // a post hook was called without a pre-hook
-        Civi::log()->debug("P60-Membership-FeeChangeLogic: There is workflow issue between the pre and post hooks");
+        Civi::log()->warning("P60-Membership-FeeChangeLogic: There is workflow issue between the pre and post hooks");
         return;
 
       case 1: // this is the outer call, here we want to act (if there is a change)
@@ -112,12 +112,12 @@ class CRM_Membership_FeeChangeLogic {
    */
   public function processChange($before_record, $after_record, $date = 'now') {
     // now we have two records - let's see if there's a difference
-    Civi::log()->debug("PROCESS CHANGE " . json_encode($before_record) . ' -> ' . json_encode($after_record));
+    //Civi::log()->debug("PROCESS CHANGE " . json_encode($before_record) . ' -> ' . json_encode($after_record));
     if ($before_record && $after_record) { // if there's not two records it's not an update
       $membership_id_diff = array_diff($before_record['membership_ids'], $after_record['membership_ids']);
       if (!empty($membership_id_diff)) {
         // something went wrong here
-        CRM_Core_Error::debug_log_message("p60 fee change: differing membership IDs received for change {$before_record['input']}-{$after_record['input']}");
+        Civi::log()->warning("p60 fee change: differing membership IDs received for change {$before_record['input']}-{$after_record['input']}");
 
       } else {
         $amount_increase = $after_record['annual_amount'] - $before_record['annual_amount'];
@@ -142,10 +142,9 @@ class CRM_Membership_FeeChangeLogic {
             CRM_Membership_CustomData::resolveCustomFields($activity_data);
 
             // create activity
-              Civi::log()->debug("CREATE CHANGE ACTIVITY");
             civicrm_api3('Activity', 'create', $activity_data);
           } catch (Exception $ex) {
-            CRM_Core_Error::debug_log_message("ERROR: P60mem - couldn't create fee increase activity: " . $ex->getMessage());
+            Civi::log()->warning("ERROR: P60mem - couldn't create fee increase activity: " . $ex->getMessage());
           }
         }
       }

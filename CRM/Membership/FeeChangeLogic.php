@@ -1,7 +1,7 @@
 <?php
 /*-------------------------------------------------------+
 | Project 60 - Membership Extension                      |
-| Copyright (C) 2018 SYSTOPIA                            |
+| Copyright (C) 2020 SYSTOPIA                            |
 | Author: B. Endres (endres -at- systopia.de)            |
 | http://www.systopia.de/                                |
 +--------------------------------------------------------+
@@ -24,11 +24,14 @@ use CRM_Membership_ExtensionUtil as E;
  */
 class CRM_Membership_FeeChangeLogic {
 
+  /** stores the singleton instance */
+  protected static $singleton = NULL;
+
   /** stores the pre/post hook records*/
   protected $monitoring_stack = [];
 
-  /** stores the singleton instance */
-  protected static $singleton = NULL;
+  /** stores a list of membership IDs that have just been created during this (php) process */
+  protected $new_memberships = [];
 
   /** caches the activity type id */
   protected $_activity_type_id   = NULL;
@@ -78,64 +81,27 @@ class CRM_Membership_FeeChangeLogic {
 
       case 1: // this is the outer call, here we want to act (if there is a change)
         $before_record = array_pop($this->monitoring_stack);
-        if ($before_record) { // null means here: new membership -> then we won't create any activities
-          $after_record  = $this->getMembershipFeeRecord($membership_id, $contribution_recur_id);
-          $this->processChange($before_record, $after_record);
+        if (in_array($membership_id, $this->new_memberships) || empty($before_record)) {
+          // we won't record any change activities for new memberships
+          return;
         }
+
+        // this is a real change, see if need to generate an activity
+        $after_record  = $this->getMembershipFeeRecord($membership_id, $contribution_recur_id);
+        $this->processChange($before_record, $after_record);
         return;
     }
   }
 
-
-//
-//  /**
-//   * Hook triggered by a change to a custom field. Let's see if it's
-//   *
-//   * If there is a change detected, an activity will be created
-//   *
-//   * @param $custom_group_id int  ID of the custom group
-//   * @param $entity_id       int  ID of the related entity (depends on group)
-//   *
-//   * @return null
-//   */
-//  public function membershipFeeUpdateWrapup($custom_group_id, $entity_id, $params) {
-//    $settings = CRM_Membership_Settings::getSettings();
-//
-//    // make sure we should spring into action:
-//    $record_fee_updates = $settings->getSetting('record_fee_updates');
-//    if (empty($record_fee_updates)) {
-//      // recording fee changes disabled
-//      return NULL;
-//    }
-//
-//    // for now, only annual_amount_field // $fields = $settings->getFields(['paid_via_field', 'annual_amount_field']);
-//    $fields = $settings->getFields(['annual_amount_field']);
-//    if (empty($fields)) {
-//      // relevant fields not enabled
-//      return NULL;
-//    }
-//
-//    $group_relevant = FALSE;
-//    foreach ($fields as $field) {
-//      $group_relevant |= ($field['custom_group_id'] == $custom_group_id);
-//    }
-//    if (!$group_relevant) {
-//      // this group is not relevant for us
-//      return NULL;
-//    }
-//
-//    // OK, this is a relevant group -> let's go!
-//    $membership_id = (int) $entity_id;
-//    $after_record  = $this->getMembershipFeeRecord($membership_id);
-//    $before_record = CRM_Utils_Array::value($membership_id, $this->pending_records);
-//    Civi::log()->debug("BEFORE RECORD: " . json_encode($before_record));
-//    Civi::log()->debug("AFTER RECORD: " . json_encode($after_record));
-//
-//    if ($before_record) {
-//      unset($this->pending_records[$membership_id]);
-//    }
-//    $this->processChange($before_record, $after_record);
-//  }
+  /**
+   * Marking a membership as 'new' will exclude them from any change magic
+   *
+   * @param integer $membership_id
+   *   Membership ID to be marked as 'new'
+   */
+  public function markMembershipNew($membership_id) {
+    $this->new_memberships[] = $membership_id;
+  }
 
   /**
    * Process the actual before/after records, and create

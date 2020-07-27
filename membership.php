@@ -213,6 +213,10 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->createMembershipUpdatePOST($objectId, $objectRef);
       $logic->membershipUpdatePOST($objectId, $objectRef);
+
+      $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
+      $fee_logic->markMembershipNew($objectId);
+
     } elseif (!empty($objectId) && $op == 'edit') {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->membershipUpdatePOST($objectId, $objectRef);
@@ -222,13 +226,6 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
     if ($op == 'create' || $op == 'edit') {
       $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
       $fee_logic->membershipFeeUpdatePOST($objectId, null);
-    }
-  }
-
-  if ($objectName == 'ContributionRecur') {
-    if ($op == 'edit') {
-      $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
-      $fee_logic->membershipFeeUpdatePOST(NULL, $objectId);
     }
   }
 
@@ -255,6 +252,12 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
         $membership_ids = $logic->getMembershipIDs($objectId);
         foreach ($membership_ids as $membership_id) {
           $logic->updateDerivedFields($objectId);
+        }
+
+        // see if this was a fee adjustment
+        if ($op == 'edit') {
+          $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
+          $fee_logic->membershipFeeUpdatePOST(NULL, $objectId);
         }
         break;
 

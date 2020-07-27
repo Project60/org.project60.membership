@@ -24,11 +24,8 @@ use CRM_Membership_ExtensionUtil as E;
  */
 class CRM_Membership_FeeChangeLogic {
 
-  /** stores the pre/post hook records */
-  protected $monitoring_stack = array();
-
-  /** stores a membership id => before_record list */
-  protected $pending_records  = array();
+  /** stores the pre/post hook records*/
+  protected $monitoring_stack = [];
 
   /** stores the singleton instance */
   protected static $singleton = NULL;
@@ -44,6 +41,7 @@ class CRM_Membership_FeeChangeLogic {
     return self::$singleton;
   }
 
+
   /**
    * Hook call to record the before state of the membership fee,
    *  from either membership or recurring contribution ID
@@ -52,10 +50,14 @@ class CRM_Membership_FeeChangeLogic {
    * @param null $contribution_recur_id  int recurring contribution ID (optional)
    */
   public function membershipFeeUpdatePRE($membership_id, $contribution_recur_id = NULL) {
-    $before_record = $this->getMembershipFeeRecord($membership_id, $contribution_recur_id);
-    array_push($this->monitoring_stack, $before_record);
+    if (count($this->monitoring_stack) == 0) {
+      // add a 'before' record
+      $record = $this->getMembershipFeeRecord($membership_id, $contribution_recur_id);
+      array_push($this->monitoring_stack, $record);
+    } else {
+      array_push($this->monitoring_stack, null);
+    }
   }
-
 
   /**
    * Hook call to record the after state of the membership fee,
@@ -65,67 +67,75 @@ class CRM_Membership_FeeChangeLogic {
    * @param null $contribution_recur_id  int recurring contribution ID (optional)
    */
   public function membershipFeeUpdatePOST($membership_id, $contribution_recur_id = NULL) {
-    $before_record = array_pop($this->monitoring_stack);
-    if ($before_record && $membership_id) {
-      // this is a membership POST -> the changes will happen in the custom hook,
-      //  so we move the party to the pending_records
-      foreach ($before_record['membership_ids'] as $membership_id) {
-        $this->pending_records[$membership_id] = $before_record;
-      }
+    switch (count($this->monitoring_stack)) {
+      default: // we are somewhere in the middle of some changes, so let's just wait
+        array_pop($this->monitoring_stack);
+        return;
 
-    } elseif ($contribution_recur_id) {
-      // in this case, the relevant changes have already happened
-      $after_record  = $this->getMembershipFeeRecord($membership_id);
-      $this->processChange($before_record, $after_record);
+      case 0: // a post hook was called without a pre-hook
+        Civi::log()->debug("P60-Membership-FeeChangeLogic: There is workflow issue between the pre and post hooks");
+        return;
+
+      case 1: // this is the outer call, here we want to act (if there is a change)
+        $before_record = array_pop($this->monitoring_stack);
+        if ($before_record) { // null means here: new membership -> then we won't create any activities
+          $after_record  = $this->getMembershipFeeRecord($membership_id, $contribution_recur_id);
+          $this->processChange($before_record, $after_record);
+        }
+        return;
     }
   }
 
 
-  /**
-   * Hook triggered by a change to a custom field. Let's see if it's
-   *
-   * If there is a change detected, an activity will be created
-   *
-   * @param $custom_group_id int  ID of the custom group
-   * @param $entity_id       int  ID of the related entity (depends on group)
-   *
-   * @return null
-   */
-  public function membershipFeeUpdateWrapup($custom_group_id, $entity_id, $params) {
-    $settings = CRM_Membership_Settings::getSettings();
-
-    // make sure we should spring into action:
-    $record_fee_updates = $settings->getSetting('record_fee_updates');
-    if (empty($record_fee_updates)) {
-      // recording fee changes disabled
-      return NULL;
-    }
-
-    // for now, only annual_amount_field // $fields = $settings->getFields(['paid_via_field', 'annual_amount_field']);
-    $fields = $settings->getFields(['annual_amount_field']);
-    if (empty($fields)) {
-      // relevant fields not enabled
-      return NULL;
-    }
-
-    $group_relevant = FALSE;
-    foreach ($fields as $field) {
-      $group_relevant |= ($field['custom_group_id'] == $custom_group_id);
-    }
-    if (!$group_relevant) {
-      // this group is not relevant for us
-      return NULL;
-    }
-
-    // OK, this is a relevant group -> let's go!
-    $membership_id = (int) $entity_id;
-    $after_record  = $this->getMembershipFeeRecord($membership_id);
-    $before_record = CRM_Utils_Array::value($membership_id, $this->pending_records);
-    if ($before_record) {
-      unset($this->pending_records[$membership_id]);
-    }
-    $this->processChange($before_record, $after_record);
-  }
+//
+//  /**
+//   * Hook triggered by a change to a custom field. Let's see if it's
+//   *
+//   * If there is a change detected, an activity will be created
+//   *
+//   * @param $custom_group_id int  ID of the custom group
+//   * @param $entity_id       int  ID of the related entity (depends on group)
+//   *
+//   * @return null
+//   */
+//  public function membershipFeeUpdateWrapup($custom_group_id, $entity_id, $params) {
+//    $settings = CRM_Membership_Settings::getSettings();
+//
+//    // make sure we should spring into action:
+//    $record_fee_updates = $settings->getSetting('record_fee_updates');
+//    if (empty($record_fee_updates)) {
+//      // recording fee changes disabled
+//      return NULL;
+//    }
+//
+//    // for now, only annual_amount_field // $fields = $settings->getFields(['paid_via_field', 'annual_amount_field']);
+//    $fields = $settings->getFields(['annual_amount_field']);
+//    if (empty($fields)) {
+//      // relevant fields not enabled
+//      return NULL;
+//    }
+//
+//    $group_relevant = FALSE;
+//    foreach ($fields as $field) {
+//      $group_relevant |= ($field['custom_group_id'] == $custom_group_id);
+//    }
+//    if (!$group_relevant) {
+//      // this group is not relevant for us
+//      return NULL;
+//    }
+//
+//    // OK, this is a relevant group -> let's go!
+//    $membership_id = (int) $entity_id;
+//    $after_record  = $this->getMembershipFeeRecord($membership_id);
+//    $before_record = CRM_Utils_Array::value($membership_id, $this->pending_records);
+//    Civi::log()->debug("BEFORE RECORD: " . json_encode($before_record));
+//    Civi::log()->debug("AFTER RECORD: " . json_encode($after_record));
+//
+//    if ($before_record) {
+//      unset($this->pending_records[$membership_id]);
+//    }
+//    $this->processChange($before_record, $after_record);
+//  }
 
   /**
    * Process the actual before/after records, and create
@@ -136,6 +146,7 @@ class CRM_Membership_FeeChangeLogic {
    */
   public function processChange($before_record, $after_record, $date = 'now') {
     // now we have two records - let's see if there's a difference
+    Civi::log()->debug("PROCESS CHANGE " . json_encode($before_record) . ' -> ' . json_encode($after_record));
     if ($before_record && $after_record) { // if there's not two records it's not an update
       $membership_id_diff = array_diff($before_record['membership_ids'], $after_record['membership_ids']);
       if (!empty($membership_id_diff)) {
@@ -165,6 +176,7 @@ class CRM_Membership_FeeChangeLogic {
             CRM_Membership_CustomData::resolveCustomFields($activity_data);
 
             // create activity
+              Civi::log()->debug("CREATE CHANGE ACTIVITY");
             civicrm_api3('Activity', 'create', $activity_data);
           } catch (Exception $ex) {
             CRM_Core_Error::debug_log_message("ERROR: P60mem - couldn't create fee increase activity: " . $ex->getMessage());
@@ -323,7 +335,7 @@ class CRM_Membership_FeeChangeLogic {
 
     // success?
     if (!empty($activity_type['id'])) {
-      $this->_activity_type_id = civicrm_api3('OptionValue', 'getvalue', [
+      $this->_activity_type_id = (int) civicrm_api3('OptionValue', 'getvalue', [
           'id'     => $activity_type['id'],
           'return' => 'value']);
 

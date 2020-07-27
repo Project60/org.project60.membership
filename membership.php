@@ -265,20 +265,6 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
 }
 
 /**
- * CiviCRM Custom (post) Hook
- *
- * @access public
- */
-function membership_civicrm_custom( $op, $groupID, $entityID, &$params ) {
-  CRM_Core_Error::debug_log_message("civicrm_custom $op, $groupID, $entityID ");// . json_encode($params));
-  if ($op == 'create' || $op == 'edit' ) {
-    $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
-    $fee_logic->membershipFeeUpdateWrapup($groupID, $entityID, $params);
-  }
-}
-
-
-/**
  * Implements hook_civicrm_buildForm().
  *
  * Insert

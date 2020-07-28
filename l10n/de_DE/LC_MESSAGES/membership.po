@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: SystopiaMemberships\n"
-"POT-Creation-Date: 2020-06-05 16:09+0200\n"
+"POT-Creation-Date: 2020-07-27 12:51-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bjoern Endres <Bjoern.Endres@didonai.com>\n"
 "Language-Team: SYSTOPIA <endres@systopia.de>\n"
@@ -26,6 +26,10 @@ msgstr "Toleranzzeit (in Tagen)"
 #: CRM/Admin/Form/Setting/MembershipExtension.php
 msgid "Live Statuses"
 msgstr "Aktive Status"
+
+#: CRM/Admin/Form/Setting/MembershipExtension.php
+msgid "Only Synchronise Between"
+msgstr "Zeitraum für Zuordnung"
 
 #: CRM/Admin/Form/Setting/MembershipExtension.php
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
@@ -90,6 +94,11 @@ msgid "Cancel Reason Field"
 msgstr "Kündigungsgrund Feld"
 
 #: CRM/Admin/Form/Setting/MembershipExtension.php
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Missing Amount (current period)"
+msgstr ""
+
+#: CRM/Admin/Form/Setting/MembershipExtension.php
 msgid "End with Statuses"
 msgstr "Bei folgenden Status beenden"
 
@@ -107,6 +116,10 @@ msgid "Paid by Field"
 msgstr "Fremdzahler Feld"
 
 #: CRM/Admin/Form/Setting/MembershipExtension.php
+msgid "Record annual fee changes"
+msgstr ""
+
+#: CRM/Admin/Form/Setting/MembershipExtension.php
 msgid "Additional Token %1"
 msgstr "Zusatztoken %1"
 
@@ -117,6 +130,18 @@ msgstr "nicht aktiviert"
 #: CRM/Admin/Form/Setting/MembershipExtension.php
 msgid "None"
 msgstr "Keine"
+
+#: CRM/Membership/FeeChangeLogic.php
+msgid "Membership Fee Increase"
+msgstr "Beitragserhöhung"
+
+#: CRM/Membership/FeeChangeLogic.php
+msgid "Membership Fee Reduction"
+msgstr "Beitragssenkung"
+
+#: CRM/Membership/FeeChangeLogic.php
+msgid "Membership Fee Update"
+msgstr "Beitragsanpassung"
 
 #: CRM/Membership/Form/PaidBy.php
 msgid "Change Membership Payment"
@@ -386,6 +411,14 @@ msgid "Membership for %1 has been updated. The membership End Date is %2."
 msgstr ""
 "Die Mitgliedschaft für %1 wurde aktualisiert. Das Enddatumg ist nun %2."
 
+#: CRM/Membership/Settings.php
+msgid "The value '%1' is invalid and will be ignored."
+msgstr ""
+
+#: CRM/Membership/Settings.php
+msgid "Invalid expression"
+msgstr "Ungültiger Ausdruck"
+
 #: CRM/Membership/TokenLogic.php
 msgid "Start Date (raw)"
 msgstr "Mitgliedschaftsbeginn (unformatiert)"
@@ -465,6 +498,19 @@ msgstr "Von Mitgliedschaft ablösen"
 #: membership.php
 msgid "Synchronise Payments"
 msgstr "Mitgliedschaftsbeiträge zuordnen"
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid ""
+"This defines which contributions will be considered for synchronisation by "
+"defining a time frame. This is optional"
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid ""
+"You can enter any valid <code>strtotime()</code> string like \"2017-01-01\" "
+"or \"now - 2 days\". You can find a documentation <a href=\"https://www.php."
+"net/manual/en/datetime.formats.php\">here</a>"
+msgstr ""
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""
@@ -677,6 +723,12 @@ msgstr ""
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""
+"If active, any change of the annual amount (determined by the two fields "
+"above) will be recorded as an activity."
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid ""
 "Select a read-only monetary field to display the installment amount as "
 "provided by the paid-via recurring contribution."
 msgstr ""
@@ -768,6 +820,12 @@ msgstr ""
 "Hier kann mein ein beliebiges Feld auswählen, das als Mitgliedschafts-Token "
 "verfügbar sein soll."
 
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
+msgid ""
+"Holds the outstanding amount for the current membership period. This is "
+"calcualted by the Membership.process job."
+msgstr ""
+
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "General Settings"
 msgstr "Allgemeine Einstellungen"
@@ -807,6 +865,10 @@ msgid "Paid Via Field"
 msgstr "Zahlungsvertrag Feld"
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Record Fee Updates"
+msgstr ""
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "End with status"
 msgstr "Statusliste für Beendigung"
 
@@ -819,6 +881,10 @@ msgid "Derived Fields"
 msgstr "Abgeleitete Felder"
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Late Payments"
+msgstr "Zahlungsausstand"
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "Additional Tokens"
 msgstr "Zusätzliche Tokens"
 
@@ -829,6 +895,10 @@ msgstr "Mitgliedschaftsbeitrags-Zuordnung"
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "General"
 msgstr "Allgemein"
+
+#: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
+msgid "Sync Timeframe"
+msgstr ""
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.tpl
 msgid "Backward Horizon"
@@ -926,8 +996,8 @@ msgstr ""
 "Mehr Einstellungen zur Zahlungszuordnung gibt es <a href=\"%1\">hier</a>."
 
 #: templates/CRM/Membership/Page/MembershipPayments.tpl
-msgid "Synchronize"
-msgstr "Synchronisieren"
+msgid "Synchronize Now"
+msgstr "Jetzt Zuordnen"
 
 #: templates/CRM/Membership/Page/MembershipPayments.tpl
 msgid "Results of this run"

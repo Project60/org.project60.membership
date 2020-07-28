@@ -240,7 +240,7 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
         $logic = CRM_Membership_PaidByLogic::getSingleton();
         $membership_ids = $logic->getMembershipIDs($objectId);
         foreach ($membership_ids as $membership_id) {
-          $logic->updateDerivedFields($objectId);
+          $logic->updateDerivedFields($membership_id);
         }
         // monitor amount
         $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();

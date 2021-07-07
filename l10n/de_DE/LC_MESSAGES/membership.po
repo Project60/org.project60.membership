@@ -642,10 +642,9 @@ msgstr ""
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp
 msgid ""
-"The field has to be an active, text type, searchable custom field to be "
-"eligible."
+"The field has to be an active, alphanumeric (text) type, is_view, searchable custom field to be eligible."
 msgstr ""
-"Das Feld muss vom Typ \"Text\", aktiv, und durchsuchbar sein, damit es hier "
+"Das Feld muss vom aktiv, Typ alphanumerisch \"Text\", durchsuchbar sein und nur ansehbar sein, damit es hier "
 "ausgewählt werden kann."
 
 #: templates/CRM/Admin/Form/Setting/MembershipExtension.hlp

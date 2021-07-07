@@ -60,7 +60,7 @@
 
 {htxt id='id-number'}
   <p>{ts domain='org.project60.membership'}You can select a membership custom field to contain the Membership Number{/ts}</p>
-  <p>{ts domain='org.project60.membership'}The field has to be an active, text type, searchable custom field to be eligible.{/ts}</p>
+  <p>{ts domain='org.project60.membership'}The field has to be an active, alphanumeric (text) type, is_view, searchable custom field to be eligible.{/ts}</p>
 {/htxt}
 
 {htxt id='id-number-show'}

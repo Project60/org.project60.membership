@@ -28,22 +28,22 @@ class CRM_Membership_NumberLogic {
      *  if the configuration option is set
      */
     public static function adjustSummaryView($contact_id) {
-      $settings = CRM_Membership_Settings::getSettings();
-      if ($settings->getSetting('membership_number_show')) {
-        // get membership number(s)
-        $result = self::getCurrentMembershipNumbers(array($contact_id));
-        if (empty($result[$contact_id])) {
-          $number = "";
-        } else {
-          $number = $result[$contact_id];
-        }
+        $settings = CRM_Membership_Settings::getSettings();
+        if ($settings->getSetting('membership_number_show')) {
+            // get membership number(s)
+            $result = self::getCurrentMembershipNumbers(array($contact_id));
+            if (empty($result[$contact_id])) {
+                $number = "";
+            } else {
+                $number = $result[$contact_id];
+            }
 
-        // inject into summary view
-        CRM_Core_Smarty::singleton()->assign('membership_number_string', $number);
-        CRM_Core_Region::instance('page-body')->add(array(
-            'template' => 'CRM/Membership/Snippets/MembershipNumber.tpl',
-        ));
-      }
+            // inject into summary view
+            CRM_Core_Smarty::singleton()->assign('membership_number_string', $number);
+            CRM_Core_Region::instance('page-body')->add(array(
+                'template' => 'CRM/Membership/Snippets/MembershipNumber.tpl',
+            ));
+        }
     }
 
     /**
@@ -55,33 +55,33 @@ class CRM_Membership_NumberLogic {
      * @throws API_Exception
      */
     public static function getCurrentMembershipNumbers($contact_ids, $membership_type_ids = NULL) {
-      $contact_id_2_membership_number = array();
+        $contact_id_2_membership_number = array();
 
-      // load field and group
-      $settings = CRM_Membership_Settings::getSettings();
-      $number_field_id = $settings->getSetting('membership_number_field');
-      if (empty($number_field_id)) {
-        return $contact_id_2_membership_number;
-      }
-      $field = civicrm_api3('CustomField', 'getsingle', array(
-          'id'     => $number_field_id,
-          'return' => 'column_name,custom_group_id'));
-      $group = civicrm_api3('CustomGroup', 'getsingle', array(
-          'id'     => $field['custom_group_id'],
-          'return' => 'table_name'));
+        // load field and group
+        $settings = CRM_Membership_Settings::getSettings();
+        $number_field_id = $settings->getSetting('membership_number_field');
+        if (empty($number_field_id)) {
+            return $contact_id_2_membership_number;
+        }
+        $field = civicrm_api3('CustomField', 'getsingle', array(
+            'id'     => $number_field_id,
+            'return' => 'column_name,custom_group_id'));
+        $group = civicrm_api3('CustomGroup', 'getsingle', array(
+            'id'     => $field['custom_group_id'],
+            'return' => 'table_name'));
 
-      // build SQL query
-      $contact_id_list = implode(',', $contact_ids);
-      $active_status_list = implode(',', $settings->getLiveStatusIDs());
+        // build SQL query
+        $contact_id_list = implode(',', $contact_ids);
+        $active_status_list = implode(',', $settings->getLiveStatusIDs());
 
-      $MEMBERSHIP_TYPE_CONDITION = '';
-      if (!empty($membership_type_ids)) {
-        $membership_type_id_list = implode(',', $membership_type_ids);
-        $MEMBERSHIP_TYPE_CONDITION = "AND membership.membership_type_id IN ({$membership_type_id_list})";
-      }
+        $MEMBERSHIP_TYPE_CONDITION = '';
+        if (!empty($membership_type_ids)) {
+            $membership_type_id_list = implode(',', $membership_type_ids);
+            $MEMBERSHIP_TYPE_CONDITION = "AND membership.membership_type_id IN ({$membership_type_id_list})";
+        }
 
-      $unprocessed_contact_ids = $contact_ids;
-      $query = "
+        $unprocessed_contact_ids = $contact_ids;
+        $query = "
       SELECT 
         membership.contact_id                                 AS contact_id,
         GROUP_CONCAT(membership.status_id 
@@ -94,22 +94,22 @@ class CRM_Membership_NumberLogic {
         AND membership.status_id IN ({$active_status_list})
         {$MEMBERSHIP_TYPE_CONDITION}
       GROUP BY membership.contact_id;";
-      $data = CRM_Core_DAO::executeQuery($query);
-      while ($data->fetch()) {
-        $numbers = explode(',', $data->membership_numbers);
-        $contact_id_2_membership_number[$data->contact_id] = $numbers[0];
+        $data = CRM_Core_DAO::executeQuery($query);
+        while ($data->fetch()) {
+            $numbers = explode(',', $data->membership_numbers);
+            $contact_id_2_membership_number[$data->contact_id] = $numbers[0];
 
-        // remove from $unprocessed_contact_ids
-        $index = array_search($data->contact_id, $unprocessed_contact_ids);
-        if ($index !== FALSE) {
-          unset($unprocessed_contact_ids[$index]);
+            // remove from $unprocessed_contact_ids
+            $index = array_search($data->contact_id, $unprocessed_contact_ids);
+            if ($index !== FALSE) {
+                unset($unprocessed_contact_ids[$index]);
+            }
         }
-      }
 
-      // fallback 1: check other active states
-      if (!empty($unprocessed_contact_ids)) {
-        $contact_id_list = implode(',', $unprocessed_contact_ids);
-        $fallback_query = "
+        // fallback 1: check other active states
+        if (!empty($unprocessed_contact_ids)) {
+            $contact_id_list = implode(',', $unprocessed_contact_ids);
+            $fallback_query = "
         SELECT 
           membership.contact_id                                 AS contact_id,
           GROUP_CONCAT(membership.status_id 
@@ -123,25 +123,25 @@ class CRM_Membership_NumberLogic {
           AND status.is_current_member = 1
           {$MEMBERSHIP_TYPE_CONDITION}
         GROUP BY membership.contact_id;";
-        $fallback_data = CRM_Core_DAO::executeQuery($fallback_query);
-        while ($fallback_data->fetch()) {
-          if (!isset($contact_id_2_membership_number[$fallback_data->contact_id])) {
-            $numbers = explode(',', $fallback_data->membership_numbers);
-            $contact_id_2_membership_number[$fallback_data->contact_id] = $numbers[0];
-          }
+            $fallback_data = CRM_Core_DAO::executeQuery($fallback_query);
+            while ($fallback_data->fetch()) {
+                if (!isset($contact_id_2_membership_number[$fallback_data->contact_id])) {
+                    $numbers = explode(',', $fallback_data->membership_numbers);
+                    $contact_id_2_membership_number[$fallback_data->contact_id] = $numbers[0];
+                }
 
-          // remove from $unprocessed_contact_ids
-          $index = array_search($fallback_data->contact_id, $unprocessed_contact_ids);
-          if ($index !== FALSE) {
-            unset($unprocessed_contact_ids[$index]);
-          }
+                // remove from $unprocessed_contact_ids
+                $index = array_search($fallback_data->contact_id, $unprocessed_contact_ids);
+                if ($index !== FALSE) {
+                    unset($unprocessed_contact_ids[$index]);
+                }
+            }
         }
-      }
 
-      // fallback 2: any other membership
-      if (!empty($unprocessed_contact_ids)) {
-        $contact_id_list = implode(',', $unprocessed_contact_ids);
-        $fallback_query = "
+        // fallback 2: any other membership
+        if (!empty($unprocessed_contact_ids)) {
+            $contact_id_list = implode(',', $unprocessed_contact_ids);
+            $fallback_query = "
           SELECT 
             membership.contact_id                                 AS contact_id,
             GROUP_CONCAT(membership.status_id 
@@ -153,22 +153,22 @@ class CRM_Membership_NumberLogic {
           WHERE membership.contact_id IN ({$contact_id_list})
             {$MEMBERSHIP_TYPE_CONDITION}
           GROUP BY membership.contact_id;";
-        $fallback_data = CRM_Core_DAO::executeQuery($fallback_query);
-        while ($fallback_data->fetch()) {
-          if (!isset($contact_id_2_membership_number[$fallback_data->contact_id])) {
-            $numbers = explode(',', $fallback_data->membership_numbers);
-            $contact_id_2_membership_number[$fallback_data->contact_id] = $numbers[0];
-          }
+            $fallback_data = CRM_Core_DAO::executeQuery($fallback_query);
+            while ($fallback_data->fetch()) {
+                if (!isset($contact_id_2_membership_number[$fallback_data->contact_id])) {
+                    $numbers = explode(',', $fallback_data->membership_numbers);
+                    $contact_id_2_membership_number[$fallback_data->contact_id] = $numbers[0];
+                }
 
-          // remove from $unprocessed_contact_ids
-          $index = array_search($fallback_data->contact_id, $unprocessed_contact_ids);
-          if ($index !== FALSE) {
-            unset($unprocessed_contact_ids[$index]);
-          }
+                // remove from $unprocessed_contact_ids
+                $index = array_search($fallback_data->contact_id, $unprocessed_contact_ids);
+                if ($index !== FALSE) {
+                    unset($unprocessed_contact_ids[$index]);
+                }
+            }
         }
-      }
 
-      return $contact_id_2_membership_number;
+        return $contact_id_2_membership_number;
     }
 
     /**
@@ -209,7 +209,15 @@ class CRM_Membership_NumberLogic {
         if (preg_match('#\{mid(?P<offset>[+-][0-9]+)?\}#', $number, $matches)) {
             // get the next membership ID
             // FIXME: this is not very reliable
-            $mid = CRM_Core_DAO::singleValueQuery("SELECT MAX(id) FROM civicrm_membership;") + 1;
+            if(preg_match('#\{YYYY0\}#', $number) ||
+                preg_match('#\{YY0\}#', $number)) {
+                $membershipsQuery = "SELECT count(id) FROM civicrm_membership WHERE join_date BETWEEN 
+                    CONCAT(year(curdate()), '-01-01') AND CONCAT(year(curdate()), '-12-31');";
+            } else {
+                $membershipsQuery = "SELECT MAX(id) FROM civicrm_membership;";
+            }
+
+            $mid = CRM_Core_DAO::singleValueQuery($membershipsQuery) + 1;
             if (!empty($matches['offset'])) {
                 if (substr($matches['offset'], 0, 1) == '-') {
                     $mid -= substr($matches['offset'], 1);
@@ -235,6 +243,15 @@ class CRM_Membership_NumberLogic {
             $number = preg_replace('#\{cid(?P<offset>[+-][0-9]+)?\}#', $mid, $number);
         }
 
+        // replace {cid+x} patterns
+        if (preg_match('#\{YY0?\}#', $number, $matches)) {
+            $number = preg_replace('#\{YY0?\}#', date('y'), $number);
+        }
+
+        // replace {cid+x} patterns
+        if (preg_match('#\{YYYY0?\}#', $number, $matches)) {
+            $number = preg_replace('#\{YYYY0?\}#', date('Y'), $number);
+        }
         // TODO: implement {seq:x} pattern
 
         return $number;

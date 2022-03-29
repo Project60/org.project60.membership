@@ -355,7 +355,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
               'data_type'       => 'String',
               'html_type'       => 'Text',
               'is_active'       => 1,
-              'is_view'         => 0,
+              'is_view'         => 1,
               'is_searchable'   => 1,
               'return'          => 'id,label'));
           foreach ($custom_fields['values'] as $custom_field) {
@@ -450,7 +450,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
           'data_type'       => 'Money',
           'is_active'       => 1,
           'is_searchable'   => 1,
-          'is_view'         => $read_only ? '1' : '0',
+          'is_view'         => $read_only ? '1' : NULL,
           'return'          => 'id,label'));
       foreach ($custom_fields['values'] as $custom_field) {
         $options[$custom_field['id']] = $custom_field['label'];

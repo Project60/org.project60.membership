@@ -232,7 +232,7 @@ class CRM_Membership_NumberLogic {
                     $cid += substr($matches['offset'], 1);
                 }
             }
-            $number = preg_replace('#\{cid(?P<offset>[+-][0-9]+)?\}#', $mid, $number);
+            $number = preg_replace('#\{cid(?P<offset>[+-][0-9]+)?\}#', $cid, $number);
         }
 
         // TODO: implement {seq:x} pattern

@@ -70,15 +70,6 @@ function membership_civicrm_config(&$config) {
 }
 
 /**
- * Implementation of hook_civicrm_xmlMenu
- *
- * @param $files array(string)
- */
-function membership_civicrm_xmlMenu(&$files) {
-  _membership_civix_civicrm_xmlMenu($files);
-}
-
-/**
  * Implementation of hook_civicrm_install
  */
 function membership_civicrm_install() {
@@ -117,27 +108,6 @@ function membership_civicrm_disable() {
  */
 function membership_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
   return _membership_civix_civicrm_upgrade($op, $queue);
-}
-
-/**
- * Implementation of hook_civicrm_managed
- *
- * Generate a list of entities to create/deactivate/delete when this module
- * is installed, disabled, uninstalled.
- */
-function membership_civicrm_managed(&$entities) {
-  return _membership_civix_civicrm_managed($entities);
-}
-
-/**
- * Implementation of hook_civicrm_caseTypes
- *
- * Generate a list of case-types
- *
- * Note: This hook only runs in CiviCRM 4.4+.
- */
-function membership_civicrm_caseTypes(&$caseTypes) {
-  _membership_civix_civicrm_caseTypes($caseTypes);
 }
 
 /**
@@ -303,7 +273,6 @@ function membership_civicrm_navigationMenu(&$menu) {
   _membership_civix_navigationMenu($menu);
 }
 
-
 /**
  * Hook implementation: New Tokens
  */
@@ -335,4 +304,22 @@ function membership_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = 
  */
 function membership_civicrm_summary( $contactID, &$content, &$contentPlacement ) {
   CRM_Membership_NumberLogic::adjustSummaryView($contactID);
+}
+
+/**
+ * Implements hook_civicrm_postInstall().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_postInstall
+ */
+function membership_civicrm_postInstall() {
+  _membership_civix_civicrm_postInstall();
+}
+
+/**
+ * Implements hook_civicrm_entityTypes().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes
+ */
+function membership_civicrm_entityTypes(&$entityTypes) {
+  _membership_civix_civicrm_entityTypes($entityTypes);
 }

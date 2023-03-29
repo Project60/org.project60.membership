@@ -182,11 +182,11 @@
           <td>{$form.sync_range.html}</td>
         </tr>
         <tr>
-          <td>{$form.grace_period.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Forward Horizon{/ts}", {literal}{"id":"id-grace-period","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership""}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.grace_period.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Forward Horizon{/ts}", {literal}{"id":"id-grace-period","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.grace_period.html}</td>
         </tr>
          <tr>
-           <td>{$form.paid_by_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Paid By Field{/ts}", {literal}{"id":"id-paid-by","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership""}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.paid_by_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Paid By Field{/ts}", {literal}{"id":"id-paid-by","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.paid_by_field.html}</td>
          </tr>
       </table>
@@ -197,7 +197,7 @@
       <h3>{ts domain="org.project60.membership"}Membership Status{/ts}</h3>
       <table>
         <tr>
-          <td>{$form.live_statuses.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Live Status{/ts}", {literal}{"id":"id-live-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership""}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.live_statuses.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Live Status{/ts}", {literal}{"id":"id-live-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.live_statuses.html}</td>
         </tr>
       </table>
@@ -205,7 +205,7 @@
     </div>
 
     <div class="crm-block crm-form-block crm-form-title-here-form-block">
-      <h3>{ts domain="org.project60.membership"}Financial Type Mapping{/ts}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Financial Type Mapping{/ts}", {literal}{"id":"id-mapping","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership""}Help{/ts}" class="helpicon">&nbsp;</a></h3>
+      <h3>{ts domain="org.project60.membership"}Financial Type Mapping{/ts}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Financial Type Mapping{/ts}", {literal}{"id":"id-mapping","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon">&nbsp;</a></h3>
       <table>
 {foreach from=$financial_types item=financial_type_name key=financial_type_id}
         {capture assign=itemid}syncmap_{$financial_type_id}{/capture}

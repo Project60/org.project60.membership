@@ -206,7 +206,7 @@ class CRM_Membership_SynchroniseLogic {
     }
 
     // add contribution restriction
-    $AND_IN_CONTRIBUTION_ID_LIST = '';
+    $AND_CONTRIBUTION_IN_LIST = '';
     if (!empty($contribution_ids)) {
       $contribution_id_list = implode(',', $contribution_ids);
       $AND_CONTRIBUTION_IN_LIST = "AND civicrm_contribution.id IN ({$contribution_id_list})";

@@ -14,6 +14,9 @@
   <compatibility>
     <ver>5.38</ver>
   </compatibility>
+  <requires>
+    <ext>legacycode</ext>
+  </requires>
   <urls>
     <url desc="Main Extension Page">https://github.com/Project60/org.project60.membership</url>
     <url desc="Documentation">https://github.com/Project60/org.project60.membership</url>

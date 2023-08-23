@@ -19,7 +19,7 @@ use CRM_Membership_ExtensionUtil as E;
 /**
  * Collection of upgrade steps.
  */
-class CRM_Membership_Upgrader extends CRM_Membership_Upgrader_Base {
+class CRM_Membership_Upgrader extends CRM_Extension_Upgrader_Base {
 
   /**
    * We want to convert the old settings to the new bucket version

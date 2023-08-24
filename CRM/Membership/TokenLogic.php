@@ -221,7 +221,7 @@ class CRM_Membership_TokenLogic {
     $cid_list = implode(',', $cids);
 
     // first: create a temp table to identify the membership ID per contact
-    $temp_contact2membership = CRM_Core_DAO::createTempTableName('p60m_token');
+    $temp_contact2membership = CRM_Legacycode_Core_DAO::createTempTableName('p60m_token');
     CRM_Core_DAO::executeQuery("DROP TEMPORARY TABLE IF EXISTS {$temp_contact2membership}");
     $contact2membership_sql = "
       SELECT

@@ -85,7 +85,7 @@ function civicrm_api3_membership_extend($params) {
     $horizon = NULL;
   }
 
-  $contribution_status_completed = (int) CRM_Legacycode_OptionGroup::getValue('contribution_status', 'Completed', 'name', 'String', 'value');
+  $contribution_status_completed = (int) CRM_Membership_CustomData::getOptionValue('contribution_status', 'Completed', 'name', 'String', 'value');
   if (!$contribution_status_completed) {
     return civicrm_api3_create_error("Cannot find contribution status 'Completed'.");
   }

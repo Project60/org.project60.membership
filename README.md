@@ -24,11 +24,6 @@ This extension currently (version 0.3) offers only two features:
    4. ``custom_fee``: If you have a custom field with your membership defining the expected yearly fee, you can set the field name here (e.g. "custom_28"). Otherwise the minimum fee as defined by the membership type is used.
    5. ``custom_interval``: If you have a custom field with your membership defining the payment cycle, you can set the field name here (e.g. "custom_29"). The values here refer to the number of months, i.e. "1" indicates monthly payment, "3" quarterly, and so on. Otherwise the period defined by the membership type is used.
 
-
-Remarks
-===
-This extension now requires the [``legacycode``](https://github.com/systopia/legacycode) extension to be installed as well. Unfortunately it was not accepted by the core team to be listed in the CiviCRM extension directory, or approved for automatic distribution, so there is currently no other way to tell the user, and we have to hope they read the this README.
-
 What's next?
 ===
 Well, that depends a lot on you. If you want to use this extension it's probably best to contact us: 

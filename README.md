@@ -15,7 +15,15 @@ A number of problems arise from this different concept:
 Features
 ===
 
-TODO: Updated feature list.
+The membership extension replaces the built-in functionality of extending memberships. It provides the following features:
+
+- Map contributions of a specific financial type onto memberships. This makes it possible to find contacts that did not pay enough membership fees.
+- Automatically extend the end date of a membership if enough membership fees for the period are paid.
+- Create membership numbers automatically with a configurable pattern.
+- Provide additional tokens for communication, for example cancellation date and reason.
+
+The project 60 membership extension does not interfere with the built-in mechanism of membership types and membership statuses, as well as the  automatic changing of membership statuses.
+
 
 Documentation
 ===

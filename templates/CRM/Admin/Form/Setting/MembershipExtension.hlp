@@ -75,6 +75,10 @@
     <ul>
       <li>{ts domain='org.project60.membership'}<code>{literal}{mid[+offset]}{/literal}</code>: CiviCRM Membership ID, with optional offset value. Example <code>{literal}{mid+1000}{/literal}</code>{/ts}</li>
       <li>{ts domain='org.project60.membership'}<code>{literal}{cid[+offset]}{/literal}</code>: CiviCRM Contact ID, with optional offset value. Example <code>{literal}{cid+100000}{/literal}</code>{/ts}</li>
+      <li>{ts domain='org.project60.membership'}<code>{literal}{YY}{/literal}</code>: A two digit representation of the current year.{/ts}</li>
+      <li>{ts domain='org.project60.membership'}<code>{literal}{YYYY}{/literal}</code>: A full numeric representation of the current year in 4 digits.{/ts}</li>
+      <li>{ts domain='org.project60.membership'}<code>{literal}{YY0}{/literal}</code>: The same as <code>{literal}YY{/literal}</code>, but the membership ID counts up from 0 every year.{/ts}</li>
+      <li>{ts domain='org.project60.membership'}<code>{literal}{YYYY0}{/literal}</code>: The same as <code>{literal}YYYY{/literal}</code>, but the membership ID counts up from 0 every year.</code>{/ts}</li>
     </ul>
   </p>
 {/htxt}

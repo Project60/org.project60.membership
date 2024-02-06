@@ -106,7 +106,10 @@ function civicrm_api3_membership_extend($params) {
     civicrm_membership.end_date                AS end_date,
     civicrm_membership_type.minimum_fee        AS minimum_fee,
     civicrm_membership_type.duration_unit      AS p_unit,
-    civicrm_membership_type.duration_interval  AS p_interval
+    civicrm_membership_type.duration_interval  AS p_interval,
+    civicrm_membership_type.period_type                 AS p_type,
+    civicrm_membership_type.fixed_period_start_day      AS p_start_day,
+    civicrm_membership_type.fixed_period_rollover_day   AS p_rollover_day   
   FROM civicrm_membership
   LEFT JOIN civicrm_membership_type ON civicrm_membership_type.id = civicrm_membership.membership_type_id ";
   if (empty($params['membership_ids'])) {
@@ -135,7 +138,10 @@ function civicrm_api3_membership_extend($params) {
       'p_unit'       => $membership_query->p_unit,
       'p_interval'   => $membership_query->p_interval,
       'end_date'     => $membership_query->end_date,
-      'start_date'   => $membership_query->start_date);
+      'start_date'   => $membership_query->start_date,
+      'p_type'          => $membership_query->p_type,
+      'p_start_day'     => $membership_query->p_start_day,
+      'p_rollover_day'  => $membership_query->p_rollover_day); 
   }
   $membership_query->free();
   $stats['memberships_checked'] = count($memberships);
@@ -146,6 +152,9 @@ function civicrm_api3_membership_extend($params) {
     $expected_payment_amount    = (float) $membership['minimum_fee'];
     $payment_unit               = $membership['p_unit'];
     $payment_interval           = (int) $membership['p_interval'];
+    $payment_type               = $membership['p_type'];
+    $payment_start_day          = $membership['p_start_day'];
+    $payment_rollover_day       = $membership['p_rollover_day'];
 
     if (!empty($params['custom_fee']) || !empty($params['custom_interval'])) {
       // custom field/value override
@@ -201,6 +210,21 @@ function civicrm_api3_membership_extend($params) {
 
     // 4. find the starting time
     $date = strtotime($membership['start_date']);
+    // the next lines implement support for membership period type "fixed"
+    // TODO: This currently works only for membership periods of type "year" and starting Jan-01 with duration 1 year.
+    // TODO: Should be enhanced for other duration unit / duration interval and differing fixed period start days.
+    if ($payment_type=="fixed"){
+      // sanitize the content of these fields (they might have no leading zero and are only 3 characters long)
+      $payment_start_day=str_pad($payment_start_day, 4, "0", STR_PAD_LEFT);
+      $payment_rollover_day=str_pad($payment_rollover_day, 4, "0", STR_PAD_LEFT);
+      // Check if rollover date was reached when the membership started:
+      // In this case, no additional payment is needed in the following membership period (year),
+      // and we add 1 year to the membership start date:
+      $rollover = strtotime("$date-substr($payment_rollover_day, 0, 2)-substr($payment_rollover_day, 2, 2)");
+      if ($rollover < $date) {$date = strtotime("+1 year", $date);}
+      // Move $date back to the start of the payment period
+      $date = strtotime("$date-substr($payment_start_day, 0, 2)-substr($payment_start_day, 2, 2)");
+    }
     if ($horizon) {
       while ($date < $horizon) {
         $date = strtotime("+$payment_interval $payment_unit", $date);

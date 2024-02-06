@@ -27,7 +27,7 @@ The project 60 membership extension does not interfere with the built-in mechani
 
 Documentation
 ===
-Updated documentation is underway, but not yet published. For now, you can check the ```/docs``` folder in the ```add_documentation``` branch to see what's already there. 
+Updated documentation is underway, but not yet published. For now, you can check the ```/docs``` folder to see what's already there. 
 
 We need your support
 ===

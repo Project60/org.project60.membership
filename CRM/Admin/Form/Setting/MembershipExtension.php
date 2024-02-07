@@ -198,7 +198,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $this->addElement('checkbox',
       "record_fee_updates",
       E::ts("Record annual fee changes"));
-    
+
     // add extra tokens
     $this->assign('custom_token_indices', range(1, self::CUSTOM_MEMBERSHIP_TOKEN_COUNT));
     $all_custom_fields = $this->getAllCustomFields();
@@ -343,7 +343,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
       // find all custom fields that are
       //  1) attached to a membership
-      //  2) of type Int
+      //  2) of type Text
       //  3) not multivalue
       //  4) indexed
       //  5) read-only
@@ -376,10 +376,11 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
     // find all custom fields that are
     //  1) attached to a membership
-    //  2) of type Int
-    //  3) not multivalue
-    //  4) indexed
-    //  5) read-only
+    //  2) of data type Text
+    //  3) of field input type Select
+    //  4) not multivalue
+    //  5) indexed
+    //  6) read-only
 
     // if there is eligible groups, look for fields
     if (!empty($custom_group_ids)) {
@@ -499,7 +500,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
     // find all custom fields that are
     //  1) attached to a membership
-    //  2) of type money
+    //  2) of type Date
     //  3) indexed
 
     // if there is eligible groups, look for fields

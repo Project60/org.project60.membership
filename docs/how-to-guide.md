@@ -19,7 +19,9 @@ The SEPA mandate needs to be assigned manually for every membership.
 
 ## How to find contacts with missing payments
 
-If you want to identify all active members that are behind with their payment, you can configure the custom field [missing abount](./configuration.md#missing-payments). The value of this field is calculated automatically by the job `Membership.process`. Search all contacts with a positive entry in the missing amount field, for example by using the report **Membership (Detail)**.
+If you want to identify all active members that are behind with their payment, you can configure the custom field [missing abount](./configuration.md#missing-payments). The value of this field is calculated automatically by the job `Membership.process`. Search all contacts with a positive entry in the missing amount field, for example by using the report **Membership (Detail)**. This should be done regularly, for example every month, if you want to send reminders about forgotten payments.
+
+You can also search all contacts with a membership of status _grace period_ and a positive entry in the missing amount field. This will exclude the contacts whose memberships are inactive since a longer time period. You can define at **Administer > CiviMember > Membership Status Rules** how long after the end date a membership should be in status _grace period_.
 
 ## How to find contributions where the automatic assignment failed
 
@@ -35,8 +37,14 @@ You first need to configure the corresponding settings [here](./configuration.md
 
 It is possible to define another contact to do the membership payments and to take that into account during the automatic extension of a membership. The configurations needed for this are described [here](./configuration.md#general) in the description **Paid By Field**.
 
+If the other contact takes over the payment only once and not every time, you can manually assign the contribution to the membership it belongs to.
 
+## How to manually assign contributions to a membership
 
+In some rare cases it might be necessary to assign a contribution manually to a membership. An example could be a person who paid their membership fee long before the start date of the membership. The [automatic synchronization](./automation.md#assign-contributions-to-memberships) will fail in this case. Another example could be a contact with several active memberships of the same type.
 
+Go to **Contributions > Find Contributions** and edit the search criteria in order to find the contributions. Select the contributions and click on **Actions > Assign to Membership**. You will be able to choose the person and membership explicitly to which the contribution should be assigned.
 
+## How to manually detach contributions from a membership
 
+The workflow is the same as above: Select the contributions in the search result at **Contributions > Find Contributions** and choose the action **Detach from Membership**.

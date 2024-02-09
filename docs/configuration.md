@@ -105,7 +105,7 @@ Remark: This only works if there is exactly one contribution per membership peri
 
 ## Derived Fields
 
-You can define additional custom fields and select them here. These fields will then be calculated automatically out of the payment contract that is related to the membership.
+You can define additional custom fields and select them here. These fields will then be calculated automatically out of the payment contract that is related to the membership. All derived fields defined here will be available as tokens for email communication.
 
 You can update all derived fields by selecting **Update Derived Fiels on Save** below.
 

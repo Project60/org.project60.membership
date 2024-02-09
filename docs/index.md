@@ -1,6 +1,6 @@
 # Introduction
 
-The **Membership Extension** aims to provide tools for a "European" interpretation of the "membership" concept. In the Anglo-Saxon countries (CiviCRM's native land) a membership is regarded as a service. If you don't pay anymore, you won't get the service - that's it. In a lot of other countries the conception is different: it's more like an indeterminate binding contract.
+The **Project 60 Membership Extension** aims to provide tools for a "European" interpretation of the "membership" concept. In the Anglo-Saxon countries (CiviCRM's native land) a membership is regarded as a service. If you don't pay anymore, you won't get the service - that's it. In a lot of other countries the conception is different: it's more like an indeterminate binding contract.
 
 A number of problems arise from this slightly different interpretation:
 

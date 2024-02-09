@@ -55,6 +55,8 @@ This job can perform various tasks with respect to memberships:
 - calculate outstanding amounts
 - extend memberships that do not have an outstanding amount for the next period
 
+The length of the next period is determined by the linked recurring contribution. For example, the membership of a contact paying yearly will be extended for one year, the membership of a contact paying monthly will be extended for one month.
+
 The corresponding API 3 call is `Membership.process`. Available parameters are:
 
 - `membership_type_id`: ID of the membership type IDs to process, or a comma-separated list of such membership types
@@ -62,6 +64,25 @@ The corresponding API 3 call is `Membership.process`. Available parameters are:
 - `limit`: If given, only this amount of memberships will be investigated. The last membership processed will be stored, and the processing will be picked up with the next (limited) call.
 - `dry_run`: If active, no changes will be performed.
 - `membership_id`: ID of the membership to process, or a comma-separated list of such membership. This can be helpful for debugging and testing.
+
+### Logging
+
+All processed memberships are logged in a file which can be useful if you have set up the job to run automatically.
+
+Two parameters change the logging behavior and are not exposed by the API explorer. These are
+
+- `log_target`: The path to a file which logs the results of the process. The default is the file `P60Membership_extension.log` in the ConfigAndLog directory. If it doesn't exist yet, you might need to create it first with write permissions for the web user (for example `www-data`).
+- `log_level`: If you enter a log level (for example "debug", "info" or "error"), the content of the log file might change.
+
+The content of the file looks for example like this:
+```
+[2024-02-09 21:50:21] Processing membership [12345]
+[2024-02-09 21:50:21] Membership [12345] paid 0 of 10.
+[2024-02-09 21:50:21] Membership [12345] is missing fee amount of: 10
+[2024-02-09 21:50:21] Processing membership [98765]
+[2024-02-09 21:50:21] Membership [98765] paid 0 of 80.
+[2024-02-09 21:50:21] Membership [98765] is missing fee amount of: 80
+```
 
 ## Update membership status
 

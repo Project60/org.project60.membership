@@ -6,7 +6,7 @@ This Extensions provides tools for a "European" interpretation of the membership
 A number of problems arise from this different concept:
 
 1. Payments are often not made upfront, the way CiviCRM expects.
-2. Membership fees are not necessarily entered manually, or collected via a payment processor, but can enter CiviCRM by other means (e.g. import, SEPA collection, etc.). This means that they can be contribution records, but not (yet) linked to the corresponding membership. 
+2. Membership fees are not necessarily entered manually, or collected via a payment processor, but can enter CiviCRM by other means (e.g. import, SEPA collection, etc.). This means that they can be contribution records, but not (yet) linked to the corresponding membership.
 3. Memberships should be automatically extended, when the appropriate payment is in the system.
 4. Despite all those possible irregularities, you need to know who is behind on their payments and by how much.
 5. Etc.
@@ -27,11 +27,11 @@ The project 60 membership extension does not interfere with the built-in mechani
 
 Documentation
 ===
-Updated documentation is underway, but not yet published. For now, you can check the ```/docs``` folder to see what's already there. 
+https://docs.civicrm.org/project60-membership/en/latest (automatic publishing)
 
 We need your support
 ===
 
 This CiviCRM extension is provided as Free and Open Source Software, and we are happy if you find it useful. However, we have put a lot of work into it (and continue to do so), much of it unpaid for. So if you benefit from our software, please consider making a financial contribution so we can continue to maintain and develop it further.
 
-If you are willing to support us in developing this CiviCRM extension, please send an email to info@systopia.de to get an invoice or agree a different payment method. Thank you! 
+If you are willing to support us in developing this CiviCRM extension, please send an email to info@systopia.de to get an invoice or agree a different payment method. Thank you!

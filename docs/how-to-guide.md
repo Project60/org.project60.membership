@@ -2,7 +2,7 @@
 
 The most important feature of the membership extension is the automatic processing of memberships and membership fees as described [here](./automation.md).
 
-This chapater is a loose combination of manual tasks that arise when working with the membership extension.
+This chapter is a loose combination of manual tasks that arise when working with the membership extension.
 
 ## How to assign a SEPA mandate to a membership
 

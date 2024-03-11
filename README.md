@@ -27,7 +27,7 @@ The project 60 membership extension does not interfere with the built-in mechani
 
 Documentation
 ===
-https://docs.civicrm.org/project60-membership/en/latest (automatic publishing)
+https://docs.civicrm.org/project60-membership/en/latest
 
 We need your support
 ===

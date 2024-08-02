@@ -10,6 +10,7 @@ nav:
   - 'Configuration': configuration.md
   - 'Automation': automation.md
   - 'How To Guide': how-to-guide.md
+  - 'Examples': example-situations.md
 
 
 markdown_extensions:

@@ -209,7 +209,15 @@ class CRM_Membership_NumberLogic {
         if (preg_match('#\{mid(?P<offset>[+-][0-9]+)?\}#', $number, $matches)) {
             // get the next membership ID
             // FIXME: this is not very reliable
-            $mid = CRM_Core_DAO::singleValueQuery("SELECT MAX(id) FROM civicrm_membership;") + 1;
+            if(preg_match('#\{YYYY0\}#', $number) ||
+                preg_match('#\{YY0\}#', $number)) {
+                $membershipsQuery = "SELECT count(id) FROM civicrm_membership WHERE join_date BETWEEN 
+                    CONCAT(year(curdate()), '-01-01') AND CONCAT(year(curdate()), '-12-31');";
+            } else {
+                $membershipsQuery = "SELECT MAX(id) FROM civicrm_membership;";
+            }
+
+            $mid = CRM_Core_DAO::singleValueQuery($membershipsQuery) + 1;
             if (!empty($matches['offset'])) {
                 if (substr($matches['offset'], 0, 1) == '-') {
                     $mid -= substr($matches['offset'], 1);
@@ -233,6 +241,16 @@ class CRM_Membership_NumberLogic {
                 }
             }
             $number = preg_replace('#\{cid(?P<offset>[+-][0-9]+)?\}#', $cid, $number);
+        }
+
+        // replace {cid+x} patterns
+        if (preg_match('#\{YY0?\}#', $number, $matches)) {
+            $number = preg_replace('#\{YY0?\}#', date('y'), $number);
+        }
+
+        // replace {cid+x} patterns
+        if (preg_match('#\{YYYY0?\}#', $number, $matches)) {
+            $number = preg_replace('#\{YYYY0?\}#', date('Y'), $number);
         }
 
         // TODO: implement {seq:x} pattern

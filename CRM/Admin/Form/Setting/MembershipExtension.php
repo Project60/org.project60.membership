@@ -432,7 +432,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
 
   /**
-   * Get all eligible fields to be used as paid_via
+   * Get all eligible fields to be used as AmountField
    * @return array options
    */
   protected function getAmountFieldOptions($read_only) {

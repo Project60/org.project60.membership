@@ -12,7 +12,7 @@
   <version>1.0.0</version>
   <develStage>stable</develStage>
   <compatibility>
-    <ver>5.38</ver>
+    <ver>5.45</ver>
   </compatibility>
   <urls>
     <url desc="Main Extension Page">https://github.com/Project60/org.project60.membership</url>
@@ -23,17 +23,18 @@
   <comments/>
   <civix>
     <namespace>CRM/Membership</namespace>
-    <format>23.02.1</format>
+    <format>24.09.1</format>
   </civix>
   <mixins>
     <mixin>menu-xml@1.0.0</mixin>
     <mixin>mgd-php@1.0.0</mixin>
     <mixin>setting-php@1.0.0</mixin>
-    <mixin>smarty-v2@1.0.1</mixin>
+    <mixin>smarty-v2@1.0.3</mixin>
+    <mixin>entity-types-php@2.0.0</mixin>
   </mixins>
   <classloader>
     <psr0 prefix="CRM_" path="."/>
     <psr4 prefix="Civi\" path="Civi"/>
   </classloader>
-  <upgrader>CRM_Membership_Upgrader</upgrader>
+  <upgrader>CiviMix\Schema\Membership\AutomaticUpgrader</upgrader>
 </extension>

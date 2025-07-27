@@ -23,7 +23,7 @@ class CRM_Membership_SynchroniseLogic {
    * this function will execute the synchronization
    *   for ONE financial_type_id => membership_type_id mapping
    */
-  public static function synchronizePayments($financial_type_id, $membership_type_ids, $settings_override = [], $contribution_ids = []) {
+  public static function synchronizePayments(int $financial_type_id, $membership_type_ids, $settings_override = [], $contribution_ids = []) : array {
     $contribution_receive_date = [];
     $membership_start_date = [];
     $membership_join_date = [];
@@ -101,7 +101,7 @@ class CRM_Membership_SynchroniseLogic {
     while ($new_payments->fetch()) {
       // FOR EACH PAYMENT: GENERATE A QUERY TO FIND ELIGIBLE MEMBERSHIPS
       $contact_id = $new_payments->contact_id;
-      $contribution_id = $new_payments->contribution_id;
+      $contribution_id = (int) $new_payments->contribution_id;
       $contribution_recur_id = $new_payments->contribution_recur_id;
       $date = date('Ymdhis', strtotime($new_payments->contribution_date));
 
@@ -166,11 +166,13 @@ class CRM_Membership_SynchroniseLogic {
 
     // EXECUTE
     foreach ($results['mapped'] as $contribution_id => $membership_id) {
+      $contribution_id = (int) $contribution_id;
       // create contribution -> membership connections
-      $create_result = civicrm_api('MembershipPayment', 'create',
-        array('contribution_id'=>$contribution_id, 'membership_id'=>$membership_id, 'version'=>3));
-      if (!empty($create_result['is_error'])) {
-        // ERROR HANDLING
+      try {
+        $create_result = civicrm_api3('MembershipPayment', 'create', [
+          'contribution_id' => $contribution_id,
+          'membership_id' => $membership_id]);
+      } catch (Exception $e) {
         $results['errors'][$contribution_id] = $create_result['is_error'];
         continue;
       }

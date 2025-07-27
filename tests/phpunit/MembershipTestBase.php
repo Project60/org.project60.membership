@@ -34,12 +34,12 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements Headless
       ->apply();
   }
 
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->makeSureThereIsALoggedInContact();
   }
 
-  public function tearDown() {
+  public function tearDown(): void {
     parent::tearDown();
   }
 

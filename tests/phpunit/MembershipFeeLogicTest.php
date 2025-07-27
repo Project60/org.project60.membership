@@ -28,12 +28,12 @@ require_once 'MembershipTestBase.php';
  */
 class MembershipFeeLogicTest extends MembershipTestBase  {
 
-  public function setUp() {
+  public function setUp() : void {
     parent::setUp();
   }
 
 
-  public function tearDown() {
+  public function tearDown() : void {
     parent::tearDown();
   }
 

@@ -82,13 +82,13 @@ function civicrm_api3_membership_payment_synchronize($params) {
  * Adding specs
  */
 function _civicrm_api3_membership_payment_synchronize_spec(&$params) {
-  $params['rangeback'] = array(
+  $params['rangeback'] = [
     'name'         => 'rangeback',
     'api.required' => 0,
     'type'         => CRM_Utils_Type::T_INT,
     'title'        => 'Range',
     'description'  => 'Backward horizon (in days). Defaults to value in settings.',
-    );
+  ];
   $params['gracedays'] = array(
     'name'         => 'gracedays',
     'api.required' => 0,

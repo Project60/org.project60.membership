@@ -260,7 +260,7 @@ class CRM_Membership_PaidByLogic
     }
 
     $query = CRM_Core_DAO::executeQuery("
-      SELECT 
+      SELECT
         payment_info.entity_id AS membership_id
       FROM {$paid_via_field['table_name']} payment_info
       WHERE payment_info.{$paid_via_field['column_name']} = {$recurring_contribution_id};");
@@ -320,7 +320,7 @@ class CRM_Membership_PaidByLogic
 
     $membership_id_list = implode(',', $membership_ids);
     $query = CRM_Core_DAO::executeQuery("
-      SELECT 
+      SELECT
         entity_id                        AS membership_id,
         {$paid_via_field['column_name']} AS contribution_recur_id
       FROM {$paid_via_field['table_name']} paymentinfo
@@ -499,8 +499,8 @@ class CRM_Membership_PaidByLogic
       $contribution_recur_id = (int) $contribution_recur_id;
       $exclude_membership_id = (int) $exclude_membership_id;
       return CRM_Core_DAO::singleValueQuery("
-          SELECT COUNT(entity_id) 
-          FROM {$field['table_name']} 
+          SELECT COUNT(entity_id)
+          FROM {$field['table_name']}
           WHERE {$field['column_name']} = {$contribution_recur_id}
             AND entity_id <> {$exclude_membership_id}");
     } else {
@@ -600,9 +600,9 @@ class CRM_Membership_PaidByLogic
         $formattedNewEndDate = CRM_Utils_Date::customFormat($this->renewed_memberships[$membership_id]['end_date'],'%B %E%f, %Y');
         // Retrieve displayNamne
         $displayName = CRM_Core_DAO::singleValueQuery("
-          SELECT display_name 
-          FROM civicrm_membership 
-          INNER JOIN civicrm_contact ON civicrm_membership.contact_id = civicrm_contact.id 
+          SELECT display_name
+          FROM civicrm_membership
+          INNER JOIN civicrm_contact ON civicrm_membership.contact_id = civicrm_contact.id
           WHERE civicrm_membership.id = %1",
           array (
               1=>array($membership_id, 'Integer')
@@ -673,11 +673,11 @@ class CRM_Membership_PaidByLogic
    * We don't check the status of the contribution as we assume only pending or completed contributions
    * will be added to the membership.
    *
-   * @param $contribution_id integer Contribution ID
-   * @param $membership_id        object  Contribution BAO object (?)
-   * @throws Exception     only if something's wrong with the pre/post call sequence - shouldn't happen
+   * @param $contribution_id  integer Contribution ID
+   * @param $membership_id    integer Membership ID
+   * @throws Exception        only if something's wrong with the pre/post call sequence - shouldn't happen
    */
-  public function membershipPaymentCreatePOST($contribution_id, $membership_id) {
+  public function membershipPaymentCreatePOST(int $contribution_id, int $membership_id) {
     $settings = CRM_Membership_Settings::getSettings();
     if (!$settings->getSetting('update_membership_status')) {
       return;
@@ -693,7 +693,7 @@ class CRM_Membership_PaidByLogic
     if (in_array($membership_id, $this->new_membership_id_stack)) {
       return; // This is a new membership no need to recalculate the end date
     }
-    
+
     //Check whether this is the first contribution of the membership
     $contributionCount = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM civicrm_membership_payment WHERE membership_id = %1", array(1=>array($membership_id, 'Integer')));
     if ($contributionCount <= 1) {

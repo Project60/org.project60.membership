@@ -19,7 +19,7 @@
   </tr>
   <tr>
     <td class="label">
-      {$form.contact.label}&nbsp;<a onclick='CRM.help("{ts}Contact Search{/ts}", {literal}{"id":"id-contact","file":"CRM\/Membership\/Form\/Task\/AssignTask"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon"></a>
+      {$form.contact.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute'}Contact Search{/ts}", {literal}{"id":"id-contact","file":"CRM\/Membership\/Form\/Task\/AssignTask"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute'}Help{/ts}" class="helpicon"></a>
     </td>
     <td>
       {$form.contact.html}

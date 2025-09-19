@@ -25,7 +25,7 @@
 			
 			<div class="crm-section">
 				<div class="label"><label for="rebuild">{ts}Rebuild Mapping{/ts}</label>
-				<a onclick='CRM.help("{ts}Rebuild Mapping{/ts}", {literal}{"id":"id-rebuild","file":"CRM\/Membership\/Page\/MembershipPayments"}{/literal}); return false;' href="#" title="{ts}Help{/ts}" class="helpicon">&nbsp;</a>
+				<a onclick='CRM.help("{ts escape='htmlattribute'}Rebuild Mapping{/ts}", {literal}{"id":"id-rebuild","file":"CRM\/Membership\/Page\/MembershipPayments"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute'}Help{/ts}" class="helpicon">&nbsp;</a>
 				</div>
 				<div class="content"><input type="checkbox" value="1" name="rebuild" id="rebuild" {if $smarty.request.rebuild}checked{/if}></div>
 				<div class="clear"></div>

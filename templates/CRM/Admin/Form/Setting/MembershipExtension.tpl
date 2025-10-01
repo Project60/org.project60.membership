@@ -32,15 +32,15 @@
       <h3>{ts domain="org.project60.membership"}Membership Number Integration{/ts}</h3>
       <table>
         <tr>
-          <td>{$form.membership_number_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Membership Number Field{/ts}", {literal}{"id":"id-number","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.membership_number_field.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Membership Number Field{/ts}", {literal}{"id":"id-number","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.membership_number_field.html}</td>
         </tr>
         <tr>
-          <td>{$form.membership_number_show.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Show Number in SummaryView{/ts}", {literal}{"id":"id-number-show","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.membership_number_show.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Show Number in SummaryView{/ts}", {literal}{"id":"id-number-show","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.membership_number_show.html}</td>
         </tr>
         <tr>
-          <td>{$form.membership_number_generator.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Generator Pattern{/ts}", {literal}{"id":"id-number-generator","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.membership_number_generator.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Generator Pattern{/ts}", {literal}{"id":"id-number-generator","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.membership_number_generator.html}</td>
         </tr>
       </table>
@@ -58,11 +58,11 @@
       <h3>{ts domain="org.project60.membership"}Membership Cancellation{/ts}</h3>
       <table>
         <tr>
-          <td>{$form.membership_cancellation_date_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Cancel Date Field{/ts}", {literal}{"id":"id-cancel-date","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.membership_cancellation_date_field.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Cancel Date Field{/ts}", {literal}{"id":"id-cancel-date","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.membership_cancellation_date_field.html}</td>
         </tr>
         <tr>
-          <td>{$form.membership_cancellation_reason_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Cancel Reason Field{/ts}", {literal}{"id":"id-cancel-reason","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.membership_cancellation_reason_field.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Cancel Reason Field{/ts}", {literal}{"id":"id-cancel-reason","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.membership_cancellation_reason_field.html}</td>
         </tr>
       </table>
@@ -79,27 +79,27 @@
        <h3>{ts domain="org.project60.membership"}Payment Integration{/ts}</h3>
        <table>
          <tr>
-           <td>{$form.paid_via_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Paid Via Field{/ts}", {literal}{"id":"id-paid-via","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.paid_via_field.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Paid Via Field{/ts}", {literal}{"id":"id-paid-via","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.paid_via_field.html}</td>
          </tr>
          <tr class="p60-paid-via-dependent">
-           <td>{$form.annual_amount_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Annual Amount Field{/ts}", {literal}{"id":"id-annual-amount-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.annual_amount_field.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Annual Amount Field{/ts}", {literal}{"id":"id-annual-amount-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.annual_amount_field.html}</td>
          </tr>
          <tr class="p60-record-fee-updates">
-           <td>{$form.record_fee_updates.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Record Fee Updates{/ts}", {literal}{"id":"id-record-fee-updates","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.record_fee_updates.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Record Fee Updates{/ts}", {literal}{"id":"id-record-fee-updates","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.record_fee_updates.html}</td>
          </tr>
          <tr>
-           <td>{$form.paid_via_end_with_status.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}End with status{/ts}", {literal}{"id":"id-paid-via-end-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.paid_via_end_with_status.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}End with status{/ts}", {literal}{"id":"id-paid-via-end-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.paid_via_end_with_status.html}</td>
          </tr>
          <tr>
-           <td>{$form.hide_auto_renewal.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Hide Auto Renewal{/ts}", {literal}{"id":"id-hide-auto-renewal","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.hide_auto_renewal.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Hide Auto Renewal{/ts}", {literal}{"id":"id-hide-auto-renewal","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.hide_auto_renewal.html}</td>
          </tr>
          <tr>
-           <td>{$form.update_membership_status.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Update membership status and end date{/ts}", {literal}{"id":"update-membership-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.update_membership_status.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Update membership status and end date{/ts}", {literal}{"id":"update-membership-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.update_membership_status.html}</td>
          </tr>
        </table>
@@ -110,27 +110,27 @@
        <h3>{ts domain="org.project60.membership"}Derived Fields{/ts}</h3>
        <table>
          <tr class="p60-paid-via-dependent">
-           <td>{$form.installment_amount_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Installment Amount Field{/ts}", {literal}{"id":"id-installment-amount-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.installment_amount_field.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Installment Amount Field{/ts}", {literal}{"id":"id-installment-amount-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.installment_amount_field.html}</td>
          </tr>
          <tr class="p60-paid-via-dependent">
-           <td>{$form.diff_amount_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Annual Gap Field{/ts}", {literal}{"id":"id-annual-gap-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.diff_amount_field.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Annual Gap Field{/ts}", {literal}{"id":"id-annual-gap-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.diff_amount_field.html}</td>
          </tr>
          <tr class="p60-paid-via-dependent">
-           <td>{$form.payment_frequency_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Payment Frequency Field{/ts}", {literal}{"id":"id-payment-frequency-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.payment_frequency_field.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Payment Frequency Field{/ts}", {literal}{"id":"id-payment-frequency-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.payment_frequency_field.html}</td>
          </tr>
          <tr class="p60-paid-via-dependent">
-           <td>{$form.payment_type_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Payment Type Field{/ts}", {literal}{"id":"id-payment-type-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.payment_type_field.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Payment Type Field{/ts}", {literal}{"id":"id-payment-type-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.payment_type_field.html}</td>
          </tr>
          <tr class="p60-paid-via-dependent p60-payment-type-dependent">
-           <td>{$form.payment_type_field_mapping.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Payment Type Field Mapping{/ts}", {literal}{"id":"id-payment-type-field-mapping","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.payment_type_field_mapping.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Payment Type Field Mapping{/ts}", {literal}{"id":"id-payment-type-field-mapping","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.payment_type_field_mapping.html}</td>
          </tr>
          <tr class="p60-paid-via-dependent p60-payment-type-dependent">
-           <td>{$form.synchronise_payment_now.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Update Derived Fields on Save{/ts}", {literal}{"id":"id-update-now","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.synchronise_payment_now.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Update Derived Fields on Save{/ts}", {literal}{"id":"id-update-now","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.synchronise_payment_now.html}</td>
          </tr>
        </table>
@@ -141,7 +141,7 @@
        <h3>{ts domain="org.project60.membership"}Late Payments{/ts}</h3>
        <table>
          <tr class="p60-paid-via-dependent">
-           <td>{$form.missing_period_amount_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Missing Amount (current period){/ts}", {literal}{"id":"id-missing-amount-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.missing_period_amount_field.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Missing Amount (current period){/ts}", {literal}{"id":"id-missing-amount-field","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.missing_period_amount_field.html}</td>
          </tr>
        </table>
@@ -149,7 +149,7 @@
      </div>
 
      <div class="crm-block crm-form-block crm-form-title-here-form-block">
-       <h3>{ts domain="org.project60.membership"}Additional Tokens{/ts} <a onclick='CRM.help("{ts domain="org.project60.membership"}Additional Tokens{/ts}", {literal}{"id":"id-additional-tokens","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></h3>
+       <h3>{ts domain="org.project60.membership"}Additional Tokens{/ts} <a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Additional Tokens{/ts}", {literal}{"id":"id-additional-tokens","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></h3>
        <table>
          {foreach from=$custom_token_indices item=custom_token_index}
          {capture assign=field_key}custom_token_{$custom_token_index}{/capture}
@@ -174,19 +174,19 @@
       <h3>{ts domain="org.project60.membership"}General{/ts}</h3>
       <table>
         <tr>
-          <td>{$form.sync_minimum_date.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Sync Timeframe{/ts}", {literal}{"id":"id-sync-timeframe","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.sync_minimum_date.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Sync Timeframe{/ts}", {literal}{"id":"id-sync-timeframe","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.sync_minimum_date.html}&nbsp;-&nbsp;{$form.sync_maximum_date.html}</td>
         </tr>
         <tr>
-          <td>{$form.sync_range.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Backward Horizon{/ts}", {literal}{"id":"id-sync-range","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.sync_range.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Backward Horizon{/ts}", {literal}{"id":"id-sync-range","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.sync_range.html}</td>
         </tr>
         <tr>
-          <td>{$form.grace_period.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Forward Horizon{/ts}", {literal}{"id":"id-grace-period","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.grace_period.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Forward Horizon{/ts}", {literal}{"id":"id-grace-period","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.grace_period.html}</td>
         </tr>
          <tr>
-           <td>{$form.paid_by_field.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Paid By Field{/ts}", {literal}{"id":"id-paid-by","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+           <td>{$form.paid_by_field.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Paid By Field{/ts}", {literal}{"id":"id-paid-by","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
            <td>{$form.paid_by_field.html}</td>
          </tr>
       </table>
@@ -197,7 +197,7 @@
       <h3>{ts domain="org.project60.membership"}Membership Status{/ts}</h3>
       <table>
         <tr>
-          <td>{$form.live_statuses.label}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Live Status{/ts}", {literal}{"id":"id-live-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
+          <td>{$form.live_statuses.label}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Live Status{/ts}", {literal}{"id":"id-live-status","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon"></a></td>
           <td>{$form.live_statuses.html}</td>
         </tr>
       </table>
@@ -205,7 +205,7 @@
     </div>
 
     <div class="crm-block crm-form-block crm-form-title-here-form-block">
-      <h3>{ts domain="org.project60.membership"}Financial Type Mapping{/ts}&nbsp;<a onclick='CRM.help("{ts domain="org.project60.membership"}Financial Type Mapping{/ts}", {literal}{"id":"id-mapping","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts domain="org.project60.membership"}Help{/ts}" class="helpicon">&nbsp;</a></h3>
+      <h3>{ts domain="org.project60.membership"}Financial Type Mapping{/ts}&nbsp;<a onclick='CRM.help("{ts escape='htmlattribute' domain="org.project60.membership"}Financial Type Mapping{/ts}", {literal}{"id":"id-mapping","file":"CRM\/Admin\/Form\/Setting\/MembershipExtension"}{/literal}); return false;' href="#" title="{ts escape='htmlattribute' domain="org.project60.membership"}Help{/ts}" class="helpicon">&nbsp;</a></h3>
       <table>
 {foreach from=$financial_types item=financial_type_name key=financial_type_id}
         {capture assign=itemid}syncmap_{$financial_type_id}{/capture}

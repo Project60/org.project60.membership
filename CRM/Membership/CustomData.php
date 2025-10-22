@@ -796,7 +796,7 @@ class CRM_Membership_CustomData
                 return $field_data['value'];
             } else {
                 // unlikely, but worth a shot:
-                return CRM_Utils_Array::value("custom_{$field_id}", $params, null);
+                return $params["custom_{$field_id}"] ?? NULL;
             }
         }
         return null;
@@ -848,9 +848,9 @@ class CRM_Membership_CustomData
                 'value' => $value,
                 'type' => CRM_Utils_Array::value('data_type', $field_specs, 'String'),
                 'custom_field_id' => $field_id,
-                'custom_group_id' => CRM_Utils_Array::value('custom_group_id', $field_specs, null),
-                'table_name' => CRM_Utils_Array::value('table_name', $group_specs, null),
-                'column_name' => CRM_Utils_Array::value('column_name', $field_specs, null),
+                'custom_group_id' => $field_specs['custom_group_id'] ?? NULL,
+                'table_name' => $group_specs['table_name'] ?? NULL,
+                'column_name' => $field_specs['column_name'] ?? NULL,
                 'is_multiple' => CRM_Utils_Array::value('is_multiple', $group_specs, 0),
             ];
         } else {

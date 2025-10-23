@@ -52,7 +52,7 @@ class CRM_Membership_NumberLogic {
      * @param  $contact_ids array contact IDs
      * @param $membership_type_ids array list of potential membership type IDs
      * @return array contact id => membership number
-     * @throws API_Exception
+     * @throws CRM_Core_Exception
      */
     public static function getCurrentMembershipNumbers($contact_ids, $membership_type_ids = NULL) {
       $contact_id_2_membership_number = array();

@@ -88,7 +88,7 @@ class CRM_Membership_TokenLogic {
    *  add more membership related tokens
    *
    * @param $tokens
-   * @throws CiviCRM_API3_Exception
+   * @throws CRM_Core_Exception
    */
   public function tokens(&$tokens) {
     $settings = CRM_Membership_Settings::getSettings();
@@ -170,7 +170,7 @@ class CRM_Membership_TokenLogic {
 
   /**
    * @return null
-   * @throws CiviCRM_API3_Exception
+   * @throws CRM_Core_Exception
    */
   protected function getMembershipTypes() {
     if ($this->_membershipTypes == NULL) {

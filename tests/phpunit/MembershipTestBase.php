@@ -194,7 +194,7 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements Headless
    * @param $change_date
    * @param $old_amount
    * @param $new_amount
-   * @throws CiviCRM_API3_Exception
+   * @throws CRM_Core_Exception
    */
   public function createChangeActivity($membership, $change_date, $old_amount, $new_amount) {
     $change_logic = CRM_Membership_FeeChangeLogic::getSingleton();

@@ -211,19 +211,25 @@ function civicrm_api3_membership_extend($params) {
     // 4. find the starting time
     $date = strtotime($membership['start_date']);
     // the next lines implement support for membership period type "fixed"
-    // TODO: This currently works only for membership periods of type "year" and starting Jan-01 with duration 1 year.
-    // TODO: Should be enhanced for other duration unit / duration interval and differing fixed period start days.
+    // TODO: This currently works only for membership periods of type "year" with duration 1 year.
+    // TODO: Should be enhanced for other duration unit / duration interval.
     if ($payment_type=="fixed"){
-      // sanitize the content of these fields (they might have no leading zero and are only 3 characters long)
-      $payment_start_day=str_pad($payment_start_day, 4, "0", STR_PAD_LEFT);
-      $payment_rollover_day=str_pad($payment_rollover_day, 4, "0", STR_PAD_LEFT);
+      // get YYYY from membership start
+      $year = date('Y', strtotime($membership['start_date']));
+      // fixed_period_start_day und rollover_day kommen z.B. als "101" - ohne führende Null
+      $start_month = substr(str_pad($payment_start_day, 4, "0", STR_PAD_LEFT), 0, 2);
+      $start_day   = substr(str_pad($payment_start_day, 4, "0", STR_PAD_LEFT), 2, 2);
+      $rollover_month = substr(str_pad($payment_rollover_day, 4, "0", STR_PAD_LEFT), 0, 2);
+      $rollover_day   = substr(str_pad($payment_rollover_day, 4, "0", STR_PAD_LEFT), 2, 2);
+
+      // use start_date of the fixed membership period
+      $date = strtotime("$year-$startMonth-$startDay");
+
       // Check if rollover date was reached when the membership started:
       // In this case, no additional payment is needed in the following membership period (year),
       // and we add 1 year to the membership start date:
-      $rollover = strtotime("$date-substr($payment_rollover_day, 0, 2)-substr($payment_rollover_day, 2, 2)");
+      $rollover = strtotime("$year-$rollover_month-$rollover_day");
       if ($rollover < $date) {$date = strtotime("+1 year", $date);}
-      // Move $date back to the start of the payment period
-      $date = strtotime("$date-substr($payment_start_day, 0, 2)-substr($payment_start_day, 2, 2)");
     }
     if ($horizon) {
       while ($date < $horizon) {
@@ -232,13 +238,33 @@ function civicrm_api3_membership_extend($params) {
     }
     // error_log("Starting with date " . date('Y-m-d', $date));
 
-    // 5. try to find a payment for each payemnt date
+    // 5. try to find a payment for each period (payment date)
     $today = strtotime("now + $look_ahead days");
     while ($date < $today) {
       // error_log("Checking date " . date('Y-m-d', $date));
       // find and add all payments around this date
       $contribution_sum = 0.0;
       foreach ($membership_payments as $index => $payment) {
+
+      $paymentTimestamp = strtotime($payment['contribution_date']);
+      if ($payment_type == "fixed") {
+
+        // Perioden-Intervall berechnen
+        $periodStart = $date;
+        $periodEnd   = strtotime("+1 year", $periodStart);
+
+        // Zahlung zählt, wenn sie innerhalb der Periode liegt
+        if ($paymentTimestamp >= $periodStart && $paymentTimestamp < $periodEnd) {
+
+          $contribution_sum += $payment['contribution_amount'];
+          unset($membership_payments[$index]);
+
+          if ($contribution_sum >= $expected_payment_amount) {
+           break;
+          }
+        }
+      } else {
+     // Rolling Membership
         $date_diff = abs($date - strtotime($payment['contribution_date']));
         if ($date_diff < $max_deviation) {
           $contribution_sum += $payment['contribution_amount'];
@@ -249,6 +275,7 @@ function civicrm_api3_membership_extend($params) {
             break;
           }
         }
+      }
       }
 
       if ($contribution_sum < $expected_payment_amount) {

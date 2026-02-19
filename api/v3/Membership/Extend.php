@@ -238,13 +238,33 @@ function civicrm_api3_membership_extend($params) {
     }
     // error_log("Starting with date " . date('Y-m-d', $date));
 
-    // 5. try to find a payment for each payemnt date
+    // 5. try to find a payment for each period (payment date)
     $today = strtotime("now + $look_ahead days");
     while ($date < $today) {
       // error_log("Checking date " . date('Y-m-d', $date));
       // find and add all payments around this date
       $contribution_sum = 0.0;
       foreach ($membership_payments as $index => $payment) {
+
+      $paymentTimestamp = strtotime($payment['contribution_date']);
+      if ($payment_type == "fixed") {
+
+        // Perioden-Intervall berechnen
+        $periodStart = $date;
+        $periodEnd   = strtotime("+1 year", $periodStart);
+
+        // Zahlung zählt, wenn sie innerhalb der Periode liegt
+        if ($paymentTimestamp >= $periodStart && $paymentTimestamp < $periodEnd) {
+
+          $contribution_sum += $payment['contribution_amount'];
+          unset($membership_payments[$index]);
+
+          if ($contribution_sum >= $expected_payment_amount) {
+           break;
+          }
+        }
+      } else {
+     // Rolling Membership
         $date_diff = abs($date - strtotime($payment['contribution_date']));
         if ($date_diff < $max_deviation) {
           $contribution_sum += $payment['contribution_amount'];
@@ -255,6 +275,7 @@ function civicrm_api3_membership_extend($params) {
             break;
           }
         }
+      }
       }
 
       if ($contribution_sum < $expected_payment_amount) {

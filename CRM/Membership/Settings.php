@@ -93,7 +93,7 @@ class CRM_Membership_Settings {
    */
   public function getStrtotimeDate($key, $warn = FALSE) {
     $value = $this->getSetting($key);
-    if (empty($value)) {
+    if ($value === NULL || $value === '' || $value === '0') {
       return NULL;
     }
 
@@ -132,7 +132,7 @@ class CRM_Membership_Settings {
    * @return int
    */
   public function getPaidByFieldID() {
-    if (!empty($this->settings_bucket['paid_by_field'])) {
+    if (isset($this->settings_bucket['paid_by_field']) && (int) $this->settings_bucket['paid_by_field'] !== 0) {
       return (int) $this->settings_bucket['paid_by_field'];
     }
     else {
@@ -154,7 +154,8 @@ class CRM_Membership_Settings {
    * @return int
    */
   public function getMissingAmountFieldID() {
-    if (!empty($this->settings_bucket['missing_period_amount_field'])) {
+    if (isset($this->settings_bucket['missing_period_amount_field'])
+      && (int) $this->settings_bucket['missing_period_amount_field'] !== 0) {
       return (int) $this->settings_bucket['missing_period_amount_field'];
     }
     else {
@@ -176,7 +177,7 @@ class CRM_Membership_Settings {
    * @return int
    */
   public function getPaidViaFieldID() {
-    if (!empty($this->settings_bucket['paid_via_field'])) {
+    if (isset($this->settings_bucket['paid_via_field']) && (int) $this->settings_bucket['paid_via_field'] !== 0) {
       return (int) $this->settings_bucket['paid_via_field'];
     }
     else {
@@ -206,7 +207,7 @@ class CRM_Membership_Settings {
       }
     }
 
-    if (!empty($fields_to_load)) {
+    if ($fields_to_load !== []) {
       $field_infos = civicrm_api3('CustomField', 'get', [
         'id'         => ['IN' => $fields_to_load],
         'sequential' => 0,
@@ -319,7 +320,7 @@ class CRM_Membership_Settings {
    */
   public function getSyncMapping() {
     $mapping = $this->getSetting('sync_mapping');
-    if (empty($mapping)) {
+    if (!is_array($mapping) || $mapping === []) {
       return CRM_Membership_Settings::_getDefaultSyncmap();
     }
     else {
@@ -346,7 +347,7 @@ class CRM_Membership_Settings {
    */
   public function getLiveStatusIDs() {
     $status_ids = $this->getSetting('live_statuses');
-    if (!is_array($status_ids) || empty($status_ids)) {
+    if (!is_array($status_ids) || $status_ids === []) {
       return [1, 2, 3];
     }
     else {
@@ -373,11 +374,11 @@ class CRM_Membership_Settings {
     $mapping = [];
     $membership_types = civicrm_api3('MembershipType', 'get',
        ['is_active' => 1, 'option.limit' => 9999]);
-    if (empty($membership_types['is_error'])) {
+    if ((int) $membership_types['is_error'] === 0) {
       foreach ($membership_types['values'] as $membership_type) {
         $key = $membership_type['id'];
         $value = $membership_type['financial_type_id'];
-        if (!empty($key) && !empty($value)) {
+        if ((int) $key !== 0 && (int) $value !== 0) {
           if (isset($mapping[$key])) {
             $mapping[$key][] = $value;
           }

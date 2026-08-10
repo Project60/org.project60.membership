@@ -86,7 +86,7 @@ class CRM_Membership_MembershipFeeLogic {
     $missing = $fees_expected - $fees_paid;
     if ($missing < $this->parameters['missing_fee_grace']) {
       // paid enough
-      if (!empty($this->parameters['extend_if_paid'])) {
+      if ((int) $this->parameters['extend_if_paid'] !== 0) {
         $this->extendMembership($membership_id, $dry_run);
         return 'extended';
       }
@@ -109,7 +109,7 @@ class CRM_Membership_MembershipFeeLogic {
         }
       }
 
-      if (!empty($this->parameters['create_invoice'])) {
+      if ((int) $this->parameters['create_invoice'] !== 0) {
         $this->updatedMissingFeeContribution($membership_id, $missing, $dry_run);
         return 'invoiced';
       }
@@ -238,7 +238,7 @@ class CRM_Membership_MembershipFeeLogic {
     $frame_target = date($modifier, $last_valid);
     while (TRUE) {
       $candidate = strtotime("{$sign}1 day", $last_valid);
-      if ($frame_target == date($modifier, $candidate)) {
+      if ($frame_target === date($modifier, $candidate)) {
         // still in the same frame, we take it!
         $last_valid = $candidate;
       }
@@ -350,7 +350,7 @@ class CRM_Membership_MembershipFeeLogic {
    * @return string
    */
   public function getOutstandingPaymentIdentifier($membership_id, $end_date) {
-    if ($end_date != '%') {
+    if ($end_date !== '%') {
       $end_date = date('Ymd', strtotime($end_date));
     }
     return "P60M-{$membership_id}-{$end_date}";
@@ -365,11 +365,11 @@ class CRM_Membership_MembershipFeeLogic {
     $identifier = $this->getOutstandingPaymentIdentifier($membership_id, $membership['end_date']);
     try {
       $contribution = civicrm_api3('Contribution', 'getsingle', ['trxn_id' => $identifier]);
-      if ($contribution['total_amount'] == $missing_amount) {
+      if ((float) $contribution['total_amount'] === (float) $missing_amount) {
         $this->log("Contribution {$identifier} found, already has the right amount.", 'debug');
       }
       else {
-        if ($contribution['contribution_status_id'] == 2) {
+        if ((int) $contribution['contribution_status_id'] === 2) {
           if ($dry_run) {
             $this->log("DRY RUN: Contribution {$identifier} found, would be adjusted.", 'debug');
           }
@@ -441,7 +441,7 @@ class CRM_Membership_MembershipFeeLogic {
 
     // if no specific amount is provided, we use the membership type's
     $mtype = $this->getMembershipType($membership['membership_type_id']);
-    if (!empty($mtype['minimum_fee'])) {
+    if (isset($mtype['minimum_fee']) && $mtype['minimum_fee'] !== '' && $mtype['minimum_fee'] !== '0') {
       return $mtype['minimum_fee'];
     }
 
@@ -527,11 +527,11 @@ class CRM_Membership_MembershipFeeLogic {
     $min_level = $this->parameters['log_level'];
     if ($req_level >= $min_level) {
       // we want to log this
-      if ($this->parameters['log_target'] == 'civicrm') {
+      if ($this->parameters['log_target'] === 'civicrm') {
         CRM_Core_Error::debug_log_message('P60.FeeLogic: ' . $message);
       }
       else {
-        if ($this->log_file == NULL) {
+        if ($this->log_file === NULL) {
           $this->log_file = fopen($this->parameters['log_target'], 'a');
           fwrite($this->log_file, date('[Y-m-d H:i:s] ') . "Membership.process started\n");
         }
@@ -548,7 +548,8 @@ class CRM_Membership_MembershipFeeLogic {
    */
   protected function getMembership($membership_id) {
     // check if we have it cached
-    if (!empty($this->cached_membership['id']) && $this->cached_membership['id'] == $membership_id) {
+    if (isset($this->cached_membership['id'])
+      && (int) $this->cached_membership['id'] === (int) $membership_id) {
       return $this->cached_membership;
     }
 

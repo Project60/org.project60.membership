@@ -56,7 +56,7 @@ class CRM_Membership_FeeChangeLogic {
    * @param null $contribution_recur_id  int recurring contribution ID (optional)
    */
   public function membershipFeeUpdatePRE($membership_id, $contribution_recur_id = NULL) {
-    if (count($this->monitoring_stack) == 0) {
+    if (count($this->monitoring_stack) === 0) {
       // add a 'before' record
       $record = $this->getMembershipFeeRecord($membership_id, $contribution_recur_id);
       array_push($this->monitoring_stack, $record);
@@ -88,7 +88,8 @@ class CRM_Membership_FeeChangeLogic {
       // this is the outer call, here we want to act (if there is a change)
       case 1:
         $before_record = array_pop($this->monitoring_stack);
-        if (in_array($membership_id, $this->new_memberships) || empty($before_record)) {
+        if (in_array($membership_id, $this->new_memberships)
+          || $before_record === NULL || $before_record === []) {
           // we won't record any change activities for new memberships
           return;
         }
@@ -123,7 +124,7 @@ class CRM_Membership_FeeChangeLogic {
     // if there's not two records it's not an update
     if ($before_record && $after_record) {
       $membership_id_diff = array_diff($before_record['membership_ids'], $after_record['membership_ids']);
-      if (!empty($membership_id_diff)) {
+      if ($membership_id_diff !== []) {
         // something went wrong here
         Civi::log()->warning('p60 fee change: differing membership IDs received for change '
           . "{$before_record['input']}-{$after_record['input']}");
@@ -181,18 +182,18 @@ class CRM_Membership_FeeChangeLogic {
     $membership_id = (int) $membership_id;
     $contribution_recur_id = (int) $contribution_recur_id;
 
-    if (empty($membership_id) && empty($contribution_recur_id)) {
+    if ($membership_id === 0 && $contribution_recur_id === 0) {
       // no data submitted
       return NULL;
     }
 
     $record_fee_updates = $settings->getSetting('record_fee_updates');
-    if (empty($record_fee_updates)) {
+    if ((int) $record_fee_updates === 0) {
       // recording fee changes disabled
       return NULL;
     }
 
-    if (empty($membership_id)) {
+    if ($membership_id === 0) {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $membership_ids = $logic->getMembershipIDs($contribution_recur_id);
     }
@@ -200,14 +201,14 @@ class CRM_Membership_FeeChangeLogic {
       $membership_ids = [$membership_id];
     }
 
-    if (empty($membership_ids)) {
+    if ($membership_ids === []) {
       // no memberships given or found
       return NULL;
     }
 
     // for now, only annual_amount_field // $fields = $settings->getFields(['paid_via_field', 'annual_amount_field']);
     $fields = $settings->getFields(['annual_amount_field']);
-    if (empty($fields)) {
+    if ($fields === []) {
       // relevant fields not enabled
       return NULL;
     }
@@ -254,11 +255,12 @@ class CRM_Membership_FeeChangeLogic {
       $paid_by_field_amount = 0.0;
       $annual_field_amount  = 0.0;
 
-      if (!empty($data['amount']) && !empty($data['frequency_unit'])) {
+      if (isset($data['amount']) && $data['amount'] !== '' && $data['amount'] !== '0'
+        && isset($data['frequency_unit']) && $data['frequency_unit'] !== '' && $data['frequency_unit'] !== '0') {
         $paid_by_field_amount = CRM_Membership_PaidByLogic::calculateAnnualTotal($data);
       }
 
-      if (!empty($data['annual_amount'])) {
+      if (isset($data['annual_amount']) && $data['annual_amount'] !== '' && $data['annual_amount'] !== '0') {
         $annual_field_amount = (float) $data['annual_amount'];
       }
 
@@ -268,7 +270,7 @@ class CRM_Membership_FeeChangeLogic {
       $contact_ids[]    = (int) $data['contact_id'];
     }
 
-    if (!empty($membership_ids)) {
+    if ($membership_ids !== []) {
       return [
         'annual_amount'  => $annual_amount,
         'membership_ids' => $membership_ids,
@@ -305,7 +307,7 @@ class CRM_Membership_FeeChangeLogic {
     }
 
     // found!
-    if ($activity_types['count'] == 1) {
+    if ($activity_types['count'] === 1) {
       // it's exactly one!
       $activity_type = reset($activity_types['values']);
       $this->_activity_type_id = (int) $activity_type['value'];
@@ -320,7 +322,7 @@ class CRM_Membership_FeeChangeLogic {
     ]);
 
     // success?
-    if (!empty($activity_type['id'])) {
+    if (isset($activity_type['id']) && (int) $activity_type['id'] !== 0) {
       $this->_activity_type_id = (int) civicrm_api3('OptionValue', 'getvalue', [
         'id'     => $activity_type['id'],
         'return' => 'value',

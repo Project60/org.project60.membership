@@ -112,7 +112,7 @@ class CRM_Membership_PaidByLogic {
    * Change the payment contract for a membership
    */
   public function changeContract($membership_id, $contribution_recur_id) {
-    if (empty($membership_id)) {
+    if ((int) $membership_id === 0) {
       // no membership given
       return;
     }
@@ -120,7 +120,7 @@ class CRM_Membership_PaidByLogic {
     $settings = CRM_Membership_Settings::getSettings();
     $field_id = $settings->getPaidViaFieldID();
     $field_name = "custom_{$field_id}";
-    if (empty($field_id)) {
+    if ((int) $field_id === 0) {
       // paid via field not set
       return;
     }
@@ -131,7 +131,7 @@ class CRM_Membership_PaidByLogic {
       'return' => $field_name,
     ]);
 
-    if ($membership[$field_name] == $contribution_recur_id) {
+    if ((int) $membership[$field_name] === (int) $contribution_recur_id) {
       // nothing changed, but update fields for what it's worth
       $this->updateDerivedFields($membership_id);
       return;
@@ -156,7 +156,7 @@ class CRM_Membership_PaidByLogic {
   public function endContract($membership_id) {
     $contribution_recur = $this->getRecurringContribution($membership_id);
     // nothing to do
-    if (empty($contribution_recur)) {
+    if ($contribution_recur === NULL || $contribution_recur === []) {
       return;
     }
 
@@ -219,7 +219,7 @@ class CRM_Membership_PaidByLogic {
     $membership_id = CRM_Utils_Request::retrieve('id', 'Integer');
     $contact_id = CRM_Utils_Request::retrieve('cid', 'Integer');
 
-    if ($formName == 'CRM_Member_Form_MembershipView') {
+    if ($formName === 'CRM_Member_Form_MembershipView') {
       // render the current
       $contribution_recur = $this->getRecurringContribution($membership_id);
       $current_display = $this->renderRecurringContribution($contribution_recur, $membership_id);
@@ -269,7 +269,7 @@ class CRM_Membership_PaidByLogic {
   public function getMembershipIDs($recurring_contribution_id) {
     $recurring_contribution_id = (int) $recurring_contribution_id;
     $result = [];
-    if (empty($recurring_contribution_id)) {
+    if ($recurring_contribution_id === 0) {
       return $result;
     }
 
@@ -285,7 +285,7 @@ class CRM_Membership_PaidByLogic {
       FROM {$paid_via_field['table_name']} payment_info
       WHERE payment_info.{$paid_via_field['column_name']} = {$recurring_contribution_id};");
     while ($query->fetch()) {
-      if (!empty($query->membership_id)) {
+      if (isset($query->membership_id) && (int) $query->membership_id !== 0) {
         $result[] = (int) $query->membership_id;
       }
     }
@@ -304,7 +304,8 @@ class CRM_Membership_PaidByLogic {
       'return' => $paid_via_key,
     ]);
 
-    if (empty($membership[$paid_via_key])) {
+    if (!isset($membership[$paid_via_key]) || $membership[$paid_via_key] === ''
+      || $membership[$paid_via_key] === '0') {
       return NULL;
     }
 
@@ -329,7 +330,7 @@ class CRM_Membership_PaidByLogic {
    */
   public function getRecurringContributions($membership_ids) {
     $result = [];
-    if (empty($membership_ids)) {
+    if ($membership_ids === []) {
       return $result;
     }
 
@@ -358,7 +359,7 @@ class CRM_Membership_PaidByLogic {
    * @return textual representation of the field value
    */
   public function renderRecurringContribution(&$contribution_recur, $membership_id) {
-    if (empty($contribution_recur)) {
+    if ($contribution_recur === NULL || $contribution_recur === []) {
       return E::ts('<i>None</i>');
     }
 
@@ -389,13 +390,14 @@ class CRM_Membership_PaidByLogic {
       $contribution_recur['display_status'] = E::ts('In Use!');
 
     }
-    elseif ($contribution_recur['contribution_status_id'] == '5'
-        || $contribution_recur['contribution_status_id'] == '2') {
+    elseif ($contribution_recur['contribution_status_id'] === '5'
+        || $contribution_recur['contribution_status_id'] === '2') {
       $contribution_recur['classes'] = 'p60-paid-via-row-eligible';
       $contribution_recur['display_status'] = E::ts('Active');
 
       // check for end dates
-      if (!empty($contribution_recur['end_date'])) {
+      if (isset($contribution_recur['end_date']) && $contribution_recur['end_date'] !== ''
+        && $contribution_recur['end_date'] !== '0') {
         $contribution_recur['display_status'] .= ' ' . E::ts('(ends&nbsp;%1)', [
           1 => CRM_Utils_Date::customFormat($contribution_recur['end_date'],
             CRM_Core_Config::singleton()->dateformatFull),
@@ -428,7 +430,8 @@ class CRM_Membership_PaidByLogic {
     }
 
     // no type yet? try payment instrument...
-    if (!empty($contribution_recur['payment_instrument_id'])) {
+    if (isset($contribution_recur['payment_instrument_id']) && $contribution_recur['payment_instrument_id'] !== ''
+      && $contribution_recur['payment_instrument_id'] !== '0') {
       $label = civicrm_api3('OptionValue', 'getvalue', [
         'return' => 'label',
         'value' => $contribution_recur['payment_instrument_id'],
@@ -459,7 +462,8 @@ class CRM_Membership_PaidByLogic {
       // no harm done: either SEPA not installed, or no SEPA mandate present.
     }
 
-    if (!empty($contribution_recur['trxn_id'])) {
+    if (isset($contribution_recur['trxn_id']) && $contribution_recur['trxn_id'] !== ''
+      && $contribution_recur['trxn_id'] !== '0') {
       return "TX {$contribution_recur['trxn_id']}";
     }
     else {
@@ -543,7 +547,7 @@ class CRM_Membership_PaidByLogic {
    * Get a simple reduced attribute set of the given contact
    */
   protected function renderContact($contact_id) {
-    if (empty($contact_id)) {
+    if ((int) $contact_id === 0) {
       return [
         'display_name' => E::ts('Error'),
       ];
@@ -586,10 +590,10 @@ class CRM_Membership_PaidByLogic {
     }
 
     $multiplier = 0;
-    if ($contribution_recur['frequency_unit'] == 'month') {
+    if ($contribution_recur['frequency_unit'] === 'month') {
       $multiplier = 12.0;
     }
-    elseif ($contribution_recur['frequency_unit'] == 'year') {
+    elseif ($contribution_recur['frequency_unit'] === 'year') {
       $multiplier = 1.0;
     }
     return (float) $contribution_recur['amount'] * (float) $multiplier
@@ -681,13 +685,14 @@ class CRM_Membership_PaidByLogic {
    */
   public function membershipUpdatePOST($membership_id, $object) {
     $update = array_pop($this->monitoring_stack);
-    if (!empty($update['membership_id']) && $update['membership_id'] != $membership_id) {
+    if ((isset($update['membership_id']) && $update['membership_id'] !== '' && $update['membership_id'] !== '0')
+      && (int) $update['membership_id'] !== (int) $membership_id) {
       error_log("P60 Memberships: Illegal pre/post sequence: membership IDs don't match!");
       return;
     }
 
     // now check if we are supposed to do anything about this
-    if (!empty($update['status_id'])) {
+    if (isset($update['status_id']) && $update['status_id'] !== '' && $update['status_id'] !== '0') {
       $settings = CRM_Membership_Settings::getSettings();
       $status_ids = $settings->getSetting('paid_via_end_with_status');
       if (is_array($status_ids) && in_array($update['status_id'], $status_ids)) {
@@ -717,7 +722,7 @@ class CRM_Membership_PaidByLogic {
     $completed_status = civicrm_api3('OptionValue', 'getvalue',
       ['name' => 'Completed', 'option_group_id' => 'contribution_status', 'return' => 'value']);
     $contribution = civicrm_api3('Contribution', 'getsingle', ['id' => $contribution_id]);
-    if ($contribution['contribution_status_id'] != $completed_status) {
+    if ((int) $contribution['contribution_status_id'] !== (int) $completed_status) {
       // Do not calculate the new end date as the contribution is not yet completed.
       return;
     }
@@ -779,10 +784,10 @@ class CRM_Membership_PaidByLogic {
     $completed_status = civicrm_api3('OptionValue', 'getvalue',
       ['name' => 'Completed', 'option_group_id' => 'contribution_status', 'return' => 'value']);
     $contribution = civicrm_api3('Contribution', 'getsingle', ['id' => $contribution_id]);
-    if ($params['contribution_status_id'] != $completed_status) {
+    if ((int) $params['contribution_status_id'] !== (int) $completed_status) {
       return;
     }
-    if ($params['contribution_status_id'] == $contribution['contribution_status_id']) {
+    if ((int) $params['contribution_status_id'] === (int) $contribution['contribution_status_id']) {
       return;
     }
 
@@ -828,7 +833,7 @@ class CRM_Membership_PaidByLogic {
   public function updateDerivedFields($membership_ids = NULL) {
     $settings = CRM_Membership_Settings::getSettings();
     $derived_fields = $settings->getDerivedFields();
-    if (empty($derived_fields) || empty($derived_fields['paid_via_field'])) {
+    if ($derived_fields === [] || !isset($derived_fields['paid_via_field'])) {
       return;
     }
 
@@ -889,7 +894,7 @@ class CRM_Membership_PaidByLogic {
 
       // apply mapping
       $mapping_raw = $settings->getSetting('payment_type_field_mapping');
-      if (!empty($mapping_raw)) {
+      if (isset($mapping_raw) && $mapping_raw !== '' && $mapping_raw !== '0') {
         $mappings = explode(',', $mapping_raw);
         foreach ($mappings as $mapping) {
           $from_to = explode(':', $mapping);
@@ -907,7 +912,7 @@ class CRM_Membership_PaidByLogic {
     }
 
     // check if there's anything to do
-    if (empty($updates)) {
+    if ($updates === []) {
       return;
     }
 

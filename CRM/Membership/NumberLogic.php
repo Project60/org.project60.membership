@@ -33,7 +33,7 @@ class CRM_Membership_NumberLogic {
     if ($settings->getSetting('membership_number_show')) {
       // get membership number(s)
       $result = self::getCurrentMembershipNumbers([$contact_id]);
-      if (empty($result[$contact_id])) {
+      if (!isset($result[$contact_id]) || $result[$contact_id] === '' || $result[$contact_id] === '0') {
         $number = '';
       }
       else {
@@ -63,7 +63,7 @@ class CRM_Membership_NumberLogic {
     // load field and group
     $settings = CRM_Membership_Settings::getSettings();
     $number_field_id = $settings->getSetting('membership_number_field');
-    if (empty($number_field_id)) {
+    if ((int) $number_field_id === 0) {
       return $contact_id_2_membership_number;
     }
     $field = civicrm_api3('CustomField', 'getsingle', [
@@ -80,7 +80,7 @@ class CRM_Membership_NumberLogic {
     $active_status_list = implode(',', $settings->getLiveStatusIDs());
 
     $MEMBERSHIP_TYPE_CONDITION = '';
-    if (!empty($membership_type_ids)) {
+    if ($membership_type_ids !== NULL && $membership_type_ids !== []) {
       $membership_type_id_list = implode(',', $membership_type_ids);
       $MEMBERSHIP_TYPE_CONDITION = "AND membership.membership_type_id IN ({$membership_type_id_list})";
     }
@@ -112,7 +112,7 @@ class CRM_Membership_NumberLogic {
     }
 
     // fallback 1: check other active states
-    if (!empty($unprocessed_contact_ids)) {
+    if ($unprocessed_contact_ids !== []) {
       $contact_id_list = implode(',', $unprocessed_contact_ids);
       $fallback_query = "
         SELECT 
@@ -144,7 +144,7 @@ class CRM_Membership_NumberLogic {
     }
 
     // fallback 2: any other membership
-    if (!empty($unprocessed_contact_ids)) {
+    if ($unprocessed_contact_ids !== []) {
       $contact_id_list = implode(',', $unprocessed_contact_ids);
       $fallback_query = "
           SELECT 
@@ -192,7 +192,7 @@ class CRM_Membership_NumberLogic {
     if ($field_id && $generator) {
       // the configuration sais we should generate a number
       $value = CRM_Membership_CustomData::getPreHookCustomDataValue($params, $field_id);
-      if (empty($value)) {
+      if (!isset($value) || $value === '' || $value === '0') {
         // generate!
         $value = self::generateNumber($generator, $params);
         CRM_Membership_CustomData::setPreHookCustomDataValue($params, $field_id, $value);
@@ -215,8 +215,8 @@ class CRM_Membership_NumberLogic {
       // get the next membership ID
       // FIXME: this is not very reliable
       $mid = CRM_Core_DAO::singleValueQuery('SELECT MAX(id) FROM civicrm_membership;') + 1;
-      if (!empty($matches['offset'])) {
-        if (substr($matches['offset'], 0, 1) == '-') {
+      if (isset($matches['offset'])) {
+        if (substr($matches['offset'], 0, 1) === '-') {
           $mid -= substr($matches['offset'], 1);
         }
         else {
@@ -230,8 +230,8 @@ class CRM_Membership_NumberLogic {
     if (preg_match('#\{cid(?P<offset>[+-][0-9]+)?\}#', $number, $matches)) {
       // get the next membership ID
       $cid = $params['contact_id'];
-      if (!empty($matches['offset'])) {
-        if (substr($matches['offset'], 0, 1) == '-') {
+      if (isset($matches['offset'])) {
+        if (substr($matches['offset'], 0, 1) === '-') {
           $cid -= substr($matches['offset'], 1);
         }
         else {

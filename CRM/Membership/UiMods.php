@@ -46,7 +46,8 @@ class CRM_Membership_UiMods {
       // set to data
       foreach ($rows as $index => &$row) {
         $membership_id = $row['membership_id'];
-        $row['auto_renew'] = !empty($membership2rcontribution[$membership_id]);
+        // recurring contribution IDs are never 0/empty, so a plain isset() suffices here
+        $row['auto_renew'] = isset($membership2rcontribution[$membership_id]);
       }
     }
   }
@@ -55,7 +56,7 @@ class CRM_Membership_UiMods {
    * Adjust a form
    */
   public static function adjustForm($formName, $form) {
-    if ($formName == 'CRM_Member_Form_MembershipView') {
+    if ($formName === 'CRM_Member_Form_MembershipView') {
       $settings = CRM_Membership_Settings::getSettings();
       $paid_via_field = $settings->getPaidViaField();
       if ($paid_via_field && $settings->getSetting('hide_auto_renewal')) {

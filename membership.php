@@ -48,7 +48,7 @@ function membership_civicrm_postProcess($formName, &$form) {
  * @access public
  */
 function membership_civicrm_searchTasks($objectType, &$tasks) {
-  if ($objectType == 'contribution') {
+  if ($objectType === 'contribution') {
     if (CRM_Core_Permission::check('access CiviMember')) {
       $tasks[] = [
         'title' => E::ts('Assign to Membership'),
@@ -102,7 +102,7 @@ function membership_civicrm_installment_created($mandate_id, $contribution_recur
  * @access public
  */
 function membership_civicrm_searchColumns($objectName, &$headers, &$rows, &$selector) {
-  if ($objectName == 'membership') {
+  if ($objectName === 'membership') {
     CRM_Membership_UiMods::adjustList($headers, $rows, $selector);
   }
 }
@@ -113,34 +113,34 @@ function membership_civicrm_searchColumns($objectName, &$headers, &$rows, &$sele
  * @access public
  */
 function membership_civicrm_pre($op, $objectName, $id, &$params) {
-  if ($objectName == 'Membership') {
+  if ($objectName === 'Membership') {
     // generate new membership number when new membership is created
-    if ($op == 'create' && empty($id)) {
+    if ($op === 'create' && (int) $id === 0) {
       // this might be one for us
       CRM_Membership_NumberLogic::generateNewNumber($params);
     }
 
     // catch if a membership is created/edited
-    if ($op == 'create' || $op == 'edit') {
+    if ($op === 'create' || $op === 'edit') {
       $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
       $fee_logic->membershipFeeUpdatePRE($id, NULL);
     }
 
     // catch if a membership is set to a certain status
-    if (!empty($id) && ($op == 'create' || $op == 'edit')) {
+    if ((int) $id !== 0 && ($op === 'create' || $op === 'edit')) {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->membershipUpdatePre($id, $params);
     }
 
   }
-  elseif ($objectName == 'Contribution' && $op == 'edit') {
+  elseif ($objectName === 'Contribution' && $op === 'edit') {
     $logic = CRM_Membership_PaidByLogic::getSingleton();
     $logic->contributionUpdatePRE($id, $params);
 
   }
-  elseif ($objectName == 'ContributionRecur') {
+  elseif ($objectName === 'ContributionRecur') {
     // catch if a recurring contribution is created/edited
-    if ($op == 'edit') {
+    if ($op === 'edit') {
       $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
       $fee_logic->membershipFeeUpdatePRE(NULL, $id);
     }
@@ -154,8 +154,8 @@ function membership_civicrm_pre($op, $objectName, $id, &$params) {
  */
 // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
-  if ($objectName == 'Membership') {
-    if (!empty($objectId) && $op == 'create') {
+  if ($objectName === 'Membership') {
+    if ((int) $objectId !== 0 && $op === 'create') {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->createMembershipUpdatePOST($objectId, $objectRef);
       $logic->membershipUpdatePOST($objectId, $objectRef);
@@ -164,29 +164,29 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
       $fee_logic->markMembershipNew($objectId);
 
     }
-    elseif (!empty($objectId) && $op == 'edit') {
+    elseif ((int) $objectId !== 0 && $op === 'edit') {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->membershipUpdatePOST($objectId, $objectRef);
     }
 
     // catch if a membership is created/edited
-    if ($op == 'create' || $op == 'edit') {
+    if ($op === 'create' || $op === 'edit') {
       $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
       $fee_logic->membershipFeeUpdatePOST($objectId, NULL);
     }
   }
 
-  if ($objectName == 'MembershipPayment' && $op == 'create') {
+  if ($objectName === 'MembershipPayment' && $op === 'create') {
     $logic = CRM_Membership_PaidByLogic::getSingleton();
     $logic->membershipPaymentCreatePOST($objectRef->contribution_id, $objectRef->membership_id);
   }
-  if ($objectName == 'Contribution' && $op == 'edit') {
+  if ($objectName === 'Contribution' && $op === 'edit') {
     $logic = CRM_Membership_PaidByLogic::getSingleton();
     $logic->contributionUpdatePOST($objectId, $objectRef);
   }
 
   // update derived fields:
-  if (!empty($objectId) && ($op == 'create' || $op == 'edit')) {
+  if ((int) $objectId !== 0 && ($op === 'create' || $op === 'edit')) {
     switch ($objectName) {
       case 'Membership':
         // update membership
@@ -203,7 +203,7 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
         }
 
         // see if this was a fee adjustment
-        if ($op == 'edit') {
+        if ($op === 'edit') {
           $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
           $fee_logic->membershipFeeUpdatePOST(NULL, $objectId);
         }
@@ -225,7 +225,7 @@ function membership_civicrm_buildForm($formName, &$form) {
   CRM_Membership_UiMods::adjustForm($formName, $form);
 
   // then inject paid-via stuff - if enabled
-  if ($formName == 'CRM_Member_Form_MembershipView') {
+  if ($formName === 'CRM_Member_Form_MembershipView') {
     $paid_by_logic = CRM_Membership_PaidByLogic::getSingleton();
     $paid_by_logic->extendForm($formName, $form);
   }

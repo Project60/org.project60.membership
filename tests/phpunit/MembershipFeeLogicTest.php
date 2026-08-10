@@ -74,9 +74,6 @@ class MembershipFeeLogicTest extends MembershipTestBase {
    */
   // phpcs:ignore Generic.Files.LineLength.TooLong
   public function _testCalculateExpectedAmount($logic, $membership_data, $expected_amount, $annual_amount, $changes = []) {
-    if (!empty($start_date)) {
-      $membership_data['start_date'] = $start_date;
-    }
     if ($annual_amount !== NULL) {
       $membership_data['annual_amount'] = $annual_amount;
     }

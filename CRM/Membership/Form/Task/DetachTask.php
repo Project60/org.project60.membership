@@ -47,7 +47,7 @@ class CRM_Membership_Form_Task_DetachTask extends CRM_Contribute_Form_Task {
 
     // simply do this by SQL
     $id_list = implode(',', $this->_contributionIds);
-    if (!empty($id_list)) {
+    if ($id_list !== '') {
       CRM_Core_DAO::executeQuery("DELETE FROM civicrm_membership_payment WHERE contribution_id IN ({$id_list})");
     }
 
@@ -60,7 +60,7 @@ class CRM_Membership_Form_Task_DetachTask extends CRM_Contribute_Form_Task {
    */
   protected function getAssignedCount() {
     $id_list = implode(',', $this->_contributionIds);
-    if (empty($id_list)) {
+    if ($id_list === '') {
       return 0;
     }
     else {

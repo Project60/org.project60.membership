@@ -1,7 +1,6 @@
 parameters:
 	paths:
 		- api
-		- Civi
 		- CRM
 		- tests
 		- membership.php

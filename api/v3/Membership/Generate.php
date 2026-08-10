@@ -68,13 +68,13 @@ function _civicrm_api3_membership_generate_spec(&$params) {
  */
 function civicrm_api3_membership_generate($params) {
   // compile dates
-  if (empty($params['from_date'])) {
+  if (!isset($params['from_date']) || $params['from_date'] === '' || $params['from_date'] === '0') {
     $from_date = NULL;
   }
   else {
     $from_date = date('Y-m-d', strtotime($params['from_date']));
   }
-  if (empty($params['to_date'])) {
+  if (!isset($params['to_date']) || $params['to_date'] === '' || $params['to_date'] === '0') {
     $to_date = date('Y-m-d');
   }
   else {
@@ -83,7 +83,7 @@ function civicrm_api3_membership_generate($params) {
 
   // make sure there is a contact ID set
   $userContactID = CRM_Core_Session::getLoggedInContactID();
-  if (empty($userContactID)) {
+  if ((int) $userContactID === 0) {
     // TODO: have a fallback setting for user
     $session = CRM_Core_Session::singleton();
     $session->set('userID', 47218);
@@ -91,10 +91,10 @@ function civicrm_api3_membership_generate($params) {
 
   // compile parameters
   $parameters = [
-    'dry_run' => !empty($params['dry_run']),
+    'dry_run' => isset($params['dry_run']) && (int) $params['dry_run'] !== 0,
     'limit'   => $params['limit'],
   ];
-  if (!empty($params['extra'])) {
+  if (isset($params['extra']) && $params['extra'] !== '' && $params['extra'] !== '0') {
     // first: try json
     $extra = json_decode($params['extra'], TRUE);
     if ($extra) {

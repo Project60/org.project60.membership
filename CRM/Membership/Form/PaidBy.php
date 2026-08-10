@@ -44,7 +44,7 @@ class CRM_Membership_Form_PaidBy extends CRM_Core_Form {
     $paid_by_id = $settings->getPaidByFieldID();
     if ($paid_by_id) {
       $paid_by_field_name = "custom_{$paid_by_id}_id";
-      if (!empty($membership[$paid_by_field_name])) {
+      if (isset($membership[$paid_by_field_name]) && $membership[$paid_by_field_name] !== '') {
         $membership['paid_by'] = $membership[$paid_by_field_name];
       }
     }
@@ -73,7 +73,8 @@ class CRM_Membership_Form_PaidBy extends CRM_Core_Form {
     $values = $this->exportValues();
 
     // Store selection
-    if (!empty($values['membership_id']) && isset($values['selected_contribution_rcur_id'])) {
+    if (isset($values['membership_id']) && $values['membership_id'] !== '' && $values['membership_id'] !== '0'
+      && isset($values['selected_contribution_rcur_id'])) {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->changeContract($values['membership_id'], $values['selected_contribution_rcur_id']);
     }

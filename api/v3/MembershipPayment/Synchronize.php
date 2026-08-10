@@ -28,16 +28,17 @@ function civicrm_api3_membership_payment_synchronize($params) {
 
   // pass override params
   $settings_override = [];
-  if (!empty($params['rangeback'])) {
+  if (isset($params['rangeback']) && (int) $params['rangeback'] !== 0) {
     $settings_override['sync_range'] = (int) $params['rangeback'];
   }
-  if (!empty($params['gracedays'])) {
+  if (isset($params['gracedays']) && (int) $params['gracedays'] !== 0) {
     $settings_override['grace_period'] = (int) $params['gracedays'];
   }
 
   // check if contribution_ids are given
   $contribution_ids = [];
-  if (!empty($params['contribution_ids'])) {
+  if (isset($params['contribution_ids']) && $params['contribution_ids'] !== ''
+    && $params['contribution_ids'] !== '0' && $params['contribution_ids'] !== []) {
     $cid_data = $params['contribution_ids'];
     if (is_string($cid_data)) {
       $cid_data = explode(',', $cid_data);
@@ -62,7 +63,8 @@ function civicrm_api3_membership_payment_synchronize($params) {
   }
 
   // if required, detach all ill assigned memberships for the given financial types first
-  if (!empty($params['rebuild']) && ($params['rebuild'] == 1 || strtolower($params['rebuild']) == 'true')) {
+  if (isset($params['rebuild'])
+    && ((string) $params['rebuild'] === '1' || strtolower((string) $params['rebuild']) === 'true')) {
     foreach ($mapping as $financial_type_id => $membership_type_ids) {
       CRM_Membership_SynchroniseLogic::resetPayments($financial_type_id, $membership_type_ids, $contribution_ids);
     }
@@ -71,7 +73,7 @@ function civicrm_api3_membership_payment_synchronize($params) {
   // start synchronization
   $results = ['mapped' => [], 'no_membership' => [], 'ambiguous' => [], 'errors' => []];
   foreach ($mapping as $financial_type_id => $membership_type_ids) {
-    if (empty($membership_type_ids)) {
+    if ($membership_type_ids === []) {
       continue;
     }
     $new_results = CRM_Membership_SynchroniseLogic::synchronizePayments($financial_type_id, $membership_type_ids,

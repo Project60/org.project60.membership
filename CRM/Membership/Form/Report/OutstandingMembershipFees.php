@@ -209,7 +209,8 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
    */
   public function getExpectedAmount() {
     $expected_amount = '0.00';
-    if (empty($this->_params['membership_fee'])) {
+    if (!isset($this->_params['membership_fee']) || $this->_params['membership_fee'] === ''
+      || $this->_params['membership_fee'] === '0') {
       $expected_amount_source = 'type';
     }
     else {
@@ -219,7 +220,8 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
     switch ($expected_amount_source) {
       case 'spec':
         // 'spec' means, the amount was specified in the override
-        if (!empty($this->_params['membership_fee_override'])) {
+        if (isset($this->_params['membership_fee_override']) && $this->_params['membership_fee_override'] !== ''
+          && $this->_params['membership_fee_override'] !== '0') {
           $expected_amount = (float) $this->_params['membership_fee_override'];
         }
         break;
@@ -275,13 +277,13 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
    * override this function, since it only creates checkboxes and selects!
    */
   public function addOptions() {
-    if (!empty($this->_options)) {
+    if ($this->_options !== []) {
       foreach ($this->_options as $fieldName => $field) {
-        if ($field['type'] == 'money') {
+        if ($field['type'] === 'money') {
           $this->addElement('text', "{$fieldName}", $field['title'], ['value' => $field['default']]);
           $this->addRule("{$fieldName}", ts('Please enter a valid amount.'), 'money');
         }
-        elseif ($field['type'] == 'text') {
+        elseif ($field['type'] === 'text') {
           $this->addElement('text', "{$fieldName}", $field['title'], ['value' => $field['default']]);
         }
       }
@@ -303,11 +305,11 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
           if (CRM_Utils_Array::value('required', $field) ||
             CRM_Utils_Array::value($fieldName, $this->_params['fields'])
           ) {
-            if ($fieldName == 'membership_dues') {
+            if ($fieldName === 'membership_dues') {
               // 'dues' is a calculated field
               $select[] = $this->getExpectedAmount() . " as {$tableName}_{$fieldName}";
             }
-            elseif ($fieldName == 'total_amount') {
+            elseif ($fieldName === 'total_amount') {
               $select[] = "SUM({$field['dbAlias']}) as {$tableName}_{$fieldName}";
             }
             else {
@@ -346,7 +348,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
 
     // join custom fields if necessary
     $membership_source = $this->_params['membership_fee'];
-    if ($membership_source != 'spec' && $membership_source != 'type') {
+    if ($membership_source !== 'spec' && $membership_source !== 'type') {
       $components = explode('.', $membership_source);
       $this->_from .= ' LEFT JOIN ' . $components[0]
         . " ON {$this->_aliases['civicrm_membership']}.id = " . $components[0] . '.`entity_id`';
@@ -379,14 +381,14 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
             }
           }
 
-          if (!empty($clause)) {
+          if ($clause !== NULL && $clause !== '') {
             $clauses[] = $clause;
           }
         }
       }
     }
 
-    if (empty($clauses)) {
+    if ($clauses === []) {
       $this->_where = 'WHERE ( 1 ) ';
     }
     else {
@@ -441,10 +443,12 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
       }
 
       // treat missing entries as zero
-      if (empty($row['civicrm_membership_membership_dues'])) {
+      if (!isset($row['civicrm_membership_membership_dues']) || $row['civicrm_membership_membership_dues'] === ''
+        || $row['civicrm_membership_membership_dues'] === '0') {
         $rows[$rowNum]['civicrm_membership_membership_dues'] = '0.00';
       }
-      if (empty($row['civicrm_contribution_total_amount'])) {
+      if (!isset($row['civicrm_contribution_total_amount']) || $row['civicrm_contribution_total_amount'] === ''
+        || $row['civicrm_contribution_total_amount'] === '0') {
         $rows[$rowNum]['civicrm_contribution_total_amount'] = '0.00';
       }
 
@@ -460,7 +464,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
         continue;
       }
 
-      if (!empty($this->_noRepeats) && $this->_outputMode != 'csv') {
+      if ($this->_noRepeats !== [] && $this->_outputMode !== 'csv') {
         // not repeat contact display names if it matches with the one
         // in previous row
         $repeatFound = FALSE;

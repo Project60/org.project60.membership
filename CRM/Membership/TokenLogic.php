@@ -90,7 +90,7 @@ class CRM_Membership_TokenLogic {
   public function tokens(&$tokens) {
     $settings = CRM_Membership_Settings::getSettings();
     $membership_types = $this->getMembershipTypes();
-    if (empty($membership_types)) {
+    if ($membership_types === []) {
       return;
     }
 
@@ -130,7 +130,7 @@ class CRM_Membership_TokenLogic {
   // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function tokenValues(&$values, $cids, $job = NULL, $tokens = [], $context = NULL) {
     // fill membership base tokens (namespace 'membership')
-    if (!empty($tokens['membership'])) {
+    if (isset($tokens['membership']) && $tokens['membership'] !== []) {
       $membership_types_used = [];
 
       // find out which tokens are used
@@ -153,10 +153,10 @@ class CRM_Membership_TokenLogic {
     }
 
     // fill the membership number tokens in the namespace called membership_number
-    if (!empty($tokens['membership_number'])) {
+    if (isset($tokens['membership_number']) && $tokens['membership_number'] !== []) {
       // collect membership types
       foreach ($tokens['membership_number'] as $token) {
-        if (substr($token, 0, 18) == 'membership_number_') {
+        if (substr($token, 0, 18) === 'membership_number_') {
           $membership_type_id = substr($token, 18);
           $tvalues = CRM_Membership_NumberLogic::getCurrentMembershipNumbers($cids, [$membership_type_id]);
           foreach ($tokens['membership_number'] as $key => $value) {
@@ -176,7 +176,7 @@ class CRM_Membership_TokenLogic {
    * @throws CRM_Core_Exception
    */
   protected function getMembershipTypes() {
-    if ($this->_membershipTypes == NULL) {
+    if ($this->_membershipTypes === NULL) {
       $membership_types = civicrm_api3('MembershipType', 'get', [
         'is_active'  => 1,
         'sequential' => 0,
@@ -221,7 +221,7 @@ class CRM_Membership_TokenLogic {
    */
   // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   protected function getMembershipTokenValues($cids, $base_tokens_used, $custom_tokens_used, $membership_type_id) {
-    if (empty($cids)) {
+    if ($cids === []) {
       return [];
     }
     $cid_list = implode(',', $cids);
@@ -266,7 +266,8 @@ class CRM_Membership_TokenLogic {
           if ($field_spec) {
             $joins[] = "LEFT JOIN {$field_spec['table_name']} AS {$custom_token_used}"
               . " ON {$custom_token_used}.entity_id = c2m.membership_id";
-            if (!empty($field_spec['option_group_id'])) {
+            if (isset($field_spec['option_group_id']) && $field_spec['option_group_id'] !== ''
+              && $field_spec['option_group_id'] !== '0') {
               // join option group
               $joins[] = "LEFT JOIN civicrm_option_value {$custom_token_used}_ov"
                 . " ON {$custom_token_used}_ov.value = {$custom_token_used}.{$field_spec['column_name']}"

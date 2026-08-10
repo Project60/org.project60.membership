@@ -70,11 +70,11 @@ class CRM_Membership_SynchroniseLogic {
     // add contribution restrictions
     $AND_IN_CONTRIBUTION_ID_LIST = $AND_CONTRIBUTION_MIN_DATE = $AND_CONTRIBUTION_MAX_DATE
       = $AND_CONTRIBUTION_STATUS = '';
-    if (!empty($contribution_ids)) {
+    if ($contribution_ids !== []) {
       $contribution_id_list = implode(',', $contribution_ids);
       $AND_IN_CONTRIBUTION_ID_LIST = "AND civicrm_contribution.id IN ({$contribution_id_list})";
     }
-    if (!empty($eligible_contribution_states)) {
+    if ($eligible_contribution_states !== []) {
       $eligible_contribution_state_list = implode(',', $eligible_contribution_states);
       $AND_CONTRIBUTION_STATUS = 'AND civicrm_contribution.contribution_status_id IN'
         . " ({$eligible_contribution_state_list})";
@@ -124,7 +124,7 @@ class CRM_Membership_SynchroniseLogic {
         // there is a paid_by field set up -> use it
         $OR_CONTACT_IS_PAID_BY = "OR paid_by_table.{$paid_by_field['column_name']} = {$contact_id}";
       }
-      if (!empty($membership_status_ids)) {
+      if ($membership_status_ids !== []) {
         $membership_status_id_list = implode(',', $membership_status_ids);
         $AND_MEMBERSHIP_STATUS_SELECTION = "AND status_id IN ({$membership_status_id_list})";
       }
@@ -154,12 +154,12 @@ class CRM_Membership_SynchroniseLogic {
       ";
       $corresponding_membership = CRM_Core_DAO::executeQuery($find_corresponding_membership_sql);
       if (!$corresponding_membership->fetch()
-          || $corresponding_membership->membership_count == 0) {
+          || (int) $corresponding_membership->membership_count === 0) {
         // NO MEMBERSHIP FOUND
         $results['no_membership'][] = $contribution_id;
 
       }
-      elseif ($corresponding_membership->membership_count == 1) {
+      elseif ((int) $corresponding_membership->membership_count === 1) {
         // MEMBERSHIP FOUND
         $results['mapped'][$contribution_id] = $corresponding_membership->membership_id;
         $contribution_receive_date[$contribution_id] = $date;
@@ -202,7 +202,8 @@ class CRM_Membership_SynchroniseLogic {
             $adjust_query['join_date'] = $contribution_date;
           }
           $adjust_result = civicrm_api('Membership', 'create', $adjust_query);
-          if (!empty($adjust_result['is_error'])) {
+          // 'is_error' is always present in civicrm_api() results
+          if ((int) $adjust_result['is_error'] !== 0) {
             // ERROR HANDLING
             $results['errors'][$contribution_id] = $adjust_result['is_error'];
           }
@@ -217,13 +218,13 @@ class CRM_Membership_SynchroniseLogic {
    * detach all ill assigned memberships for the given financial types first
    */
   public static function resetPayments($financial_type_id, $membership_type_ids, $contribution_ids = []) {
-    if (empty($membership_type_ids)) {
+    if ($membership_type_ids === []) {
       return;
     }
 
     // add contribution restriction
     $AND_CONTRIBUTION_IN_LIST = '';
-    if (!empty($contribution_ids)) {
+    if ($contribution_ids !== []) {
       $contribution_id_list = implode(',', $contribution_ids);
       $AND_CONTRIBUTION_IN_LIST = "AND civicrm_contribution.id IN ({$contribution_id_list})";
     }

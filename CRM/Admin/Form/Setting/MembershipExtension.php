@@ -236,7 +236,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $sync_mapping = [];
     foreach ($values as $key => $value) {
       $key_prefix = substr($key, 0, 7);
-      if ($key_prefix == 'syncmap') {
+      if ($key_prefix === 'syncmap') {
         $key_id = substr($key, 8);
         $sync_mapping[$key_id] = $value;
       }
@@ -274,10 +274,10 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
       $settings->setSetting($key, $values[$key], FALSE);
     }
 
-    if (is_array($values['live_statuses']) && !empty($values['live_statuses'])) {
+    if (is_array($values['live_statuses']) && $values['live_statuses'] !== []) {
       $settings->setSetting('live_statuses', $values['live_statuses'], FALSE);
     }
-    if (is_array($values['paid_via_end_with_status']) && !empty($values['paid_via_end_with_status'])) {
+    if (is_array($values['paid_via_end_with_status']) && $values['paid_via_end_with_status'] !== []) {
       $settings->setSetting('paid_via_end_with_status', $values['paid_via_end_with_status'], FALSE);
     }
     $settings->write();
@@ -287,7 +287,8 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $settings->getStrtotimeDate('sync_maximum_date', TRUE);
 
     // update fields if requested
-    if (!empty($values['synchronise_payment_now'])) {
+    if (isset($values['synchronise_payment_now']) && $values['synchronise_payment_now'] !== ''
+      && $values['synchronise_payment_now'] !== '0') {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->updateDerivedFields();
     }
@@ -314,7 +315,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     //  5) read-only
 
     // if there is eligible groups, look for fields
-    if (!empty($custom_group_ids)) {
+    if ($custom_group_ids !== []) {
       $custom_fields = civicrm_api3('CustomField', 'get', [
         'custom_group_id' => ['IN' => $custom_group_ids],
         'data_type'       => 'Int',
@@ -347,7 +348,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     //  5) read-only
 
     // if there is eligible groups, look for fields
-    if (!empty($custom_group_ids)) {
+    if ($custom_group_ids !== []) {
       $custom_fields = civicrm_api3('CustomField', 'get', [
         'custom_group_id' => ['IN' => $custom_group_ids],
         'data_type'       => 'String',
@@ -382,7 +383,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     //  6) read-only
 
     // if there is eligible groups, look for fields
-    if (!empty($custom_group_ids)) {
+    if ($custom_group_ids !== []) {
       $custom_fields = civicrm_api3('CustomField', 'get', [
         'custom_group_id' => ['IN' => $custom_group_ids],
         'data_type'       => 'String',
@@ -413,7 +414,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     //  3) indexed
 
     // if there is eligible groups, look for fields
-    if (!empty($custom_group_ids)) {
+    if ($custom_group_ids !== []) {
       $custom_fields = civicrm_api3('CustomField', 'get', [
         'custom_group_id' => ['IN' => $custom_group_ids],
         'data_type'       => 'ContactReference',
@@ -443,7 +444,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     //  3) indexed
 
     // if there is eligible groups, look for fields
-    if (!empty($custom_group_ids)) {
+    if ($custom_group_ids !== []) {
       $custom_fields = civicrm_api3('CustomField', 'get', [
         'custom_group_id' => ['IN' => $custom_group_ids],
         'data_type'       => 'Money',
@@ -475,7 +476,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     //  3) indexed
 
     // if there is eligible groups, look for fields
-    if (!empty($custom_group_ids)) {
+    if ($custom_group_ids !== []) {
       $custom_fields = civicrm_api3('CustomField', 'get', [
         'custom_group_id' => ['IN' => $custom_group_ids],
         'is_active'       => 1,
@@ -503,7 +504,7 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     //  3) indexed
 
     // if there is eligible groups, look for fields
-    if (!empty($custom_group_ids)) {
+    if ($custom_group_ids !== []) {
       $custom_fields = civicrm_api3('CustomField', 'get', [
         'custom_group_id' => ['IN' => $custom_group_ids],
         'data_type'       => 'Date',

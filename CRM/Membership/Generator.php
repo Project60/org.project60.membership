@@ -38,7 +38,7 @@ class CRM_Membership_Generator {
 
     // check if it's turned on
     $fields = $settings->getFields(['annual_amount_field']);
-    if (empty($fields)) {
+    if ($fields === []) {
       return civicrm_api3_create_error('Annual membership fee field not active.');
     }
     $annual_fee_field = reset($fields);
@@ -69,19 +69,19 @@ class CRM_Membership_Generator {
     // processing loop:
     $records_written     = 0;
     $memberships_written = -1;
-    $membership_limit    = empty($params['limit']) ? PHP_INT_MAX : (int) $params['limit'];
+    $membership_limit    = ((int) ($params['limit'] ?? 0) === 0) ? PHP_INT_MAX : (int) $params['limit'];
     $membership_id       = NULL;
     $last_fee_amount     = NULL;
     $last_timestamp      = NULL;
     $fee_data_points     = [];
     while ($event->fetch()) {
       // ignore zero fee events
-      if (empty($event->annual_fee)) {
+      if (!isset($event->annual_fee) || $event->annual_fee === '' || $event->annual_fee === '0') {
         continue;
       }
 
       // first: check if the membership has changed:
-      if ($membership_id != $event->membership_id) {
+      if ($membership_id !== $event->membership_id) {
         // new case: first write out the collected data of the last one:
         $new_records_written = self::writeFeeUpdateRecords($membership_id, $fee_data_points, $params);
         $records_written += $new_records_written;
@@ -104,7 +104,7 @@ class CRM_Membership_Generator {
 
       // record changes
       $new_fee_amount = $event->annual_fee;
-      if ($last_fee_amount != $new_fee_amount) {
+      if ((float) $last_fee_amount !== (float) $new_fee_amount) {
         // this is a change event
         $new_timestamp  = strtotime($event->log_date);
         $fee_data_points[] = [$new_timestamp, $new_fee_amount];
@@ -133,7 +133,7 @@ class CRM_Membership_Generator {
   protected static function writeFeeUpdateRecords($membership_id, $fee_data_points, $params) {
     $change_counter = 0;
     $membership_id  = (int) $membership_id;
-    if (empty($membership_id) || count($fee_data_points) < 2) {
+    if ((int) $membership_id === 0 || count($fee_data_points) < 2) {
       return 0;
     }
 
@@ -148,8 +148,8 @@ class CRM_Membership_Generator {
     // remove leading zero data points
     $no_leading_zero_data_points = [];
     foreach ($fee_data_points as $fee_data_point) {
-      if (($fee_data_point[$AMOUNT] == 0)
-          && count($no_leading_zero_data_points) == 0) {
+      if (((float) $fee_data_point[$AMOUNT] === 0.0)
+          && count($no_leading_zero_data_points) === 0) {
         Civi::log()->debug("Dropped leading zero data point in [{$membership_id}]");
         continue;
       }
@@ -162,7 +162,7 @@ class CRM_Membership_Generator {
 
     // if there is a crunch limit set (minimum time between changes so they would be
     // considered a real update, and not just an error and a correction), do the crunching
-    if (!empty($params['crunch_limit'])) {
+    if (isset($params['crunch_limit']) && $params['crunch_limit'] !== '' && $params['crunch_limit'] !== '0') {
       // simply drop data points that are followed closely followed by the next one
       $crunch_limit = strtotime("now + {$params['crunch_limit']}") - strtotime('now');
       $crunched_data_points = [];
@@ -191,8 +191,8 @@ class CRM_Membership_Generator {
       }
 
       // skip same fees (could be created by crunched short-term changes
-      if ($fee_record[1] != $last_record[1]) {
-        if (empty($params['dry_run'])) {
+      if ((float) $fee_record[1] !== (float) $last_record[1]) {
+        if ((int) ($params['dry_run'] ?? 0) === 0) {
           // create a change
           $fee_logic->processChange([
             'membership_ids' => [$membership_id],

@@ -55,7 +55,7 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements
   public function makeSureThereIsALoggedInContact() {
     // make sure there is a logged in user
     $user = CRM_Core_Session::getLoggedInContactID();
-    if (empty($user)) {
+    if ((int) $user === 0) {
       $session = CRM_Core_Session::singleton();
       // get random contact
       $contact = civicrm_api3('Contact', 'get', ['option.limit' => 1]);
@@ -72,15 +72,15 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements
    * @param $params various attributes
    */
   public function createMembership($params) {
-    if (empty($params['contact_id'])) {
+    if (!isset($params['contact_id']) || (int) $params['contact_id'] === 0) {
       $params['contact_id'] = $this->createRandomContact();
     }
 
-    if (empty($params['membership_type_id'])) {
+    if (!isset($params['membership_type_id']) || (int) $params['membership_type_id'] === 0) {
       $params['membership_type_id'] = $this->getRandomMembershipType();
     }
 
-    if (empty($params['start_date'])) {
+    if (!isset($params['start_date']) || $params['start_date'] === '' || $params['start_date'] === '0') {
       $params['start_date'] = date('Y-m-d');
     }
 
@@ -118,9 +118,9 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements
     $settings = CRM_Membership_Settings::getSettings();
 
     $annual_amount_field_id = $settings->getSetting('annual_amount_field');
-    if (empty($annual_amount_field_id)) {
+    if ((int) $annual_amount_field_id === 0) {
       $annual_amount_field_search = civicrm_api3('CustomField', 'get', ['name' => 'test_annual_amount_field']);
-      if (empty($annual_amount_field_search['id'])) {
+      if (!isset($annual_amount_field_search['id']) || (int) $annual_amount_field_search['id'] === 0) {
         // field doesn't exist
         $annual_amount_field_creation = civicrm_api3('CustomField', 'create', [
           'custom_group_id' => $this->getMembershipCustomGroupID(),
@@ -147,7 +147,7 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements
    */
   public function getMembershipCustomGroupID() {
     $membership_custom_group_search = civicrm_api3('CustomGroup', 'get', ['name' => 'test_membership_group']);
-    if (empty($membership_custom_group_search['id'])) {
+    if (!isset($membership_custom_group_search['id']) || (int) $membership_custom_group_search['id'] === 0) {
       // field doesn't exist
       $membership_custom_group_creation = civicrm_api3('CustomGroup', 'create', [
         'name'      => 'test_membership_group',
@@ -169,7 +169,7 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements
    */
   public function getRandomMembershipType() {
     $type_query = civicrm_api3('MembershipType', 'get', ['is_active' => 1]);
-    if (empty($type_query['count'])) {
+    if ((int) $type_query['count'] === 0) {
       error_log('create type');
       $create_query = civicrm_api3('MembershipType', 'create', [
         'name'                 => 'Member Test',

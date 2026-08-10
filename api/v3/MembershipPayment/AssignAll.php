@@ -44,18 +44,18 @@ function civicrm_api3_membership_payment_assign_all($params) {
   ];
 
   // add contribution / membership status IDs
-  if (!empty($params['contribution_status_ids'])) {
+  if (isset($params['contribution_status_ids']) && $params['contribution_status_ids'] !== '') {
     $settings_override['eligible_contribution_states'] = array_map('intval',
       explode(',', $params['contribution_status_ids']));
   }
-  if (!empty($params['membership_status_ids'])) {
+  if (isset($params['membership_status_ids']) && $params['membership_status_ids'] !== '') {
     $settings_override['live_statuses'] = array_map('intval', explode(',', $params['membership_status_ids']));
   }
 
   // start synchronization
   $results = ['mapped' => [], 'no_membership' => [], 'ambiguous' => [], 'errors' => []];
   foreach ($mapping as $financial_type_id => $membership_type_ids) {
-    if (empty($membership_type_ids)) {
+    if ($membership_type_ids === []) {
       continue;
     }
     $new_results = CRM_Membership_SynchroniseLogic::synchronizePayments($financial_type_id, $membership_type_ids,

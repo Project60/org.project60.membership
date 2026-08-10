@@ -43,7 +43,7 @@ function civicrm_api3_membership_payment_getlist($params) {
   }
 
   // now restrict to the ones with memberships
-  if (!empty($contact_ids)) {
+  if ($contact_ids !== []) {
     $contact_id_list = implode(',', $contact_ids);
     $contact_ids = [];
     $filtered_contacts = CRM_Core_DAO::executeQuery(

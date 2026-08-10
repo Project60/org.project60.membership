@@ -87,7 +87,8 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
   public function postProcess() {
 
     $values = $this->exportValues();
-    if (!empty($values['membership']) && !empty($this->_contributionIds)) {
+    if (isset($values['membership']) && $values['membership'] !== '' && $values['membership'] !== '0'
+      && $this->_contributionIds !== []) {
       $membership_id = $values['membership'];
       // load the current assignment status
       $mapping = [];
@@ -104,7 +105,7 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
       foreach ($this->_contributionIds as $contribution_id) {
         if (isset($mapping[$contribution_id])) {
           $membership_payment = $mapping[$contribution_id];
-          if ($membership_payment['membership_id'] == $membership_id) {
+          if ((int) $membership_payment['membership_id'] === (int) $membership_id) {
             // this is already assigned to the right membership
             $already_assigned++;
 
@@ -147,7 +148,7 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
    */
   protected function getDefaultContact() {
     if (self::$default_contact === NULL) {
-      if (empty($this->_contributionIds)) {
+      if ($this->_contributionIds === []) {
         self::$default_contact = [0, NULL];
       }
       else {
@@ -160,7 +161,8 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
             LEFT JOIN civicrm_contact ON civicrm_contact.id = civicrm_contribution.contact_id
             WHERE civicrm_contribution.id IN ({$contribution_id_list})");
         if ($contacts->fetch()) {
-          if ($contacts->contact_count == 1) {
+          // DAO properties from raw SQL come back as strings, hence the cast
+          if ((int) $contacts->contact_count === 1) {
             self::$default_contact = [$contacts->contact_id, "[{$contacts->contact_id}] {$contacts->sort_name}"];
           }
           else {

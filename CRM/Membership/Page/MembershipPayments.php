@@ -32,13 +32,13 @@ class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
 
     // if parameter RUN is set, execute and compile list
     if (isset($_REQUEST['run'])) {
-      if (empty($_REQUEST['rebuild'])) {
+      if (!isset($_REQUEST['rebuild']) || $_REQUEST['rebuild'] === '' || $_REQUEST['rebuild'] === '0') {
         $rebuild = 0;
       }
       else {
         $rebuild = 1;
       }
-      if (empty($_REQUEST['adjust'])) {
+      if (!isset($_REQUEST['adjust']) || $_REQUEST['adjust'] === '' || $_REQUEST['adjust'] === '0') {
         $rangeback = 0;
       }
       $result = civicrm_api('MembershipPayment', 'synchronize', [
@@ -63,7 +63,7 @@ class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
    * use DB statements to loop up data for the given contributions
    */
   public function getData($contribution_ids, $list_name, $add_membership = FALSE) {
-    if (count($contribution_ids) == 0) {
+    if (count($contribution_ids) === 0) {
       return;
     }
 
@@ -111,8 +111,10 @@ class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
           '&reset=1&action=view&id=' . $results->contribution_id . '&cid=' . $results->contact_id),
         'contribution_date'     => CRM_Utils_Date::customFormat($results->contribution_date, $date_format),
         'contribution_type'     => $results->contribution_type,
-        'membership_id'         => (empty($results->membership_id) ? '' : $results->membership_id),
-        'membership_link'       => (empty($results->membership_id) ? '' : CRM_Utils_System::url(
+        'membership_id'         => (($results->membership_id === NULL || $results->membership_id === '')
+          ? '' : $results->membership_id),
+        'membership_link'       => (($results->membership_id === NULL || $results->membership_id === '')
+          ? '' : CRM_Utils_System::url(
           'civicrm/contact/view/membership',
           'action=view&reset=1&cid=' . $results->contact_id . '&id=' . $results->membership_id)),
         'contact_id'            => $results->contact_id,

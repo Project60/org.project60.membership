@@ -63,7 +63,7 @@ function civicrm_api3_membership_extend($params) {
 
   // 0. Sanitize parameters
   $membership_type_ids = _mebership_extend_helper_extract_intlist($params['membership_type_ids']);
-  if (empty($membership_type_ids)) {
+  if (!isset($membership_type_ids) || $membership_type_ids === '') {
     $membership_clause = 'civicrm_membership_type.is_active = 1';
   }
   else {
@@ -71,7 +71,7 @@ function civicrm_api3_membership_extend($params) {
   }
 
   $membership_status_ids = _mebership_extend_helper_extract_intlist($params['status_ids']);
-  if (empty($membership_status_ids)) {
+  if (!isset($membership_status_ids) || $membership_status_ids === '') {
     $membership_status_ids = '1,2,3';
   }
 
@@ -82,7 +82,7 @@ function civicrm_api3_membership_extend($params) {
     $look_ahead = 14;
   }
 
-  if (isset($params['horizon']) && !empty($params['horizon'])) {
+  if (isset($params['horizon']) && $params['horizon'] !== '' && $params['horizon'] !== '0') {
     $horizon_days = (int) $params['horizon'];
     $horizon = strtotime("-$horizon_days days");
   }
@@ -114,7 +114,7 @@ function civicrm_api3_membership_extend($params) {
     civicrm_membership_type.fixed_period_rollover_day   AS p_rollover_day   
   FROM civicrm_membership
   LEFT JOIN civicrm_membership_type ON civicrm_membership_type.id = civicrm_membership.membership_type_id ';
-  if (empty($params['membership_ids'])) {
+  if (!(isset($params['membership_ids']) && $params['membership_ids'] !== '' && $params['membership_ids'] !== '0')) {
     $find_memberships_sql .= "
     WHERE $membership_clause
       AND civicrm_membership.status_id IN ($membership_status_ids)
@@ -160,27 +160,33 @@ function civicrm_api3_membership_extend($params) {
     $payment_start_day          = $membership['p_start_day'];
     $payment_rollover_day       = $membership['p_rollover_day'];
 
-    if (!empty($params['custom_fee']) || !empty($params['custom_interval'])) {
+    $has_custom_fee = isset($params['custom_fee']) && $params['custom_fee'] !== '' && $params['custom_fee'] !== '0';
+    $has_custom_interval = isset($params['custom_interval']) && $params['custom_interval'] !== ''
+      && $params['custom_interval'] !== '0';
+    if ($has_custom_fee || $has_custom_interval) {
       // custom field/value override
       $membership_data = civicrm_api3('Membership', 'getsingle', ['id' => $membership_id]);
+      $custom_interval_value = $has_custom_interval ? ($membership_data[$params['custom_interval']] ?? NULL) : NULL;
+      $custom_fee_value = $has_custom_fee ? ($membership_data[$params['custom_fee']] ?? NULL) : NULL;
 
-      if (!empty($params['custom_interval']) && !empty($membership_data[$params['custom_interval']])) {
+      if ($has_custom_interval && $custom_interval_value !== NULL && $custom_interval_value !== ''
+        && $custom_interval_value !== '0') {
         $payment_interval = $membership_data[$params['custom_interval']];
         $payment_unit     = 'month';
       }
 
-      if (!empty($params['custom_fee']) && !empty($membership_data[$params['custom_fee']])) {
+      if ($has_custom_fee && $custom_fee_value !== NULL && $custom_fee_value !== '' && $custom_fee_value !== '0') {
         $expected_payment_amount = $membership_data[$params['custom_fee']];
         $expected_payment_amount = CRM_Utils_Rule::cleanMoney($expected_payment_amount);
 
         // this is interpreted as a YEARLY fee, needs to be broken down to individual payments
-        if ($payment_unit == 'month') {
+        if ($payment_unit === 'month') {
           $expected_payment_amount = ((float) $expected_payment_amount) / 12.0 * (float) $payment_interval;
         }
-        elseif ($payment_unit == 'year') {
+        elseif ($payment_unit === 'year') {
           $expected_payment_amount = ((float) $expected_payment_amount) * (float) $payment_interval;
         }
-        elseif ($payment_unit == 'week') {
+        elseif ($payment_unit === 'week') {
           $expected_payment_amount = ((float) $expected_payment_amount) / 53 * (float) $payment_interval;
         }
       }
@@ -219,7 +225,7 @@ function civicrm_api3_membership_extend($params) {
     // the next lines implement support for membership period type "fixed"
     // TODO: This currently works only for membership periods of type "year" and starting Jan-01 with duration 1 year.
     // TODO: Should be enhanced for other duration unit / duration interval and differing fixed period start days.
-    if ($payment_type == 'fixed') {
+    if ($payment_type === 'fixed') {
       // sanitize the content of these fields (they might have no leading zero and are only 3 characters long)
       $payment_start_day = str_pad($payment_start_day, 4, '0', STR_PAD_LEFT);
       $payment_rollover_day = str_pad($payment_rollover_day, 4, '0', STR_PAD_LEFT);
@@ -285,7 +291,7 @@ function civicrm_api3_membership_extend($params) {
         'end_date'  => date('Ymdhis', $date),
       ];
 
-      if (!empty($params['change_status'])) {
+      if (isset($params['change_status']) && $params['change_status'] !== '' && $params['change_status'] !== '0') {
         // add a status update:
         if ($date > $now) {
           $update['status_id'] = $membership_status_current_id;
@@ -293,7 +299,7 @@ function civicrm_api3_membership_extend($params) {
       }
 
       // execute the update
-      if (empty($params['test_run'])) {
+      if (!(isset($params['test_run']) && $params['test_run'] !== '' && $params['test_run'] !== '0')) {
         civicrm_api3('Membership', 'create', $update);
       }
 
@@ -305,7 +311,7 @@ function civicrm_api3_membership_extend($params) {
   } // END OUTER (MEMBERSHIP-ID) LOOP
 
   $stats['memberships_irregular'] = count($stats['irregular_membership_ids']);
-  if (!empty($params['test_run'])) {
+  if (isset($params['test_run']) && $params['test_run'] !== '' && $params['test_run'] !== '0') {
     $stats['test_run'] = 1;
   }
 
@@ -344,7 +350,7 @@ function _civicrm_api3_membership_extend_spec(&$params) {
 }
 
 function _mebership_extend_helper_extract_intlist($raw_value) {
-  if (empty($raw_value)) {
+  if (!isset($raw_value) || $raw_value === '' || $raw_value === '0') {
     return '';
   }
   $bits = explode(',', $raw_value);

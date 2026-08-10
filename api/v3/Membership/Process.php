@@ -29,7 +29,7 @@ function civicrm_api3_membership_process($params) {
   $logic = new CRM_Membership_MembershipFeeLogic($params);
 
   // get membership IDs
-  if (empty($params['membership_id'])) {
+  if (!isset($params['membership_id']) || $params['membership_id'] === '' || $params['membership_id'] === '0') {
     $membership_ids = [];
   }
   else {
@@ -41,12 +41,13 @@ function civicrm_api3_membership_process($params) {
   // - LIVE (by status ID)
   // - Within <end_date_offset> days after current end_date
   // - using the membership_type_id restrictions (if given)
-  if (empty($membership_ids)) {
+  if ($membership_ids === []) {
     // build query
     $AND_STATUS_ID_LIVE = $AND_SKIP_LAST_PROCESSED = $LIMIT = '';
 
     // restrict by membership_type_id
-    if (empty($params['membership_type_id'])) {
+    if (!isset($params['membership_type_id']) || $params['membership_type_id'] === ''
+      || $params['membership_type_id'] === '0') {
       $AND_MEMBERSHIP_HAS_TYPES = '';
     }
     else {
@@ -57,7 +58,7 @@ function civicrm_api3_membership_process($params) {
 
     // restrict by status
     $live_status_ids = $settings->getLiveStatusIDs();
-    if (!empty($live_status_ids)) {
+    if ($live_status_ids !== []) {
       $live_status_list = implode(',', $live_status_ids);
       $AND_STATUS_ID_LIVE = "AND status_id IN ($live_status_list)";
     }
@@ -93,7 +94,8 @@ function civicrm_api3_membership_process($params) {
     $membership_id = (int) $membership_id_raw;
     if ($membership_id) {
       try {
-        $result_class = $processor->process($membership_id, !empty($params['dry_run']));
+        $result_class = $processor->process($membership_id,
+          isset($params['dry_run']) && (int) $params['dry_run'] !== 0);
       }
       catch (Exception $ex) {
         $result_class = 'exception';
@@ -111,7 +113,7 @@ function civicrm_api3_membership_process($params) {
 
   // mark processed
   if ($params['limit']) {
-    if ($processed_counter == $params['limit']) {
+    if ($processed_counter === (int) $params['limit']) {
       $settings->setLastProcessedMembershipID($last_processed_id);
     }
     else {

@@ -385,6 +385,7 @@ class CRM_Membership_MembershipFeeLogic {
       }
     }
     catch (Exception $ex) {
+      // @ignoreException
       // not found -> create
       $this->log("Contribution {$identifier} doesn't exist yet.", 'debug');
       $mtype = $this->getMembershipType($membership['membership_type_id']);

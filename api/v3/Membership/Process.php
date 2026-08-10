@@ -98,6 +98,7 @@ function civicrm_api3_membership_process($params) {
           isset($params['dry_run']) && (int) $params['dry_run'] !== 0);
       }
       catch (Exception $ex) {
+        // @ignoreException
         $result_class = 'exception';
         $processor->log("Failed to process membership ID '{$membership_id_raw}': " . $ex->getMessage());
       }

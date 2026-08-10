@@ -160,6 +160,7 @@ class CRM_Membership_FeeChangeLogic {
             civicrm_api3('Activity', 'create', $activity_data);
           }
           catch (Exception $ex) {
+            // @ignoreException
             Civi::log()->warning("ERROR: P60mem - couldn't create fee increase activity: " . $ex->getMessage());
           }
         }

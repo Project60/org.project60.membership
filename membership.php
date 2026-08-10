@@ -82,7 +82,7 @@ function membership_civicrm_install() {
  * Implements hook_civicrm_enable().
  */
 function membership_civicrm_enable() {
-  return _membership_civix_civicrm_enable();
+  _membership_civix_civicrm_enable();
 }
 
 /**

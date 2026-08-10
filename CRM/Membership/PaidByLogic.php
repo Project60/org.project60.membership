@@ -176,6 +176,7 @@ class CRM_Membership_PaidByLogic {
           ]);
         }
         catch (Exception $ex) {
+          // @ignoreException
           // seems it's no (valid) mandate after all...
         }
         if ($mandate) {
@@ -198,6 +199,7 @@ class CRM_Membership_PaidByLogic {
         [1 => $contribution_recur['id']]), E::ts('Payment terminated.'), 'info');
     }
     catch (Exception $ex) {
+      // @ignoreException
       // if there's any problem: make sure the user is warned
       $message = E::ts("The connected recurring contribution [%1] couldn't be ended: %2.", [
         1 => $contribution_recur['id'],
@@ -321,6 +323,7 @@ class CRM_Membership_PaidByLogic {
       return $contribution_recur;
     }
     catch (Exception $e) {
+      // @ignoreException
       CRM_Core_Session::setStatus(E::ts("Couldn't load 'paid via' data."), ts('Error'), 'error');
       return NULL;
     }
@@ -463,6 +466,7 @@ class CRM_Membership_PaidByLogic {
       ]);
     }
     catch (Exception $ex) {
+      // @ignoreException
       // no harm done: either SEPA not installed, or no SEPA mandate present.
     }
 

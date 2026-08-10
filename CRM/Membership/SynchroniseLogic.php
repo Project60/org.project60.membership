@@ -185,7 +185,9 @@ class CRM_Membership_SynchroniseLogic {
         ]);
       }
       catch (Exception $e) {
-        $results['errors'][$contribution_id] = $create_result['is_error'];
+        // @ignoreException
+        // $create_result would be undefined/stale here, since the call that would have set it is what threw
+        $results['errors'][$contribution_id] = $e->getMessage();
         continue;
       }
 

@@ -1,0 +1,9 @@
+/.phpcs.cache
+/.phpunit.result.cache
+/.phpstan/
+/composer.lock
+/phpstan.neon
+/tools/*/vendor/
+/tools/*/composer.lock
+/vendor/
+/tests/phpunit/bootstrap.local.php

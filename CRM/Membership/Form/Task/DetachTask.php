@@ -13,6 +13,8 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 
 use CRM_Membership_ExtensionUtil as E;
 
@@ -25,20 +27,21 @@ require_once 'CRM/Core/Form.php';
  */
 class CRM_Membership_Form_Task_DetachTask extends CRM_Contribute_Form_Task {
 
-  function buildQuickForm() {
+  public function buildQuickForm() {
     CRM_Utils_System::setTitle(E::ts('Detach Contributions from Membership'));
 
     // compile an info text
-    $infotext = E::ts("%1 of the %2 contributions are currently attached to a membership.", array(
+    $infotext = E::ts('%1 of the %2 contributions are currently attached to a membership.', [
       1 => $this->getAssignedCount(),
-      2 => count($this->_contributionIds)));
+      2 => count($this->_contributionIds),
+    ]);
     $this->assign('infotext', $infotext);
 
     // call the (overwritten) Form's method, so the continue button is on the right...
     CRM_Core_Form::addDefaultButtons(E::ts('Detach'));
   }
 
-  function postProcess() {
+  public function postProcess() {
     // get the count
     $count = $this->getAssignedCount();
 
@@ -48,7 +51,8 @@ class CRM_Membership_Form_Task_DetachTask extends CRM_Contribute_Form_Task {
       CRM_Core_DAO::executeQuery("DELETE FROM civicrm_membership_payment WHERE contribution_id IN ({$id_list})");
     }
 
-    CRM_Core_Session::setStatus(E::ts("%1 contributions have been detached from their memberships.", array(1 => $count)), ts('Success'), 'info');
+    CRM_Core_Session::setStatus(E::ts('%1 contributions have been detached from their memberships.',
+      [1 => $count]), ts('Success'), 'info');
   }
 
   /**
@@ -58,8 +62,11 @@ class CRM_Membership_Form_Task_DetachTask extends CRM_Contribute_Form_Task {
     $id_list = implode(',', $this->_contributionIds);
     if (empty($id_list)) {
       return 0;
-    } else {
-      return CRM_Core_DAO::singleValueQuery("SELECT COUNT(id) FROM civicrm_membership_payment WHERE contribution_id IN ({$id_list})");
+    }
+    else {
+      return CRM_Core_DAO::singleValueQuery(
+        "SELECT COUNT(id) FROM civicrm_membership_payment WHERE contribution_id IN ({$id_list})");
     }
   }
+
 }

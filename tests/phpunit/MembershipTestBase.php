@@ -13,6 +13,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
 
 use CRM_Membership_ExtensionUtil as E;
 use Civi\Test\HeadlessInterface;
@@ -24,7 +25,10 @@ use Civi\Test\TransactionalInterface;
  *
  * @group headless
  */
-class MembershipTestBase extends \PHPUnit\Framework\TestCase implements HeadlessInterface, HookInterface, TransactionalInterface {
+class MembershipTestBase extends \PHPUnit\Framework\TestCase implements
+    HeadlessInterface,
+    HookInterface,
+    TransactionalInterface {
 
   public function setUpHeadless() {
     // Civi\Test has many helpers, like install(), uninstall(), sql(), and sqlFile().
@@ -95,12 +99,12 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements Headless
    * Create a random contact and return the ID
    */
   public function createRandomContact() {
-    $this->assertNotEmpty(CRM_Core_Session::getLoggedInContactID(), "No logged in user");
-    $contact = civicrm_api3('Contact','create', [
-        'contact_type'       => 'Individual',
-        'first_name'         => substr(sha1(microtime()), 0, 16),
-        'last_name'          => substr(sha1(microtime()), 0, 16),
-        'preferred_language' => 'en_US',
+    $this->assertNotEmpty(CRM_Core_Session::getLoggedInContactID(), 'No logged in user');
+    $contact = civicrm_api3('Contact', 'create', [
+      'contact_type'       => 'Individual',
+      'first_name'         => substr(sha1(microtime()), 0, 16),
+      'last_name'          => substr(sha1(microtime()), 0, 16),
+      'preferred_language' => 'en_US',
     ]);
     $this->assertNotEmpty($contact['id'], "Couldn't create contact");
     return $contact['id'];
@@ -118,17 +122,18 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements Headless
       $annual_amount_field_search = civicrm_api3('CustomField', 'get', ['name' => 'test_annual_amount_field']);
       if (empty($annual_amount_field_search['id'])) {
         // field doesn't exist
-        $annual_amount_field_creation = civicrm_api3('CustomField','create', [
-            'custom_group_id' => $this->getMembershipCustomGroupID(),
-            'name'            => 'test_annual_amount_field',
-            'label'           => 'Annual Membership Fee',
-            'data_type'       => 'Money',
-            'html_type'       => 'Text',
-            'is_active'       => 1,
+        $annual_amount_field_creation = civicrm_api3('CustomField', 'create', [
+          'custom_group_id' => $this->getMembershipCustomGroupID(),
+          'name'            => 'test_annual_amount_field',
+          'label'           => 'Annual Membership Fee',
+          'data_type'       => 'Money',
+          'html_type'       => 'Text',
+          'is_active'       => 1,
         ]);
         $this->assertNotEmpty($annual_amount_field_creation['id'], "Couldn't create membership annual amount field");
         $annual_amount_field_id = $annual_amount_field_creation['id'];
-      } else {
+      }
+      else {
         $annual_amount_field_id = $annual_amount_field_search['id'];
       }
     }
@@ -144,16 +149,17 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements Headless
     $membership_custom_group_search = civicrm_api3('CustomGroup', 'get', ['name' => 'test_membership_group']);
     if (empty($membership_custom_group_search['id'])) {
       // field doesn't exist
-      $membership_custom_group_creation = civicrm_api3('CustomGroup','create', [
-          'name'      => 'test_membership_group',
-          'title'     => 'Membership Info',
-          'extends'   => 'Membership',
-          'style'     => 'Inline',
-          'is_active' => 1,
+      $membership_custom_group_creation = civicrm_api3('CustomGroup', 'create', [
+        'name'      => 'test_membership_group',
+        'title'     => 'Membership Info',
+        'extends'   => 'Membership',
+        'style'     => 'Inline',
+        'is_active' => 1,
       ]);
       $this->assertNotEmpty($membership_custom_group_creation['id'], "Couldn't create membership group");
       return $membership_custom_group_creation['id'];
-    } else {
+    }
+    else {
       return $membership_custom_group_search['id'];
     }
   }
@@ -164,24 +170,25 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements Headless
   public function getRandomMembershipType() {
     $type_query = civicrm_api3('MembershipType', 'get', ['is_active' => 1]);
     if (empty($type_query['count'])) {
-      error_log("create type");
+      error_log('create type');
       $create_query = civicrm_api3('MembershipType', 'create', [
-          "name"                 => "Member Test",
-          "member_of_contact_id" => "1",
-          "financial_type_id"    => "2",
-          "minimum_fee"          => "10",
-          "duration_unit"        => "year",
-          "domain_id"            => "1",
-          "duration_interval"    => "1",
-          "period_type"          => "rolling",
-          "visibility"           => "Public",
-          "is_active"            => "1",
-          "contribution_type_id" => "2"
+        'name'                 => 'Member Test',
+        'member_of_contact_id' => '1',
+        'financial_type_id'    => '2',
+        'minimum_fee'          => '10',
+        'duration_unit'        => 'year',
+        'domain_id'            => '1',
+        'duration_interval'    => '1',
+        'period_type'          => 'rolling',
+        'visibility'           => 'Public',
+        'is_active'            => '1',
+        'contribution_type_id' => '2',
       ]);
       $this->assertNotEmpty($create_query['id'], "Couldn't create membership type");
       return $create_query['id'];
 
-    } else {
+    }
+    else {
       $first_type = reset($type_query['values']);
       return $first_type['id'];
     }
@@ -199,17 +206,17 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements Headless
   public function createChangeActivity($membership, $change_date, $old_amount, $new_amount) {
     $change_logic = CRM_Membership_FeeChangeLogic::getSingleton();
     $activity_data = [
-        'activity_type_id'   => $change_logic->getActivityTypeID(),
-        'target_id'          => $membership['contact_id'],
-        'subject'            => "TEST",
-        'activity_date_time' => $change_date,
-        'source_contact_id'  => CRM_Core_Session::getLoggedInContactID(),
-        'source_record_id'   => $membership['id'],
+      'activity_type_id'   => $change_logic->getActivityTypeID(),
+      'target_id'          => $membership['contact_id'],
+      'subject'            => 'TEST',
+      'activity_date_time' => $change_date,
+      'source_contact_id'  => CRM_Core_Session::getLoggedInContactID(),
+      'source_record_id'   => $membership['id'],
 
         // custom data
-        'p60membership_fee_update.annual_amount_before'   => number_format($old_amount, 2, '.', ''),
-        'p60membership_fee_update.annual_amount_after'    => number_format($new_amount, 2, '.', ''),
-        'p60membership_fee_update.annual_amount_increase' => number_format(($new_amount-$old_amount), 2, '.', ''),
+      'p60membership_fee_update.annual_amount_before'   => number_format($old_amount, 2, '.', ''),
+      'p60membership_fee_update.annual_amount_after'    => number_format($new_amount, 2, '.', ''),
+      'p60membership_fee_update.annual_amount_increase' => number_format(($new_amount - $old_amount), 2, '.', ''),
     ];
 
     // normalise
@@ -218,4 +225,5 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements Headless
     // create activity
     civicrm_api3('Activity', 'create', $activity_data);
   }
+
 }

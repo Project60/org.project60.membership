@@ -13,12 +13,14 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
 
 /**
  * This job can perform various tasks wrt to memberships:
  *  - calculate outstanding amounts
  *  - extend memberships that do not have an outstanding amount
  */
+// phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 function civicrm_api3_membership_process($params) {
   $settings = CRM_Membership_Settings::getSettings();
   // set defaults
@@ -29,11 +31,11 @@ function civicrm_api3_membership_process($params) {
   // get membership IDs
   if (empty($params['membership_id'])) {
     $membership_ids = [];
-  } else {
+  }
+  else {
     $membership_ids = array_map('intval', explode(',', $params['membership_id']));
     unset($params['limit']);
   }
-
 
   // Find membership IDs if not given:
   // - LIVE (by status ID)
@@ -46,12 +48,12 @@ function civicrm_api3_membership_process($params) {
     // restrict by membership_type_id
     if (empty($params['membership_type_id'])) {
       $AND_MEMBERSHIP_HAS_TYPES = '';
-    } else {
+    }
+    else {
       $membership_type_ids = array_map('intval', explode(',', $params['membership_type_id']));
       $membership_type_id_list = implode(',', $membership_type_ids);
       $AND_MEMBERSHIP_HAS_TYPES = "AND membership_type_id IN ({$membership_type_id_list})";
     }
-
 
     // restrict by status
     $live_status_ids = $settings->getLiveStatusIDs();
@@ -62,8 +64,8 @@ function civicrm_api3_membership_process($params) {
 
     // work with limits
     if ($params['limit']) {
-      $LIMIT = "LIMIT " . abs((int) $params['limit']);
-      $AND_SKIP_LAST_PROCESSED = "AND id > " . $settings->getLastProcessedMembershipID();
+      $LIMIT = 'LIMIT ' . abs((int) $params['limit']);
+      $AND_SKIP_LAST_PROCESSED = 'AND id > ' . $settings->getLastProcessedMembershipID();
     }
 
     $membership2process_sql = "
@@ -75,13 +77,11 @@ function civicrm_api3_membership_process($params) {
         {$AND_SKIP_LAST_PROCESSED}
       ORDER BY id ASC
       {$LIMIT}";
-    //Civi::log()->debug("query: {$membership2process_sql}");
     $membership2process = CRM_Core_DAO::executeQuery($membership2process_sql);
     while ($membership2process->fetch()) {
       $membership_ids[] = (int) $membership2process->membership_id;
     }
   }
-
 
   // run membership IDs
   $processor = new CRM_Membership_MembershipFeeLogic($params);
@@ -94,11 +94,13 @@ function civicrm_api3_membership_process($params) {
     if ($membership_id) {
       try {
         $result_class = $processor->process($membership_id, !empty($params['dry_run']));
-      } catch (Exception $ex) {
+      }
+      catch (Exception $ex) {
         $result_class = 'exception';
         $processor->log("Failed to process membership ID '{$membership_id_raw}': " . $ex->getMessage());
       }
-    } else {
+    }
+    else {
       $result_class = 'bad_id';
       $processor->log("Skipped illegal membership ID '{$membership_id_raw}'");
     }
@@ -111,7 +113,8 @@ function civicrm_api3_membership_process($params) {
   if ($params['limit']) {
     if ($processed_counter == $params['limit']) {
       $settings->setLastProcessedMembershipID($last_processed_id);
-    } else {
+    }
+    else {
       $settings->setLastProcessedMembershipID(0);
     }
   }
@@ -123,40 +126,42 @@ function civicrm_api3_membership_process($params) {
  * API3 action specs
  */
 function _civicrm_api3_membership_process_spec(&$params) {
-  $params['membership_id'] = array(
-      'name'         => 'membership_id',
-      'api.required' => 0,
-      'type'         => CRM_Utils_Type::T_STRING,
-      'title'        => 'Membership ID(s)',
-      'description'  => 'ID of the membership to process, or a comma-separated list of such membership',
-  );
-  $params['membership_type_id'] = array(
+  $params['membership_id'] = [
+    'name'         => 'membership_id',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_STRING,
+    'title'        => 'Membership ID(s)',
+    'description'  => 'ID of the membership to process, or a comma-separated list of such membership',
+  ];
+  $params['membership_type_id'] = [
     'name'         => 'membership_type_id',
     'api.required' => 0,
     'type'         => CRM_Utils_Type::T_STRING,
     'title'        => 'Membership Type ID(s)',
     'description'  => 'ID of the membership type IDs to process, or a comma-separated list of such membership types',
-  );
-  $params['dry_run'] = array(
-      'name'         => 'dry_run',
-      'api.required' => 0,
-      'type'         => CRM_Utils_Type::T_INT,
-      'title'        => 'Dry Run?',
-      'description'  => 'If active, no changes will be performed',
-  );
-  $params['end_date_offset'] = array(
-      'name'         => 'end_date_offset',
-      'api.default'  => 0,
-      'type'         => CRM_Utils_Type::T_INT,
-      'title'        => 'Selection offset for membership end date',
-      'description'  => 'Will investigate memberships [end_date_offset] days after their current end date. If negative _before_ end date',
-  );
-  $params['limit'] = array(
-      'name'         => 'limit',
-      'api.default'  => 0,
-      'type'         => CRM_Utils_Type::T_INT,
-      'title'        => 'Processing Limit',
-      'description'  => 'If given, only this amount of memberships will be investigated. The last membership processed will be stored, and the processing will be picked up with the next (limited) call',
-  );
+  ];
+  $params['dry_run'] = [
+    'name'         => 'dry_run',
+    'api.required' => 0,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Dry Run?',
+    'description'  => 'If active, no changes will be performed',
+  ];
+  $params['end_date_offset'] = [
+    'name'         => 'end_date_offset',
+    'api.default'  => 0,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Selection offset for membership end date',
+    'description'  => 'Will investigate memberships [end_date_offset] days after their current end date.'
+    . ' If negative _before_ end date',
+  ];
+  $params['limit'] = [
+    'name'         => 'limit',
+    'api.default'  => 0,
+    'type'         => CRM_Utils_Type::T_INT,
+    'title'        => 'Processing Limit',
+    'description'  => 'If given, only this amount of memberships will be investigated. The last'
+    . ' membership processed will be stored, and the processing will be picked up with the'
+    . ' next (limited) call',
+  ];
 }
-

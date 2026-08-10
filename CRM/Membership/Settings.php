@@ -13,6 +13,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
 
 use CRM_Membership_ExtensionUtil as E;
 
@@ -21,13 +22,16 @@ use CRM_Membership_ExtensionUtil as E;
  */
 class CRM_Membership_Settings {
 
-  /** singleton object */
+  /**
+   * singleton object */
   protected static $singleton = NULL;
 
-  /** the current settings blob */
+  /**
+   * the current settings blob */
   protected $settings_bucket = NULL;
 
-  /** cached data on the paid_via field */
+  /**
+   * cached data on the paid_via field */
   protected $paid_via_field = NULL;
   protected $paid_by_field = NULL;
   protected $field_cache = NULL;
@@ -38,7 +42,7 @@ class CRM_Membership_Settings {
   protected function __construct() {
     $this->settings_bucket = CRM_Core_BAO_Setting::getItem('Membership Payments', 'p60_membership_settings');
     if (!is_array($this->settings_bucket)) {
-      $this->settings_bucket = array();
+      $this->settings_bucket = [];
     }
   }
 
@@ -74,7 +78,8 @@ class CRM_Membership_Settings {
   public function getSetting($key) {
     if (isset($this->settings_bucket[$key])) {
       return $this->settings_bucket[$key];
-    } else {
+    }
+    else {
       return NULL;
     }
   }
@@ -96,10 +101,12 @@ class CRM_Membership_Settings {
     $parsed_time = strtotime($value);
     if ($parsed_time) {
       return date('Y-m-d H:i:s', $parsed_time);
-    } else {
+    }
+    else {
       // this could not be parsed
       if ($warn) {
-        CRM_Core_Session::setStatus(E::ts("The value '%1' is invalid and will be ignored.", [1 => $value]), E::ts("Invalid expression"), 'warn');
+        CRM_Core_Session::setStatus(E::ts("The value '%1' is invalid and will be ignored.", [1 => $value]),
+          E::ts('Invalid expression'), 'warn');
       }
       return NULL;
     }
@@ -127,7 +134,8 @@ class CRM_Membership_Settings {
   public function getPaidByFieldID() {
     if (!empty($this->settings_bucket['paid_by_field'])) {
       return (int) $this->settings_bucket['paid_by_field'];
-    } else {
+    }
+    else {
       return NULL;
     }
   }
@@ -148,7 +156,8 @@ class CRM_Membership_Settings {
   public function getMissingAmountFieldID() {
     if (!empty($this->settings_bucket['missing_period_amount_field'])) {
       return (int) $this->settings_bucket['missing_period_amount_field'];
-    } else {
+    }
+    else {
       return NULL;
     }
   }
@@ -162,7 +171,6 @@ class CRM_Membership_Settings {
     return $this->getFieldInfo($field_id);
   }
 
-
   /**
    * Get the field ID of the selected paid_via field
    * @return int
@@ -170,7 +178,8 @@ class CRM_Membership_Settings {
   public function getPaidViaFieldID() {
     if (!empty($this->settings_bucket['paid_via_field'])) {
       return (int) $this->settings_bucket['paid_via_field'];
-    } else {
+    }
+    else {
       return NULL;
     }
   }
@@ -190,7 +199,7 @@ class CRM_Membership_Settings {
    * @param $ids
    */
   public function cacheFields($field_ids) {
-    $fields_to_load = array();
+    $fields_to_load = [];
     foreach ($field_ids as $field_id) {
       if (!isset($this->field_cache[$field_id])) {
         $fields_to_load[] = $field_id;
@@ -198,20 +207,22 @@ class CRM_Membership_Settings {
     }
 
     if (!empty($fields_to_load)) {
-      $field_infos = civicrm_api3('CustomField', 'get', array(
-          'id'         => array('IN' => $fields_to_load),
-          'sequential' => 0,
-          'return'     => 'column_name,id,label,custom_group_id'));
+      $field_infos = civicrm_api3('CustomField', 'get', [
+        'id'         => ['IN' => $fields_to_load],
+        'sequential' => 0,
+        'return'     => 'column_name,id,label,custom_group_id',
+      ]);
 
-      $groups_to_load = array();
+      $groups_to_load = [];
       foreach ($field_infos['values'] as $field_info) {
         $groups_to_load[] = $field_info['custom_group_id'];
       }
 
-      $group_data = civicrm_api3('CustomGroup', 'get', array(
-          'id'         => array('IN' => $groups_to_load),
-          'sequential' => 0,
-          'return'     => 'id,table_name'));
+      $group_data = civicrm_api3('CustomGroup', 'get', [
+        'id'         => ['IN' => $groups_to_load],
+        'sequential' => 0,
+        'return'     => 'id,table_name',
+      ]);
 
       // finally: fill the cache
       foreach ($fields_to_load as $field_id) {
@@ -222,7 +233,8 @@ class CRM_Membership_Settings {
 
           $this->field_cache[$field_id] = $field;
 
-        } else {
+        }
+        else {
           $this->field_cache[$field_id] = 'MISSING';
         }
       }
@@ -232,20 +244,21 @@ class CRM_Membership_Settings {
   /**
    * Get an info block for the given field ID
    */
-  public function getFieldInfo($field_id)
-  {
+  public function getFieldInfo($field_id) {
     if ($field_id) {
       if (!isset($this->field_cache[$field_id])) {
         // load the field data
-        $field_info = civicrm_api3('CustomField', 'getsingle', array(
-            'id'     => $field_id,
-            'return' => 'column_name,id,label,custom_group_id,option_group_id'));
+        $field_info = civicrm_api3('CustomField', 'getsingle', [
+          'id'     => $field_id,
+          'return' => 'column_name,id,label,custom_group_id,option_group_id',
+        ]);
         $field_info['key'] = 'custom_' . $field_id;
 
         // add some of the group data as well
-        $group_data = civicrm_api3('CustomGroup', 'getsingle', array(
-            'id'     => $field_info['custom_group_id'],
-            'return' => 'id,table_name'));
+        $group_data = civicrm_api3('CustomGroup', 'getsingle', [
+          'id'     => $field_info['custom_group_id'],
+          'return' => 'id,table_name',
+        ]);
         $field_info['table_name'] = $group_data['table_name'];
         $this->field_cache[$field_id] = $field_info;
       }
@@ -260,7 +273,9 @@ class CRM_Membership_Settings {
    * @return array with the settings names mapped to the custom field objects
    */
   public function getDerivedFields() {
-    $field_keys = array('paid_via_field', 'annual_amount_field', 'installment_amount_field', 'diff_amount_field', 'payment_frequency_field', 'payment_type_field');
+    $field_keys = ['paid_via_field', 'annual_amount_field', 'installment_amount_field', 'diff_amount_field',
+      'payment_frequency_field', 'payment_type_field',
+    ];
     return $this->getFields($field_keys);
   }
 
@@ -272,7 +287,7 @@ class CRM_Membership_Settings {
    */
   public function getFields($field_keys) {
     $settings = CRM_Membership_Settings::getSettings();
-    $active_field_ids = array();
+    $active_field_ids = [];
     foreach ($field_keys as $field_key) {
       $field_id = $settings->getSetting($field_key);
       if ($field_id) {
@@ -282,7 +297,7 @@ class CRM_Membership_Settings {
 
     $settings->cacheFields($active_field_ids);
 
-    $active_fields = array();
+    $active_fields = [];
     foreach ($field_keys as $field_key) {
       $field_id = $settings->getSetting($field_key);
       if ($field_id) {
@@ -296,7 +311,6 @@ class CRM_Membership_Settings {
     return $active_fields;
   }
 
-
   /**
    * get the syncmap property
    * default is the mapping that is defined by the membership_types' financial type id
@@ -307,7 +321,8 @@ class CRM_Membership_Settings {
     $mapping = $this->getSetting('sync_mapping');
     if (empty($mapping)) {
       return CRM_Membership_Settings::_getDefaultSyncmap();
-    } else {
+    }
+    else {
       return $mapping;
     }
   }
@@ -332,8 +347,9 @@ class CRM_Membership_Settings {
   public function getLiveStatusIDs() {
     $status_ids = $this->getSetting('live_statuses');
     if (!is_array($status_ids) || empty($status_ids)) {
-      return array(1,2,3);
-    } else {
+      return [1, 2, 3];
+    }
+    else {
       return $status_ids;
     }
   }
@@ -354,9 +370,9 @@ class CRM_Membership_Settings {
    * extracts the default syncmapString from the membership types
    */
   protected static function _getDefaultSyncmap() {
-    $mapping = array();
+    $mapping = [];
     $membership_types = civicrm_api3('MembershipType', 'get',
-       array('is_active' => 1, 'option.limit' => 9999));
+       ['is_active' => 1, 'option.limit' => 9999]);
     if (empty($membership_types['is_error'])) {
       foreach ($membership_types['values'] as $membership_type) {
         $key = $membership_type['id'];
@@ -364,13 +380,15 @@ class CRM_Membership_Settings {
         if (!empty($key) && !empty($value)) {
           if (isset($mapping[$key])) {
             $mapping[$key][] = $value;
-          } else {
-            $mapping[$key] = array($value);
+          }
+          else {
+            $mapping[$key] = [$value];
           }
         }
       }
-    } else {
-      error_log("org.project60.membership: Cannot read membership types - ".$membership_types['error_message']);
+    }
+    else {
+      error_log('org.project60.membership: Cannot read membership types - ' . $membership_types['error_message']);
     }
     return $mapping;
   }
@@ -392,4 +410,5 @@ class CRM_Membership_Settings {
   public function setLastProcessedMembershipID($id) {
     Civi::settings()->set('p60_membership_last_processed_id', (int) $id);
   }
+
 }

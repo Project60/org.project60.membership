@@ -13,6 +13,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
 
 use CRM_Membership_ExtensionUtil as E;
 
@@ -30,10 +31,10 @@ class CRM_Membership_UiMods {
     $settings = CRM_Membership_Settings::getSettings();
     if ($settings->getSetting('hide_auto_renewal')) {
       // set header
-      $headers[8] = array('name' => E::ts("Contract"));
+      $headers[8] = ['name' => E::ts('Contract')];
 
       // extract memberhship IDs
-      $membership_ids = array();
+      $membership_ids = [];
       foreach ($rows as $index => $row) {
         $membership_ids[] = $row['membership_id'];
       }
@@ -59,10 +60,11 @@ class CRM_Membership_UiMods {
       $paid_via_field = $settings->getPaidViaField();
       if ($paid_via_field && $settings->getSetting('hide_auto_renewal')) {
         CRM_Core_Smarty::singleton()->assign('auto_renewal_label', E::ts('Auto Renew'));
-        CRM_Core_Region::instance('page-body')->add(array(
-            'template' => 'CRM/Membership/Snippets/HideAutoRenewal.tpl',
-        ));
+        CRM_Core_Region::instance('page-body')->add([
+          'template' => 'CRM/Membership/Snippets/HideAutoRenewal.tpl',
+        ]);
       }
     }
   }
+
 }

@@ -13,6 +13,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
 
 use CRM_Membership_ExtensionUtil as E;
 
@@ -40,18 +41,22 @@ class CRM_Membership_MembershipFeeLogic {
   public function __construct($parameters = []) {
     // set defaults
     $this->parameters = [
-        'extend_if_paid'                 => 0,
-        'create_invoice'                 => 0,
-        'contribution_status'            => '1',
-        'membership_period_shift'        => -10, // shift the membership period the contribution is assigned to. With -10 a payment made at the end of december would be counted towards the next year
-        'missing_fee_grace'              => 0.99,
-        'missing_fee_payment_instrument' => 5, // EFT
-        'missing_fee_update'             => 1, // YES
-        'cutoff_today'                   => FALSE,
-        'log_level'                      => 'info',
-        'log_target'                     => 'civicrm',
-        'time_unit'                      => 'month',
-        'change_status_ids'              => '1,2',
+      'extend_if_paid'                 => 0,
+      'create_invoice'                 => 0,
+      'contribution_status'            => '1',
+    // shift the membership period the contribution is assigned to. With -10 a payment
+    // made at the end of december would be counted towards the next year
+      'membership_period_shift'        => -10,
+      'missing_fee_grace'              => 0.99,
+    // EFT
+      'missing_fee_payment_instrument' => 5,
+    // YES
+      'missing_fee_update'             => 1,
+      'cutoff_today'                   => FALSE,
+      'log_level'                      => 'info',
+      'log_target'                     => 'civicrm',
+      'time_unit'                      => 'month',
+      'change_status_ids'              => '1,2',
     ];
 
     // overwrite with passed parameters
@@ -66,7 +71,7 @@ class CRM_Membership_MembershipFeeLogic {
    *
    * @param $membership_id
    * @return string action: extended - membership was extended
-   *                        paid     - membership was paid for, but not extended due to settings
+   *   paid     - membership was paid for, but not extended due to settings
    *                        invoiced - membership was not fully paid for, and an invoice contribution was created
    *                        not_paid - membership was not fully paid for
    */
@@ -84,11 +89,13 @@ class CRM_Membership_MembershipFeeLogic {
       if (!empty($this->parameters['extend_if_paid'])) {
         $this->extendMembership($membership_id, $dry_run);
         return 'extended';
-      } else {
+      }
+      else {
         return 'paid';
       }
 
-    } else {
+    }
+    else {
       // paid too little
       $this->log("Membership [{$membership_id}] is missing fee amount of: {$missing}");
 
@@ -97,16 +104,16 @@ class CRM_Membership_MembershipFeeLogic {
         if ($missing_payment_field) {
           civicrm_api3('Membership', 'create', [
             'id' => $membership_id,
-            $missing_payment_field['key'] => $missing
+            $missing_payment_field['key'] => $missing,
           ]);
         }
       }
 
-
       if (!empty($this->parameters['create_invoice'])) {
         $this->updatedMissingFeeContribution($membership_id, $missing, $dry_run);
         return 'invoiced';
-      } else {
+      }
+      else {
         return 'not_paid';
       }
     }
@@ -150,10 +157,11 @@ class CRM_Membership_MembershipFeeLogic {
         // changes only take effect on the beginning of the next phase
         $next_phase_start = $this->alignDate($change_query->change_date, TRUE, TRUE);
         $changes[] = [
-            $phase_start,
-            $next_phase_start,
-            $change_query->amount_before,
-            $change_query->amount_after];
+          $phase_start,
+          $next_phase_start,
+          $change_query->amount_before,
+          $change_query->amount_after,
+        ];
         $phase_start = $next_phase_start;
       }
     }
@@ -194,7 +202,6 @@ class CRM_Membership_MembershipFeeLogic {
     return $counter;
   }
 
-
   /**
    * Align the given date based on the 'time_unit' setting
    * @param $date          string date
@@ -203,6 +210,7 @@ class CRM_Membership_MembershipFeeLogic {
    *
    * @return  string aligned date
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function alignDate($date, $forward, $one_more_day = FALSE) {
     $sign = $forward ? '+' : '-';
 
@@ -210,12 +218,15 @@ class CRM_Membership_MembershipFeeLogic {
       case 'day':
         $modifier = 'd';
         break;
+
       case 'week':
         $modifier = 'W';
         break;
+
       case 'year':
         $modifier = 'Y';
         break;
+
       default:
       case 'month':
         $modifier = 'm';
@@ -230,7 +241,8 @@ class CRM_Membership_MembershipFeeLogic {
       if ($frame_target == date($modifier, $candidate)) {
         // still in the same frame, we take it!
         $last_valid = $candidate;
-      } else {
+      }
+      else {
         // we left the frame, break!
         if ($one_more_day) {
           $last_valid = $candidate;
@@ -251,10 +263,13 @@ class CRM_Membership_MembershipFeeLogic {
     switch ($this->parameters['time_unit']) {
       case 'day':
         return 365;
+
       case 'week':
         return 52;
+
       case 'year':
         return 1;
+
       default:
       case 'month':
         return 12;
@@ -288,7 +303,6 @@ class CRM_Membership_MembershipFeeLogic {
         AND (payment.trxn_id IS NULL OR payment.trxn_id NOT LIKE '{$identifier_pattern}')
         AND DATE(payment.receive_date) >= (DATE('{$from_date}') + INTERVAL {$assignment_shift_days} DAY)
         AND DATE(payment.receive_date) <= (DATE('{$to_date}') + INTERVAL {$assignment_shift_days} DAY)";
-    //Civi::log()->debug($amount_sql);
     $amount = CRM_Core_DAO::singleValueQuery($amount_sql);
 
     // add the outstanding payment contribution if found
@@ -314,7 +328,8 @@ class CRM_Membership_MembershipFeeLogic {
 
     // get from_date
     $start_date   = strtotime($membership['start_date']);
-    $period_start = strtotime("-{$mtype['duration_interval']} {$mtype['duration_unit']}", strtotime($membership['end_date']));
+    $period_start = strtotime("-{$mtype['duration_interval']} {$mtype['duration_unit']}",
+      strtotime($membership['end_date']));
     $from_date    = max($start_date, $period_start);
 
     // get to_date
@@ -352,40 +367,46 @@ class CRM_Membership_MembershipFeeLogic {
       $contribution = civicrm_api3('Contribution', 'getsingle', ['trxn_id' => $identifier]);
       if ($contribution['total_amount'] == $missing_amount) {
         $this->log("Contribution {$identifier} found, already has the right amount.", 'debug');
-      } else {
+      }
+      else {
         if ($contribution['contribution_status_id'] == 2) {
           if ($dry_run) {
             $this->log("DRY RUN: Contribution {$identifier} found, would be adjusted.", 'debug');
-          } else {
+          }
+          else {
             $this->log("Contribution {$identifier} found, will be adjusted.", 'debug');
             civicrm_api3('Contribution', 'create', [
-                'id'           => $contribution['id'],
-                'total_amount' => $missing_amount,
+              'id'           => $contribution['id'],
+              'total_amount' => $missing_amount,
             ]);
             $this->log("Contribution {$identifier} was found and adjusted.", 'debug');
           }
         }
       }
-    } catch (Exception $ex) {
+    }
+    catch (Exception $ex) {
       // not found -> create
       $this->log("Contribution {$identifier} doesn't exist yet.", 'debug');
       $mtype = $this->getMembershipType($membership['membership_type_id']);
       $contact_id = $this->getPayingContactID($membership_id);
       if ($dry_run) {
         $this->log("DRY RUN: Contribution {$identifier} would be created.", 'debug');
-      } else {
+      }
+      else {
         $contribution = civicrm_api3('Contribution', 'create', [
-            'contact_id'             => $contact_id,
-            'total_amount'           => $missing_amount,
-            'financial_type_id'      => $mtype['contribution_type_id'],
-            'payment_instrument_id'  => $this->parameters['missing_fee_payment_instrument'],
-            'receive_date'           => date('YmdHis'),
-            'contribution_status_id' => 2, // Pending
+          'contact_id'             => $contact_id,
+          'total_amount'           => $missing_amount,
+          'financial_type_id'      => $mtype['contribution_type_id'],
+          'payment_instrument_id'  => $this->parameters['missing_fee_payment_instrument'],
+          'receive_date'           => date('YmdHis'),
+        // Pending
+          'contribution_status_id' => 2,
         ]);
         $this->log("Contribution {$identifier} created.", 'debug');
 
         // connect to membership
-        CRM_Core_DAO::executeQuery("INSERT IGNORE INTO civicrm_membership_payment (contribution_id,membership_id) VALUES ({$contribution['id']}, {$membership_id});");
+        CRM_Core_DAO::executeQuery('INSERT IGNORE INTO civicrm_membership_payment (contribution_id,membership_id)'
+          . " VALUES ({$contribution['id']}, {$membership_id});");
       }
     }
   }
@@ -407,9 +428,11 @@ class CRM_Membership_MembershipFeeLogic {
         $amount = $membership[$annual_amount_field['key']];
         return $amount;
 
-      } else {
+      }
+      else {
         // value not provided by API
-        $amount = CRM_Core_DAO::singleValueQuery("SELECT `{$annual_amount_field['column_name']}` FROM `{$annual_amount_field['table_name']}` WHERE entity_id = {$membership_id};");
+        $amount = CRM_Core_DAO::singleValueQuery("SELECT `{$annual_amount_field['column_name']}`"
+          . " FROM `{$annual_amount_field['table_name']}` WHERE entity_id = {$membership_id};");
         if ($amount !== NULL) {
           return $amount;
         }
@@ -442,8 +465,10 @@ class CRM_Membership_MembershipFeeLogic {
     $next_end_date = $this->alignDate($next_end_date, TRUE);
 
     if ($dry_run) {
-      $this->log("Would extend membership [{$membership_id}] of contact [{$membership['contact_id']}] until {$next_end_date}");
-    } else {
+      $this->log("Would extend membership [{$membership_id}] of contact [{$membership['contact_id']}]"
+        . " until {$next_end_date}");
+    }
+    else {
       $membership_extension = [
         'id'            => $membership_id,
         'end_date'      => $next_end_date,
@@ -461,7 +486,8 @@ class CRM_Membership_MembershipFeeLogic {
 
       // run update
       civicrm_api3('Membership', 'create', $membership_extension);
-      $this->log("Extended membership [{$membership_id}] of contact [{$membership['contact_id']}] until {$next_end_date}");
+      $this->log("Extended membership [{$membership_id}] of contact [{$membership['contact_id']}]"
+        . " until {$next_end_date}");
 
       // add activity??
       // TODO: add activity
@@ -482,15 +508,15 @@ class CRM_Membership_MembershipFeeLogic {
     // see if there is another contact paying for this membership
     $paid_by_field = $settings->getPaidByField();
     if ($paid_by_field) {
-      $paid_by_field_value = CRM_Core_DAO::singleValueQuery("SELECT {$paid_by_field['column_name']} FROM {$paid_by_field['table_name']} WHERE entity_id = {$membership_id}");
+      $paid_by_field_value = CRM_Core_DAO::singleValueQuery("SELECT {$paid_by_field['column_name']}"
+        . " FROM {$paid_by_field['table_name']} WHERE entity_id = {$membership_id}");
       if ($paid_by_field_value) {
-        $paid_by_contact_id  = $paid_by_field_value;
+        $paid_by_contact_id = $paid_by_field_value;
       }
     }
 
     return $paid_by_contact_id;
   }
-
 
   /**
    * @param string $level
@@ -502,8 +528,9 @@ class CRM_Membership_MembershipFeeLogic {
     if ($req_level >= $min_level) {
       // we want to log this
       if ($this->parameters['log_target'] == 'civicrm') {
-        CRM_Core_Error::debug_log_message("P60.FeeLogic: " . $message);
-      } else {
+        CRM_Core_Error::debug_log_message('P60.FeeLogic: ' . $message);
+      }
+      else {
         if ($this->log_file == NULL) {
           $this->log_file = fopen($this->parameters['log_target'], 'a');
           fwrite($this->log_file, date('[Y-m-d H:i:s] ') . "Membership.process started\n");
@@ -512,7 +539,6 @@ class CRM_Membership_MembershipFeeLogic {
       }
     }
   }
-
 
   /**
    * Load membership (cached)
@@ -547,4 +573,5 @@ class CRM_Membership_MembershipFeeLogic {
     }
     return $this->membership_types[$membership_type_id];
   }
+
 }

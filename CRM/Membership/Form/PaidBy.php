@@ -13,6 +13,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
 
 use CRM_Membership_ExtensionUtil as E;
 
@@ -30,13 +31,13 @@ class CRM_Membership_Form_PaidBy extends CRM_Core_Form {
     $logic    = CRM_Membership_PaidByLogic::getSingleton();
     $paid_via = $settings->getPaidViaField();
     if (!$paid_via) {
-      CRM_Core_Session::setStatus(E::ts("Paid Via Field not enabled!"), E::ts('Error'), 'error');
+      CRM_Core_Session::setStatus(E::ts('Paid Via Field not enabled!'), E::ts('Error'), 'error');
       return;
     }
 
     // get some IDs
-    $membership_id = CRM_Utils_Request::retrieve('mid',  'Integer');
-    $membership = civicrm_api3('Membership', 'getsingle', array('id' => $membership_id));
+    $membership_id = CRM_Utils_Request::retrieve('mid', 'Integer');
+    $membership = civicrm_api3('Membership', 'getsingle', ['id' => $membership_id]);
     $contribution_recur = $logic->getRecurringContribution($membership_id);
 
     // see if there is a 'paid by'
@@ -50,19 +51,19 @@ class CRM_Membership_Form_PaidBy extends CRM_Core_Form {
 
     // add vars:
     $this->assign('paid_by_current', $contribution_recur);
-    $this->assign('membership',      $membership);
+    $this->assign('membership', $membership);
 
     // add form elements
     $this->add('hidden', 'selected_contribution_rcur_id', $contribution_recur ? $contribution_recur['id'] : '');
     $this->add('hidden', 'membership_id', $membership_id);
 
-    $this->addButtons(array(
-      array(
+    $this->addButtons([
+      [
         'type' => 'submit',
         'name' => E::ts('Save Changes'),
         'isDefault' => TRUE,
-      ),
-    ));
+      ],
+    ]);
 
     // export form elements
     parent::buildQuickForm();
@@ -79,4 +80,5 @@ class CRM_Membership_Form_PaidBy extends CRM_Core_Form {
 
     parent::postProcess();
   }
+
 }

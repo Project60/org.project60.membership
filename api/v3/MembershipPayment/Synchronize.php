@@ -13,6 +13,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
 
 /**
  * this job will connect all payments of a certain financial_type with the
@@ -20,6 +21,7 @@
  *
  * @return array API result
  */
+// phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 function civicrm_api3_membership_payment_synchronize($params) {
   $settings = CRM_Membership_Settings::getSettings();
   $mapping  = $settings->getSyncMapping();
@@ -34,7 +36,7 @@ function civicrm_api3_membership_payment_synchronize($params) {
   }
 
   // check if contribution_ids are given
-  $contribution_ids = array();
+  $contribution_ids = [];
   if (!empty($params['contribution_ids'])) {
     $cid_data = $params['contribution_ids'];
     if (is_string($cid_data)) {
@@ -44,7 +46,8 @@ function civicrm_api3_membership_payment_synchronize($params) {
       foreach ($cid_data as $contribution_id) {
         $contribution_ids[] = (int) $contribution_id;
       }
-    } else {
+    }
+    else {
       $contribution_ids[] = (int) $cid_data;
     }
   }
@@ -52,30 +55,38 @@ function civicrm_api3_membership_payment_synchronize($params) {
   // verify mapping
   foreach ($mapping as $financial_type_id => $membership_type_ids) {
     foreach ($membership_type_ids as $membership_type_id) {
-      if (!is_numeric($financial_type_id) || !is_numeric($membership_type_id))
+      if (!is_numeric($financial_type_id) || !is_numeric($membership_type_id)) {
         return civicrm_api3_create_error("The parameter 'mapping' should contain only IDs.");
+      }
     }
   }
 
   // if required, detach all ill assigned memberships for the given financial types first
-  if (!empty($params['rebuild']) && ($params['rebuild']==1 || strtolower($params['rebuild'])=='true')) {
-  	foreach ($mapping as $financial_type_id => $membership_type_ids) {
-      CRM_Membership_SynchroniseLogic::resetPayments($financial_type_id, $membership_type_ids,  $contribution_ids);
-  	}
+  if (!empty($params['rebuild']) && ($params['rebuild'] == 1 || strtolower($params['rebuild']) == 'true')) {
+    foreach ($mapping as $financial_type_id => $membership_type_ids) {
+      CRM_Membership_SynchroniseLogic::resetPayments($financial_type_id, $membership_type_ids, $contribution_ids);
+    }
   }
 
   // start synchronization
-  $results = array('mapped'=>array(), 'no_membership' => array(), 'ambiguous'=>array(), 'errors'=>array());
+  $results = ['mapped' => [], 'no_membership' => [], 'ambiguous' => [], 'errors' => []];
   foreach ($mapping as $financial_type_id => $membership_type_ids) {
-    if (empty($membership_type_ids)) continue;
-  	$new_results = CRM_Membership_SynchroniseLogic::synchronizePayments($financial_type_id, $membership_type_ids,$settings_override, $contribution_ids);
-  	foreach ($new_results as $key => $new_values)
-  		$results[$key] += $new_values;
+    if (empty($membership_type_ids)) {
+      continue;
+    }
+    $new_results = CRM_Membership_SynchroniseLogic::synchronizePayments($financial_type_id, $membership_type_ids,
+      $settings_override, $contribution_ids);
+    foreach ($new_results as $key => $new_values) {
+      $results[$key] += $new_values;
+    }
   }
 
   $null = NULL;
-  return civicrm_api3_create_success(array_keys($results['mapped']), $params, $null, $null, $null,
-  	array('no_membership'=>$results['no_membership'], 'ambiguous'=>$results['ambiguous'], 'errors'=>$results['errors']));
+  return civicrm_api3_create_success(array_keys($results['mapped']), $params, $null, $null, $null, [
+    'no_membership' => $results['no_membership'],
+    'ambiguous'     => $results['ambiguous'],
+    'errors'        => $results['errors'],
+  ]);
 }
 
 /**
@@ -89,24 +100,24 @@ function _civicrm_api3_membership_payment_synchronize_spec(&$params) {
     'title'        => 'Range',
     'description'  => 'Backward horizon (in days). Defaults to value in settings.',
   ];
-  $params['gracedays'] = array(
+  $params['gracedays'] = [
     'name'         => 'gracedays',
     'api.required' => 0,
     'type'         => CRM_Utils_Type::T_INT,
     'title'        => 'Grace',
     'description'  => 'Grace Period (in days). Defaults to value in settings.',
-    );
-  $params['rebuild'] = array(
+  ];
+  $params['rebuild'] = [
     'name'         => 'rebuild',
     'api.required' => 0,
     'type'         => CRM_Utils_Type::T_INT,
     'title'        => 'Rebuild Mapping',
     'description'  => 'Caution: Will first remove all existing assignments!',
-    );
-  $params['contribution_ids'] = array(
+  ];
+  $params['contribution_ids'] = [
     'name'         => 'contribution_ids',
     'api.required' => 0,
     'title'        => 'List of contribution IDs to process',
     'description'  => 'If not given, all contribution IDs will be processed.',
-    );
+  ];
 }

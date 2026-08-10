@@ -13,28 +13,30 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
 
 /**
  * This is the end point for the CRM_Membership_Form_Task_AssignTask autocomplete
  *
  * This will only find contacts with memberships
- * 
- * @todo I know it's quite a hack, and there should be a better way, 
+ *
+ * @todo I know it's quite a hack, and there should be a better way,
  *            but I couldn't find it. PRs very welcome!
  */
 function civicrm_api3_membership_payment_getlist($params) {
   // first, finde contacts via API (respecting permissions, ACLs, etc.)
   if (is_numeric($params['term'])) {
     // if it's an ID, us that
-    $contact_search = civicrm_api3('Contact', 'get', array('id' => $params['term']));
-  } else {
+    $contact_search = civicrm_api3('Contact', 'get', ['id' => $params['term']]);
+  }
+  else {
     // otherwise, use getlist
-    $contact_search = civicrm_api3('Contact', 'getlist', array('input' => $params['term']));
+    $contact_search = civicrm_api3('Contact', 'getlist', ['input' => $params['term']]);
   }
 
   // now extract ids
-  $contact_ids = array();
-  $all_contacts = array();
+  $contact_ids = [];
+  $all_contacts = [];
   foreach ($contact_search['values'] as $contact) {
     $contact_ids[] = $contact['id'];
     $all_contacts[$contact['id']] = $contact;
@@ -43,21 +45,23 @@ function civicrm_api3_membership_payment_getlist($params) {
   // now restrict to the ones with memberships
   if (!empty($contact_ids)) {
     $contact_id_list = implode(',', $contact_ids);
-    $contact_ids = array();
-    $filtered_contacts = CRM_Core_DAO::executeQuery("SELECT DISTINCT(contact_id) FROM civicrm_membership WHERE contact_id IN ({$contact_id_list});");
+    $contact_ids = [];
+    $filtered_contacts = CRM_Core_DAO::executeQuery(
+      "SELECT DISTINCT(contact_id) FROM civicrm_membership WHERE contact_id IN ({$contact_id_list});");
     while ($filtered_contacts->fetch()) {
       $contact_ids[] = $filtered_contacts->contact_id;
     }
   }
 
   // finally, compile results
-  $result = array();
+  $result = [];
   foreach ($contact_ids as $contact_id) {
     $contact = $all_contacts[$contact_id];
     $name = isset($contact['sort_name']) ? $contact['sort_name'] : $contact['label'];
-    $result[] = array(
+    $result[] = [
       'id'   => $contact_id,
-      'text' => "[{$contact_id}] {$name}");
+      'text' => "[{$contact_id}] {$name}",
+    ];
   }
 
   return $result;

@@ -34,7 +34,6 @@
   </mixins>
   <classloader>
     <psr0 prefix="CRM_" path="."/>
-    <psr4 prefix="Civi\" path="Civi"/>
   </classloader>
   <upgrader>CiviMix\Schema\Membership\AutomaticUpgrader</upgrader>
 </extension>

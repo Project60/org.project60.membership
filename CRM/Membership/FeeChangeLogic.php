@@ -13,6 +13,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
 
 use CRM_Membership_ExtensionUtil as E;
 
@@ -24,26 +25,28 @@ use CRM_Membership_ExtensionUtil as E;
  */
 class CRM_Membership_FeeChangeLogic {
 
-  /** stores the singleton instance */
+  /**
+   * stores the singleton instance */
   protected static $singleton = NULL;
 
-  /** stores the pre/post hook records*/
+  /**
+   * stores the pre/post hook records*/
   protected $monitoring_stack = [];
 
-  /** stores a list of membership IDs that have just been created during this (php) process */
+  /**
+   * stores a list of membership IDs that have just been created during this (php) process */
   protected $new_memberships = [];
 
-  /** caches the activity type id */
-  protected $_activity_type_id   = NULL;
+  /**
+   * caches the activity type id */
+  protected $_activity_type_id = NULL;
 
-  public static function getSingleton()
-  {
+  public static function getSingleton() {
     if (self::$singleton === NULL) {
       self::$singleton = new CRM_Membership_FeeChangeLogic();
     }
     return self::$singleton;
   }
-
 
   /**
    * Hook call to record the before state of the membership fee,
@@ -57,8 +60,9 @@ class CRM_Membership_FeeChangeLogic {
       // add a 'before' record
       $record = $this->getMembershipFeeRecord($membership_id, $contribution_recur_id);
       array_push($this->monitoring_stack, $record);
-    } else {
-      array_push($this->monitoring_stack, null);
+    }
+    else {
+      array_push($this->monitoring_stack, NULL);
     }
   }
 
@@ -71,15 +75,18 @@ class CRM_Membership_FeeChangeLogic {
    */
   public function membershipFeeUpdatePOST($membership_id, $contribution_recur_id = NULL) {
     switch (count($this->monitoring_stack)) {
-      default: // we are somewhere in the middle of some changes, so let's just wait
+      // we are somewhere in the middle of some changes, so let's just wait
+      default:
         array_pop($this->monitoring_stack);
         return;
 
-      case 0: // a post hook was called without a pre-hook
-        Civi::log()->warning("P60-Membership-FeeChangeLogic: There is workflow issue between the pre and post hooks");
+      // a post hook was called without a pre-hook
+      case 0:
+        Civi::log()->warning('P60-Membership-FeeChangeLogic: There is workflow issue between the pre and post hooks');
         return;
 
-      case 1: // this is the outer call, here we want to act (if there is a change)
+      // this is the outer call, here we want to act (if there is a change)
+      case 1:
         $before_record = array_pop($this->monitoring_stack);
         if (in_array($membership_id, $this->new_memberships) || empty($before_record)) {
           // we won't record any change activities for new memberships
@@ -87,7 +94,7 @@ class CRM_Membership_FeeChangeLogic {
         }
 
         // this is a real change, see if need to generate an activity
-        $after_record  = $this->getMembershipFeeRecord($membership_id, $contribution_recur_id);
+        $after_record = $this->getMembershipFeeRecord($membership_id, $contribution_recur_id);
         $this->processChange($before_record, $after_record);
         return;
     }
@@ -113,29 +120,36 @@ class CRM_Membership_FeeChangeLogic {
   public function processChange($before_record, $after_record, $date = 'now') {
     // now we have two records - let's see if there's a difference
     //Civi::log()->debug("PROCESS CHANGE " . json_encode($before_record) . ' -> ' . json_encode($after_record));
-    if ($before_record && $after_record) { // if there's not two records it's not an update
+    // if there's not two records it's not an update
+    if ($before_record && $after_record) {
       $membership_id_diff = array_diff($before_record['membership_ids'], $after_record['membership_ids']);
       if (!empty($membership_id_diff)) {
         // something went wrong here
-        Civi::log()->warning("p60 fee change: differing membership IDs received for change {$before_record['input']}-{$after_record['input']}");
+        Civi::log()->warning('p60 fee change: differing membership IDs received for change '
+          . "{$before_record['input']}-{$after_record['input']}");
 
-      } else {
+      }
+      else {
         $amount_increase = $after_record['annual_amount'] - $before_record['annual_amount'];
         if ($amount_increase) {
           // there has been a change - create activity
           try {
             $activity_data = [
-                'activity_type_id'   => $this->getActivityTypeID(),
-                'target_id'          => array_intersect($before_record['contact_ids'], $after_record['contact_ids']),
-                'subject'            => ($amount_increase > 0) ? E::ts("Membership Fee Increase") : E::ts("Membership Fee Reduction"),
-                'activity_date_time' => date('YmdHis', strtotime("$date")),
-                'source_contact_id'  => CRM_Core_Session::getLoggedInContactID(),
-                'source_record_id'   => reset($after_record['membership_ids']),
+              'activity_type_id'   => $this->getActivityTypeID(),
+              'target_id'          => array_intersect($before_record['contact_ids'], $after_record['contact_ids']),
+              'subject'            => ($amount_increase > 0)
+              ? E::ts('Membership Fee Increase')
+              : E::ts('Membership Fee Reduction'),
+              'activity_date_time' => date('YmdHis', strtotime("$date")),
+              'source_contact_id'  => CRM_Core_Session::getLoggedInContactID(),
+              'source_record_id'   => reset($after_record['membership_ids']),
 
                 // custom data
-                'p60membership_fee_update.annual_amount_before'   => number_format($before_record['annual_amount'], 2, '.', ''),
-                'p60membership_fee_update.annual_amount_after'    => number_format($after_record['annual_amount'], 2, '.', ''),
-                'p60membership_fee_update.annual_amount_increase' => number_format($amount_increase, 2, '.', ''),
+              'p60membership_fee_update.annual_amount_before'   => number_format($before_record['annual_amount'],
+                2, '.', ''),
+              'p60membership_fee_update.annual_amount_after'    => number_format($after_record['annual_amount'],
+                2, '.', ''),
+              'p60membership_fee_update.annual_amount_increase' => number_format($amount_increase, 2, '.', ''),
             ];
 
             // normalise
@@ -143,7 +157,8 @@ class CRM_Membership_FeeChangeLogic {
 
             // create activity
             civicrm_api3('Activity', 'create', $activity_data);
-          } catch (Exception $ex) {
+          }
+          catch (Exception $ex) {
             Civi::log()->warning("ERROR: P60mem - couldn't create fee increase activity: " . $ex->getMessage());
           }
         }
@@ -160,6 +175,7 @@ class CRM_Membership_FeeChangeLogic {
    *
    * @return array|null the resulting record, or NULL if this doesn't apply
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   protected function getMembershipFeeRecord($membership_id, $contribution_recur_id = NULL) {
     $settings = CRM_Membership_Settings::getSettings();
     $membership_id = (int) $membership_id;
@@ -179,7 +195,8 @@ class CRM_Membership_FeeChangeLogic {
     if (empty($membership_id)) {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $membership_ids = $logic->getMembershipIDs($contribution_recur_id);
-    } else {
+    }
+    else {
       $membership_ids = [$membership_id];
     }
 
@@ -199,15 +216,18 @@ class CRM_Membership_FeeChangeLogic {
     $joins = $selects = [];
 
     if (isset($fields['paid_via_field'])) {
-      $joins[]   = "LEFT JOIN {$fields['paid_via_field']['table_name']} paid_via ON paid_via.entity_id = membership.id";
-      $joins[]   = "LEFT JOIN civicrm_contribution_recur recur ON recur.id = paid_via.{$fields['paid_via_field']['column_name']}";
-      $selects[] = "recur.amount AS amount";
-      $selects[] = "recur.frequency_unit AS frequency_unit";
-      $selects[] = "recur.frequency_interval AS frequency_interval";
+      $joins[]   = "LEFT JOIN {$fields['paid_via_field']['table_name']} paid_via"
+        . ' ON paid_via.entity_id = membership.id';
+      $joins[]   = 'LEFT JOIN civicrm_contribution_recur recur ON recur.id = paid_via.'
+        . "{$fields['paid_via_field']['column_name']}";
+      $selects[] = 'recur.amount AS amount';
+      $selects[] = 'recur.frequency_unit AS frequency_unit';
+      $selects[] = 'recur.frequency_interval AS frequency_interval';
     }
 
     if (isset($fields['annual_amount_field'])) {
-      $joins[]   = "LEFT JOIN {$fields['annual_amount_field']['table_name']} annual_amount ON annual_amount.entity_id = membership.id";
+      $joins[]   = "LEFT JOIN {$fields['annual_amount_field']['table_name']} annual_amount"
+        . ' ON annual_amount.entity_id = membership.id';
       $selects[] = "annual_amount.{$fields['annual_amount_field']['column_name']} AS annual_amount";
     }
 
@@ -239,7 +259,7 @@ class CRM_Membership_FeeChangeLogic {
       }
 
       if (!empty($data['annual_amount'])) {
-        $annual_field_amount  = (float) $data['annual_amount'];
+        $annual_field_amount = (float) $data['annual_amount'];
       }
 
       // gather data
@@ -250,12 +270,13 @@ class CRM_Membership_FeeChangeLogic {
 
     if (!empty($membership_ids)) {
       return [
-          'annual_amount'  => $annual_amount,
-          'membership_ids' => $membership_ids,
-          'contact_ids'    => $contact_ids,
-          'input'          => "{$membership_id}/{$contribution_recur_id}"
+        'annual_amount'  => $annual_amount,
+        'membership_ids' => $membership_ids,
+        'contact_ids'    => $contact_ids,
+        'input'          => "{$membership_id}/{$contribution_recur_id}",
       ];
-    } else {
+    }
+    else {
       return NULL;
     }
   }
@@ -274,8 +295,8 @@ class CRM_Membership_FeeChangeLogic {
 
     // try to find it
     $activity_types = civicrm_api3('OptionValue', 'get', [
-        'option_group_id' => 'activity_type',
-        'name'            => 'p60membership_fee_update'
+      'option_group_id' => 'activity_type',
+      'name'            => 'p60membership_fee_update',
     ]);
 
     // there's a problem
@@ -293,24 +314,27 @@ class CRM_Membership_FeeChangeLogic {
 
     // no? we need to create it...
     $activity_type = civicrm_api3('OptionValue', 'create', [
-        'option_group_id' => 'activity_type',
-        'name'            => 'p60membership_fee_update',
-        'label'           => E::ts('Membership Fee Update')
+      'option_group_id' => 'activity_type',
+      'name'            => 'p60membership_fee_update',
+      'label'           => E::ts('Membership Fee Update'),
     ]);
 
     // success?
     if (!empty($activity_type['id'])) {
       $this->_activity_type_id = (int) civicrm_api3('OptionValue', 'getvalue', [
-          'id'     => $activity_type['id'],
-          'return' => 'value']);
+        'id'     => $activity_type['id'],
+        'return' => 'value',
+      ]);
 
       // make sure the fields are there
       $custom_data = new CRM_Membership_CustomData('org.project60.membership');
       $custom_data->syncCustomGroup(__DIR__ . '/../../resources/fee_update_custom_group.json');
 
       return $this->_activity_type_id;
-    } else {
+    }
+    else {
       throw new Exception("Couldn't create activity type");
     }
   }
+
 }

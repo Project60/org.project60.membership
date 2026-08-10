@@ -13,6 +13,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
 
 /**
  * This job will check all memberships for new membership payments. It will
@@ -25,21 +26,21 @@
  * @param membership_type_ids      only check memberships with the given membership types
  *                           default is ALL
  * @param precision        precision in which to accept membership payments
- *                           a value of '1.0' means 100% of the cycle period, i.e. 
- *                           only payments on the exact date will be accepted. 
+ *                           a value of '1.0' means 100% of the cycle period, i.e.
+ *                           only payments on the exact date will be accepted.
  *                           a precision of 0.9 (90%) would allow for monthly payments
  *                           to be off by up to 3 days (10% of 31 days).
- *                           DEFAULT is 0.8  
- * @param status_ids       define the membership status IDs that will be considered. 
+ *                           DEFAULT is 0.8
+ * @param status_ids       define the membership status IDs that will be considered.
  *                           DEFAULT is 1,2,3 (new, current, grace)
- * @param look_ahead       only check memberships with an end_date up to look_ahead 
+ * @param look_ahead       only check memberships with an end_date up to look_ahead
  *                           days in the future. This value can be negative.
  *                           DEFAULT is 14
  * @param custom_fee       if set, this should be a custom field of the membership
  *                           containing a yearly(!) fee override. If not set or not present with
  *                           one particular membership, the default will still be used
- * @param horizon          if set, this represents the backward horizon in days 
- *                           in which to check the membership payment, 
+ * @param horizon          if set, this represents the backward horizon in days
+ *                           in which to check the membership payment,
  *                           e.g. "365" will only check the last year
  * @param membership_ids   a comma-separated list of memebership IDs
  *                           THIS OVERRIDES ALL ABOVE PARAMETERS, this is a debug feature
@@ -49,57 +50,58 @@
  *                           DEFAULT is 1
  * @param test_run         if "1" no actual changes are performed. DEFAULT is 0
  */
+// phpcs:ignore Generic.Metrics.CyclomaticComplexity.MaxExceeded
 function civicrm_api3_membership_extend($params) {
-  $now = strtotime("now");
-  $stats = array(
+  $now = strtotime('now');
+  $stats = [
     'memberships_checked'      => 0,
     'memberships_extended'     => 0,
     'memberships_irregular'    => 0,
-    'extended_membership_ids'  => array(),
-    'irregular_membership_ids' => array(),
-    );
+    'extended_membership_ids'  => [],
+    'irregular_membership_ids' => [],
+  ];
 
   // 0. Sanitize parameters
-  $membership_type_ids   = _mebership_extend_helper_extract_intlist($params['membership_type_ids']);
+  $membership_type_ids = _mebership_extend_helper_extract_intlist($params['membership_type_ids']);
   if (empty($membership_type_ids)) {
-    $membership_clause = "civicrm_membership_type.is_active = 1";
-  } else {
+    $membership_clause = 'civicrm_membership_type.is_active = 1';
+  }
+  else {
     $membership_clause = "civicrm_membership.membership_type_id IN ($membership_type_ids)";
   }
 
   $membership_status_ids = _mebership_extend_helper_extract_intlist($params['status_ids']);
   if (empty($membership_status_ids)) {
-    $membership_status_ids = "1,2,3";
+    $membership_status_ids = '1,2,3';
   }
 
   if (isset($params['look_ahead'])) {
     $look_ahead = (int) $params['look_ahead'];
-  } else {
+  }
+  else {
     $look_ahead = 14;
   }
 
   if (isset($params['horizon']) && !empty($params['horizon'])) {
     $horizon_days = (int) $params['horizon'];
     $horizon = strtotime("-$horizon_days days");
-  } else {
+  }
+  else {
     $horizon = NULL;
   }
 
-  $contribution_status_completed = (int) CRM_Membership_CustomData::getOptionValue('contribution_status', 'Completed', 'name', 'String', 'value');
+  $contribution_status_completed = (int) CRM_Membership_CustomData::getOptionValue('contribution_status',
+    'Completed', 'name', 'String', 'value');
   if (!$contribution_status_completed) {
     return civicrm_api3_create_error("Cannot find contribution status 'Completed'.");
   }
 
-  $membership_status_current = civicrm_api3('MembershipStatus', 'getsingle', array('name' => 'Current'));
+  $membership_status_current = civicrm_api3('MembershipStatus', 'getsingle', ['name' => 'Current']);
   $membership_status_current_id = $membership_status_current['id'];
 
-
-
-
-
   // 1. identify and load all memberships
-  $memberships = array();
-  $find_memberships_sql = "
+  $memberships = [];
+  $find_memberships_sql = '
   SELECT 
     civicrm_membership.id                      AS membership_id,
     civicrm_membership.start_date              AS start_date,
@@ -111,7 +113,7 @@ function civicrm_api3_membership_extend($params) {
     civicrm_membership_type.fixed_period_start_day      AS p_start_day,
     civicrm_membership_type.fixed_period_rollover_day   AS p_rollover_day   
   FROM civicrm_membership
-  LEFT JOIN civicrm_membership_type ON civicrm_membership_type.id = civicrm_membership.membership_type_id ";
+  LEFT JOIN civicrm_membership_type ON civicrm_membership_type.id = civicrm_membership.membership_type_id ';
   if (empty($params['membership_ids'])) {
     $find_memberships_sql .= "
     WHERE $membership_clause
@@ -119,9 +121,10 @@ function civicrm_api3_membership_extend($params) {
       AND (civicrm_membership.is_override IS NULL OR civicrm_membership.is_override = 0)
       AND civicrm_membership.end_date < (NOW() + INTERVAL $look_ahead DAY);
     ";
-  } else {
+  }
+  else {
     // DEBUG OVERRIDE
-    $membership_ids = array();
+    $membership_ids = [];
     $membership_ids_raw = explode(',', $params['membership_ids']);
     foreach ($membership_ids_raw as $value) {
       $membership_ids[] = (int) $value;
@@ -132,7 +135,7 @@ function civicrm_api3_membership_extend($params) {
 
   $membership_query = CRM_Core_DAO::executeQuery($find_memberships_sql);
   while ($membership_query->fetch()) {
-    $memberships[$membership_query->membership_id] = array(
+    $memberships[$membership_query->membership_id] = [
       'id'           => $membership_query->membership_id,
       'minimum_fee'  => $membership_query->minimum_fee,
       'p_unit'       => $membership_query->p_unit,
@@ -141,7 +144,8 @@ function civicrm_api3_membership_extend($params) {
       'start_date'   => $membership_query->start_date,
       'p_type'          => $membership_query->p_type,
       'p_start_day'     => $membership_query->p_start_day,
-      'p_rollover_day'  => $membership_query->p_rollover_day); 
+      'p_rollover_day'  => $membership_query->p_rollover_day,
+    ];
   }
   $membership_query->free();
   $stats['memberships_checked'] = count($memberships);
@@ -158,7 +162,7 @@ function civicrm_api3_membership_extend($params) {
 
     if (!empty($params['custom_fee']) || !empty($params['custom_interval'])) {
       // custom field/value override
-      $membership_data = civicrm_api3('Membership', 'getsingle', array('id' => $membership_id));
+      $membership_data = civicrm_api3('Membership', 'getsingle', ['id' => $membership_id]);
 
       if (!empty($params['custom_interval']) && !empty($membership_data[$params['custom_interval']])) {
         $payment_interval = $membership_data[$params['custom_interval']];
@@ -172,18 +176,19 @@ function civicrm_api3_membership_extend($params) {
         // this is interpreted as a YEARLY fee, needs to be broken down to individual payments
         if ($payment_unit == 'month') {
           $expected_payment_amount = ((float) $expected_payment_amount) / 12.0 * (float) $payment_interval;
-        } elseif ($payment_unit == 'year') {
+        }
+        elseif ($payment_unit == 'year') {
           $expected_payment_amount = ((float) $expected_payment_amount) * (float) $payment_interval;
-        } elseif ($payment_unit == 'week') {
+        }
+        elseif ($payment_unit == 'week') {
           $expected_payment_amount = ((float) $expected_payment_amount) / 53 * (float) $payment_interval;
         }
-        // error_log(sprintf("EXPECTED: '%s'", $expected_payment_amount));
       }
     }
 
     // calculate max_deviation based on precision
-    $max_deviation              = ((float) strtotime("$payment_interval $payment_unit", 0)) * ((float) (1.0-min(1.0, (float) $params['precision'])));
-    // error_log("accepted deviation is $max_deviation, in days: ".($max_deviation/60/60/24));
+    $max_deviation = ((float) strtotime("$payment_interval $payment_unit", 0))
+      * ((float) (1.0 - min(1.0, (float) $params['precision'])));
 
     // 3. load all payments
     $payment_query_sql = "
@@ -198,14 +203,15 @@ function civicrm_api3_membership_extend($params) {
       AND  civicrm_contribution.contribution_status_id = $contribution_status_completed
     ORDER BY contribution_date DESC
     ;";
-    $membership_payments = array();
+    $membership_payments = [];
     $payment_query = CRM_Core_DAO::executeQuery($payment_query_sql);
     while ($payment_query->fetch()) {
-      $membership_payments[] = array(
+      $membership_payments[] = [
         'id'                    => $payment_query->contribution_id,
         'contribution_date'     => $payment_query->contribution_date,
         'contribution_amount'   => $payment_query->contribution_amount,
-        'contribution_currency' => $payment_query->contribution_currency);
+        'contribution_currency' => $payment_query->contribution_currency,
+      ];
     }
 
     // 4. find the starting time
@@ -213,15 +219,17 @@ function civicrm_api3_membership_extend($params) {
     // the next lines implement support for membership period type "fixed"
     // TODO: This currently works only for membership periods of type "year" and starting Jan-01 with duration 1 year.
     // TODO: Should be enhanced for other duration unit / duration interval and differing fixed period start days.
-    if ($payment_type=="fixed"){
+    if ($payment_type == 'fixed') {
       // sanitize the content of these fields (they might have no leading zero and are only 3 characters long)
-      $payment_start_day=str_pad($payment_start_day, 4, "0", STR_PAD_LEFT);
-      $payment_rollover_day=str_pad($payment_rollover_day, 4, "0", STR_PAD_LEFT);
+      $payment_start_day = str_pad($payment_start_day, 4, '0', STR_PAD_LEFT);
+      $payment_rollover_day = str_pad($payment_rollover_day, 4, '0', STR_PAD_LEFT);
       // Check if rollover date was reached when the membership started:
       // In this case, no additional payment is needed in the following membership period (year),
       // and we add 1 year to the membership start date:
       $rollover = strtotime("$date-substr($payment_rollover_day, 0, 2)-substr($payment_rollover_day, 2, 2)");
-      if ($rollover < $date) {$date = strtotime("+1 year", $date);}
+      if ($rollover < $date) {
+        $date = strtotime('+1 year', $date);
+      }
       // Move $date back to the start of the payment period
       $date = strtotime("$date-substr($payment_start_day, 0, 2)-substr($payment_start_day, 2, 2)");
     }
@@ -230,7 +238,6 @@ function civicrm_api3_membership_extend($params) {
         $date = strtotime("+$payment_interval $payment_unit", $date);
       }
     }
-    // error_log("Starting with date " . date('Y-m-d', $date));
 
     // 5. try to find a payment for each payemnt date
     $today = strtotime("now + $look_ahead days");
@@ -242,8 +249,8 @@ function civicrm_api3_membership_extend($params) {
         $date_diff = abs($date - strtotime($payment['contribution_date']));
         if ($date_diff < $max_deviation) {
           $contribution_sum += $payment['contribution_amount'];
-          // error_log("found contribution [{$payment['id']}]... sum is now $contribution_sum");
-          unset($membership_payments[$index]); // remove from list
+          // remove from list
+          unset($membership_payments[$index]);
           if ($contribution_sum >= $expected_payment_amount) {
             // we've reached the expected amount, stop looking
             break;
@@ -253,12 +260,14 @@ function civicrm_api3_membership_extend($params) {
 
       if ($contribution_sum < $expected_payment_amount) {
         // this due date has no (or not enough payments)
-        // error_log("EXPECTED $expected_payment_amount FOR membership [$membership_id] NOT FOUND ON ". date('Y-m-d', $date));
+        // error_log("EXPECTED $expected_payment_amount FOR membership [$membership_id] NOT FOUND ON "
+        //   . date('Y-m-d', $date));
         $stats['irregular_membership_ids'][] = $membership_id;
         // no payment found for this time, so this would have to be the (new) end_date
         break;
-      
-      } else {
+
+      }
+      else {
         // everything checks out => advance to next due date
         // error_log("sum is enough, moving on...");
         $date = strtotime("+$payment_interval $payment_unit", $date);
@@ -266,14 +275,15 @@ function civicrm_api3_membership_extend($params) {
     }
 
     // finally, go back one day since we want to use this as end_date (last day of membership)
-    $date = strtotime("-1 day", $date);
+    $date = strtotime('-1 day', $date);
     $end_date = strtotime($membership['end_date']);
     if ($end_date < $date) {
       // here's something we can extend...
       // error_log("EXTEND membership [$membership_id] TO: " . date('Y-m-d', $date));
-      $update = array(
-          'id'        => $membership_id,
-          'end_date'  => date('Ymdhis', $date));
+      $update = [
+        'id'        => $membership_id,
+        'end_date'  => date('Ymdhis', $date),
+      ];
 
       if (!empty($params['change_status'])) {
         // add a status update:
@@ -289,38 +299,56 @@ function civicrm_api3_membership_extend($params) {
 
       $stats['memberships_extended'] += 1;
       $stats['extended_membership_ids'][] = $membership_id;
-    } else {
-      // error_log("NOT EXTENDED: membership [$membership_id] end_date >= " . date('Y-m-d', $date));
     }
+    // otherwise the membership is not extended, since the new end date would not be later than the current one
 
   } // END OUTER (MEMBERSHIP-ID) LOOP
-  
+
   $stats['memberships_irregular'] = count($stats['irregular_membership_ids']);
-  if (!empty($params['test_run'])) $stats['test_run'] = 1;
+  if (!empty($params['test_run'])) {
+    $stats['test_run'] = 1;
+  }
 
   return civicrm_api3_create_success($stats);
 }
 
 function _civicrm_api3_membership_extend_spec(&$params) {
-  $params['type_ids'] =  array('title' => "Check memberships with the given membership types. DEFAULT is ALL",
-                                'api.default' => "");
-  $params['precision'] =  array('title' => "precision in which to accept membership payments a value of '1.0' means 100% of the cycle period, i.e. only payments on the exact date will be accepted. A precision of 0.9 (90%) would allow for monthly payments to be off by up to 3 days (10% of 31 days).",
-                                'api.default' => "0.8");
-  $params['status_ids'] = array('title' => "Defines the membership status IDs that will be considered. DEFAULT is 1,2,3 (new, current, grace)",
-                                'api.default' => "1,2,3");
-  $params['look_ahead'] = array('title' => "Only check memberships with an end_date up to look_ahead days in the future. This value can be negative. DEFAULT is 14.",
-                                'api.default' => "14");
-  $params['change_status'] = array('title' => "Update the membership status when extending the membership. Default is '1' (yes)",
-                                'api.default' => "1");
-  $params['horizon'] = array('title' => "if set, this represents the backward horizon in days in which to check the membership payment, e.g. '365' will only check the last year",
-                                'api.default' => "");
+  $params['type_ids'] = [
+    'title' => 'Check memberships with the given membership types. DEFAULT is ALL',
+    'api.default' => '',
+  ];
+  $params['precision'] = [
+    'title' => "precision in which to accept membership payments a value of '1.0' means 100% of the cycle"
+    . ' period, i.e. only payments on the exact date will be accepted. A precision of 0.9 (90%) would'
+    . ' allow for monthly payments to be off by up to 3 days (10% of 31 days).',
+    'api.default' => '0.8',
+  ];
+  $params['status_ids'] = [
+    'title' => 'Defines the membership status IDs that will be considered. DEFAULT is 1,2,3 (new, current, grace)',
+    'api.default' => '1,2,3',
+  ];
+  $params['look_ahead'] = [
+    'title' => 'Only check memberships with an end_date up to look_ahead days in the future.'
+    . ' This value can be negative. DEFAULT is 14.',
+    'api.default' => '14',
+  ];
+  $params['change_status'] = [
+    'title' => "Update the membership status when extending the membership. Default is '1' (yes)",
+    'api.default' => '1',
+  ];
+  $params['horizon'] = [
+    'title' => 'if set, this represents the backward horizon in days in which to check the membership'
+    . " payment, e.g. '365' will only check the last year",
+    'api.default' => '',
+  ];
 }
 
-
 function _mebership_extend_helper_extract_intlist($raw_value) {
-  if (empty($raw_value)) return '';
+  if (empty($raw_value)) {
+    return '';
+  }
   $bits = explode(',', $raw_value);
-  $elements = array();
+  $elements = [];
   foreach ($bits as $value) {
     if ((int) $value) {
       $elements[] = (int) $value;

@@ -13,6 +13,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
 
 use CRM_Membership_ExtensionUtil as E;
 
@@ -33,13 +34,14 @@ class CRM_Membership_Upgrader extends CRM_Extension_Upgrader_Base {
     // see if there is a new bucket
     $new_settings = CRM_Core_BAO_Setting::getItem('Membership Payments', 'p60_membership_settings');
     if (!$new_settings) {
-      $mapping = array(
+      $mapping = [
         'sync_mapping'      => 'sync_mapping',
         'sync_rangeback'    => 'sync_range',
         'synce_graceperiod' => 'sync_graceperiod',
-        'live_statuses'     => 'live_statuses');
+        'live_statuses'     => 'live_statuses',
+      ];
 
-      $new_settings = array();
+      $new_settings = [];
       foreach ($mapping as $old_key => $new_key) {
         $old_value = CRM_Core_BAO_Setting::getItem('Membership Payments', $old_key);
         if ($old_value) {
@@ -50,4 +52,5 @@ class CRM_Membership_Upgrader extends CRM_Extension_Upgrader_Base {
 
     return TRUE;
   }
+
 }

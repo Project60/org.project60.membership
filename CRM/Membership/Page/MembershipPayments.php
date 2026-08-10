@@ -13,14 +13,16 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 
 require_once 'CRM/Core/Page.php';
 
 class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
 
-  const VIEW_CUTOFF = 2000;
+  public const VIEW_CUTOFF = 2000;
 
-  function run() {
+  public function run() {
     $settings = CRM_Membership_Settings::getSettings();
     $mapping  = $settings->getSyncMapping();
     $this->assign('mapping', $mapping);
@@ -32,42 +34,50 @@ class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
     if (isset($_REQUEST['run'])) {
       if (empty($_REQUEST['rebuild'])) {
         $rebuild = 0;
-      } else {
+      }
+      else {
         $rebuild = 1;
       }
       if (empty($_REQUEST['adjust'])) {
         $rangeback = 0;
       }
-      $result = civicrm_api('MembershipPayment', 'synchronize', array(
-          'mapping'   => $mapping,
-          'rangeback' => $rangeback,
-          'rebuild'   => $rebuild,
-          'version'   => 3));
-      $this->assign('results', print_r($result, true));
+      $result = civicrm_api('MembershipPayment', 'synchronize', [
+        'mapping'   => $mapping,
+        'rangeback' => $rangeback,
+        'rebuild'   => $rebuild,
+        'version'   => 3,
+      ]);
+      $this->assign('results', print_r($result, TRUE));
 
       // gather the data to display
-      $this->getData($result['values'],        'mapped', true);
+      $this->getData($result['values'], 'mapped', TRUE);
       $this->getData($result['no_membership'], 'no_membership');
-      $this->getData($result['ambiguous'],     'ambiguous');
-      $this->assign('executed', true);
+      $this->getData($result['ambiguous'], 'ambiguous');
+      $this->assign('executed', TRUE);
     }
 
     parent::run();
   }
 
-  // use DB statements to loop up data for the given contributions
-  function getData($contribution_ids, $list_name, $add_membership = false) {
-    if (count($contribution_ids) == 0) return;
+  /**
+   * use DB statements to loop up data for the given contributions
+   */
+  public function getData($contribution_ids, $list_name, $add_membership = FALSE) {
+    if (count($contribution_ids) == 0) {
+      return;
+    }
 
-    $contribution_id_list = implode(",", $contribution_ids);
+    $contribution_id_list = implode(',', $contribution_ids);
     $date_format = CRM_Core_Config::singleton()->dateformatFull;
-    $data_list = array();
+    $data_list = [];
 
-    // include membership?
+    // decide whether the membership columns should be included
     if ($add_membership) {
-      $membership_select = "civicrm_membership_payment.membership_id AS membership_id,";
-      $membership_join = "LEFT JOIN civicrm_membership_payment ON civicrm_membership_payment.contribution_id = civicrm_contribution.id";
-    } else {
+      $membership_select = 'civicrm_membership_payment.membership_id AS membership_id,';
+      $membership_join = 'LEFT JOIN civicrm_membership_payment'
+        . ' ON civicrm_membership_payment.contribution_id = civicrm_contribution.id';
+    }
+    else {
       $membership_select = '';
       $membership_join = '';
     }
@@ -93,25 +103,33 @@ class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
     ";
     $results = CRM_Core_DAO::executeQuery($contribution_data_sql);
     while ($results->fetch()) {
-      $data_list[] = array(
+      $data_list[] = [
         'contribution_id'       => $results->contribution_id,
-        'contribution_amount'   => CRM_Utils_Money::format($results->contribution_amount, $results->contribution_currency),
-        'contribution_link'     => CRM_Utils_System::url('civicrm/contact/view/contribution', "&reset=1&action=view&id=".$results->contribution_id."&cid=".$results->contact_id),
+        'contribution_amount'   => CRM_Utils_Money::format($results->contribution_amount,
+          $results->contribution_currency),
+        'contribution_link'     => CRM_Utils_System::url('civicrm/contact/view/contribution',
+          '&reset=1&action=view&id=' . $results->contribution_id . '&cid=' . $results->contact_id),
         'contribution_date'     => CRM_Utils_Date::customFormat($results->contribution_date, $date_format),
         'contribution_type'     => $results->contribution_type,
-        'membership_id'         => (empty($results->membership_id)?'':$results->membership_id),
-        'membership_link'       => (empty($results->membership_id)?'':CRM_Utils_System::url('civicrm/contact/view/membership', "action=view&reset=1&cid=".$results->contact_id."&id=".$results->membership_id)),
+        'membership_id'         => (empty($results->membership_id) ? '' : $results->membership_id),
+        'membership_link'       => (empty($results->membership_id) ? '' : CRM_Utils_System::url(
+          'civicrm/contact/view/membership',
+          'action=view&reset=1&cid=' . $results->contact_id . '&id=' . $results->membership_id)),
         'contact_id'            => $results->contact_id,
         'contact_type'          => $results->contact_type,
         'contact_name'          => $results->contact_name,
-        'contact_link'          => CRM_Utils_System::url('civicrm/contact/view', "&reset=1&cid=".$results->contact_id),
-      );
+        'contact_link'          => CRM_Utils_System::url('civicrm/contact/view',
+          '&reset=1&cid=' . $results->contact_id),
+      ];
 
       // make sure, we don't run into memory issues:
-      if (count($data_list) >= self::VIEW_CUTOFF) break;
+      if (count($data_list) >= self::VIEW_CUTOFF) {
+        break;
+      }
     }
     $results->free();
 
     $this->assign($list_name, $data_list);
   }
+
 }

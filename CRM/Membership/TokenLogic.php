@@ -65,7 +65,7 @@ class CRM_Membership_TokenLogic {
     $settings = CRM_Membership_Settings::getSettings();
     foreach ($all_custom_tokens as $custom_token => $custom_token_name) {
       // TODO: deal with 'raw'
-      if ($settings->getSetting($custom_token . '_field')) {
+      if ((int) $settings->getSetting($custom_token . '_field') !== 0) {
         $active_custom_tokens[$custom_token] = $custom_token_name;
       }
     }
@@ -261,9 +261,9 @@ class CRM_Membership_TokenLogic {
       foreach ($custom_tokens_used as $custom_token_used) {
         $field_name = $custom_token_used . '_field';
         $field_id = $settings->getSetting($field_name);
-        if ($field_id) {
+        if ((int) $field_id !== 0) {
           $field_spec = $settings->getFieldInfo($field_id);
-          if ($field_spec) {
+          if ($field_spec !== NULL) {
             $joins[] = "LEFT JOIN {$field_spec['table_name']} AS {$custom_token_used}"
               . " ON {$custom_token_used}.entity_id = c2m.membership_id";
             if (isset($field_spec['option_group_id']) && $field_spec['option_group_id'] !== ''

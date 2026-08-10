@@ -421,7 +421,7 @@ class CRM_Membership_MembershipFeeLogic {
 
     $settings = CRM_Membership_Settings::getSettings();
     $annual_amount_field_id = $settings->getSetting('annual_amount_field');
-    if ($annual_amount_field_id) {
+    if ((int) $annual_amount_field_id !== 0) {
       $annual_amount_field = $settings->getFieldInfo($annual_amount_field_id);
       if (isset($membership[$annual_amount_field['key']])) {
         // value already provided by API result

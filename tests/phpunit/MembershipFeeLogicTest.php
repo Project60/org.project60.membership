@@ -83,7 +83,7 @@ class MembershipFeeLogicTest extends MembershipTestBase {
     foreach ($changes as $change) {
       $this->createChangeActivity($membership, $change[0], $change[1], $change[2]);
     }
-    $this->assertEquals($expected_amount,
+    self::assertEquals($expected_amount,
       $logic->calculateExpectedFeeForCurrentPeriod($membership['id'], 'Calculated fee off'));
     return $membership;
   }
@@ -93,11 +93,11 @@ class MembershipFeeLogicTest extends MembershipTestBase {
    */
   public function testUnitDateDiff() {
     $logic = new CRM_Membership_MembershipFeeLogic(['time_unit' => 'month']);
-    $this->assertEquals(0, $logic->getDateUnitDiff('2019-01-01', '2019-01-01'));
-    $this->assertEquals(1, $logic->getDateUnitDiff('2019-01-01', '2019-01-02'));
-    $this->assertEquals(1, $logic->getDateUnitDiff('2019-01-01', '2019-01-31'));
-    $this->assertEquals(1, $logic->getDateUnitDiff('2019-01-01', '2019-02-01'));
-    $this->assertEquals(2, $logic->getDateUnitDiff('2019-01-01', '2019-02-02'));
+    self::assertEquals(0, $logic->getDateUnitDiff('2019-01-01', '2019-01-01'));
+    self::assertEquals(1, $logic->getDateUnitDiff('2019-01-01', '2019-01-02'));
+    self::assertEquals(1, $logic->getDateUnitDiff('2019-01-01', '2019-01-31'));
+    self::assertEquals(1, $logic->getDateUnitDiff('2019-01-01', '2019-02-01'));
+    self::assertEquals(2, $logic->getDateUnitDiff('2019-01-01', '2019-02-02'));
   }
 
   /**
@@ -105,32 +105,32 @@ class MembershipFeeLogicTest extends MembershipTestBase {
    */
   public function testAlignDate() {
     $logic = new CRM_Membership_MembershipFeeLogic(['time_unit' => 'month']);
-    $this->assertEquals('2019-01-01', $logic->alignDate('2019-01-14', FALSE));
-    $this->assertEquals('2019-01-01', $logic->alignDate('2019-01-01', FALSE));
-    $this->assertEquals('2019-01-01', $logic->alignDate('2019-01-31', FALSE));
-    $this->assertEquals('2019-01-31', $logic->alignDate('2019-01-14', TRUE));
-    $this->assertEquals('2019-01-31', $logic->alignDate('2019-01-01', TRUE));
-    $this->assertEquals('2019-01-31', $logic->alignDate('2019-01-31', TRUE));
+    self::assertEquals('2019-01-01', $logic->alignDate('2019-01-14', FALSE));
+    self::assertEquals('2019-01-01', $logic->alignDate('2019-01-01', FALSE));
+    self::assertEquals('2019-01-01', $logic->alignDate('2019-01-31', FALSE));
+    self::assertEquals('2019-01-31', $logic->alignDate('2019-01-14', TRUE));
+    self::assertEquals('2019-01-31', $logic->alignDate('2019-01-01', TRUE));
+    self::assertEquals('2019-01-31', $logic->alignDate('2019-01-31', TRUE));
 
-    $this->assertEquals('2019-02-01', $logic->alignDate('2019-01-31', TRUE, TRUE));
-    $this->assertEquals('2018-12-31', $logic->alignDate('2019-01-31', FALSE, TRUE));
+    self::assertEquals('2019-02-01', $logic->alignDate('2019-01-31', TRUE, TRUE));
+    self::assertEquals('2018-12-31', $logic->alignDate('2019-01-31', FALSE, TRUE));
 
     $logic = new CRM_Membership_MembershipFeeLogic(['time_unit' => 'year']);
-    $this->assertEquals('2019-01-01', $logic->alignDate('2019-01-14', FALSE));
-    $this->assertEquals('2019-01-01', $logic->alignDate('2019-02-01', FALSE));
-    $this->assertEquals('2019-01-01', $logic->alignDate('2019-03-31', FALSE));
-    $this->assertEquals('2019-12-31', $logic->alignDate('2019-04-14', TRUE));
-    $this->assertEquals('2019-12-31', $logic->alignDate('2019-05-01', TRUE));
-    $this->assertEquals('2019-12-31', $logic->alignDate('2019-06-31', TRUE));
+    self::assertEquals('2019-01-01', $logic->alignDate('2019-01-14', FALSE));
+    self::assertEquals('2019-01-01', $logic->alignDate('2019-02-01', FALSE));
+    self::assertEquals('2019-01-01', $logic->alignDate('2019-03-31', FALSE));
+    self::assertEquals('2019-12-31', $logic->alignDate('2019-04-14', TRUE));
+    self::assertEquals('2019-12-31', $logic->alignDate('2019-05-01', TRUE));
+    self::assertEquals('2019-12-31', $logic->alignDate('2019-06-31', TRUE));
 
     $logic = new CRM_Membership_MembershipFeeLogic(['time_unit' => 'week']);
-    $this->assertEquals('2019-01-14', $logic->alignDate('2019-01-14', FALSE));
-    $this->assertEquals('2019-01-14', $logic->alignDate('2019-01-16', FALSE));
-    $this->assertEquals('2019-01-14', $logic->alignDate('2019-01-20', FALSE));
+    self::assertEquals('2019-01-14', $logic->alignDate('2019-01-14', FALSE));
+    self::assertEquals('2019-01-14', $logic->alignDate('2019-01-16', FALSE));
+    self::assertEquals('2019-01-14', $logic->alignDate('2019-01-20', FALSE));
 
-    $this->assertEquals('2019-01-20', $logic->alignDate('2019-01-14', TRUE));
-    $this->assertEquals('2019-01-20', $logic->alignDate('2019-01-14', TRUE));
-    $this->assertEquals('2019-01-20', $logic->alignDate('2019-01-14', TRUE));
+    self::assertEquals('2019-01-20', $logic->alignDate('2019-01-14', TRUE));
+    self::assertEquals('2019-01-20', $logic->alignDate('2019-01-14', TRUE));
+    self::assertEquals('2019-01-20', $logic->alignDate('2019-01-14', TRUE));
   }
 
 }

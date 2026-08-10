@@ -716,7 +716,9 @@ class CRM_Membership_CustomData {
         $first_character = substr($value, 0, 1);
         if ($first_character === '[' || $first_character === '{') {
           $unpacked_value = json_decode($value, TRUE);
-          if ($unpacked_value) {
+          if ($unpacked_value !== NULL && $unpacked_value !== FALSE && $unpacked_value !== 0
+            && $unpacked_value !== 0.0 && $unpacked_value !== '' && $unpacked_value !== '0'
+            && $unpacked_value !== []) {
             if (is_array($unpacked_value) && $unpacked_value === []) {
               // this is a strange behaviour in the API,
               //   but empty arrays are not processed properly

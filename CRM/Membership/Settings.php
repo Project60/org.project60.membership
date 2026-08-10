@@ -291,7 +291,7 @@ class CRM_Membership_Settings {
     $active_field_ids = [];
     foreach ($field_keys as $field_key) {
       $field_id = $settings->getSetting($field_key);
-      if ($field_id) {
+      if ((int) $field_id !== 0) {
         $active_field_ids[] = $field_id;
       }
     }
@@ -301,9 +301,9 @@ class CRM_Membership_Settings {
     $active_fields = [];
     foreach ($field_keys as $field_key) {
       $field_id = $settings->getSetting($field_key);
-      if ($field_id) {
+      if ((int) $field_id !== 0) {
         $field = $settings->getFieldInfo($field_id);
-        if ($field) {
+        if ($field !== NULL) {
           $active_fields[$field_key] = $field;
         }
       }

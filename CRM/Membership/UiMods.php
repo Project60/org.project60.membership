@@ -29,7 +29,7 @@ class CRM_Membership_UiMods {
    */
   public static function adjustList(&$headers, &$rows, &$selector) {
     $settings = CRM_Membership_Settings::getSettings();
-    if ($settings->getSetting('hide_auto_renewal')) {
+    if ((int) $settings->getSetting('hide_auto_renewal') !== 0) {
       // set header
       $headers[8] = ['name' => E::ts('Contract')];
 

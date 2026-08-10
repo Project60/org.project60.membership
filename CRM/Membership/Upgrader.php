@@ -44,7 +44,9 @@ class CRM_Membership_Upgrader extends CRM_Extension_Upgrader_Base {
       $new_settings = [];
       foreach ($mapping as $old_key => $new_key) {
         $old_value = CRM_Core_BAO_Setting::getItem('Membership Payments', $old_key);
-        if ($old_value) {
+        if ($old_value !== NULL && $old_value !== FALSE && $old_value !== 0
+          && $old_value !== 0.0 && $old_value !== '' && $old_value !== '0'
+          && $old_value !== []) {
           $new_settings[$new_key] = $old_value;
         }
       }

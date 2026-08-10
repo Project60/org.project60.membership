@@ -30,7 +30,7 @@ class CRM_Membership_NumberLogic {
    */
   public static function adjustSummaryView($contact_id) {
     $settings = CRM_Membership_Settings::getSettings();
-    if ($settings->getSetting('membership_number_show')) {
+    if ((int) $settings->getSetting('membership_number_show') !== 0) {
       // get membership number(s)
       $result = self::getCurrentMembershipNumbers([$contact_id]);
       if (!isset($result[$contact_id]) || $result[$contact_id] === '' || $result[$contact_id] === '0') {

@@ -63,7 +63,7 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements
     }
 
     $user = CRM_Core_Session::getLoggedInContactID();
-    $this->assertNotEmpty($user, "Couldn't set logged in contact ID");
+    self::assertNotEmpty($user, "Couldn't set logged in contact ID");
   }
 
   /**
@@ -99,14 +99,14 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements
    * Create a random contact and return the ID
    */
   public function createRandomContact() {
-    $this->assertNotEmpty(CRM_Core_Session::getLoggedInContactID(), 'No logged in user');
+    self::assertNotEmpty(CRM_Core_Session::getLoggedInContactID(), 'No logged in user');
     $contact = civicrm_api3('Contact', 'create', [
       'contact_type'       => 'Individual',
       'first_name'         => substr(sha1(microtime()), 0, 16),
       'last_name'          => substr(sha1(microtime()), 0, 16),
       'preferred_language' => 'en_US',
     ]);
-    $this->assertNotEmpty($contact['id'], "Couldn't create contact");
+    self::assertNotEmpty($contact['id'], "Couldn't create contact");
     return $contact['id'];
   }
 
@@ -130,7 +130,7 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements
           'html_type'       => 'Text',
           'is_active'       => 1,
         ]);
-        $this->assertNotEmpty($annual_amount_field_creation['id'], "Couldn't create membership annual amount field");
+        self::assertNotEmpty($annual_amount_field_creation['id'], "Couldn't create membership annual amount field");
         $annual_amount_field_id = $annual_amount_field_creation['id'];
       }
       else {
@@ -156,7 +156,7 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements
         'style'     => 'Inline',
         'is_active' => 1,
       ]);
-      $this->assertNotEmpty($membership_custom_group_creation['id'], "Couldn't create membership group");
+      self::assertNotEmpty($membership_custom_group_creation['id'], "Couldn't create membership group");
       return $membership_custom_group_creation['id'];
     }
     else {
@@ -184,7 +184,7 @@ class MembershipTestBase extends \PHPUnit\Framework\TestCase implements
         'is_active'            => '1',
         'contribution_type_id' => '2',
       ]);
-      $this->assertNotEmpty($create_query['id'], "Couldn't create membership type");
+      self::assertNotEmpty($create_query['id'], "Couldn't create membership type");
       return $create_query['id'];
 
     }

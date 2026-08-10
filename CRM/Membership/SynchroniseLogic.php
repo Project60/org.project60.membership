@@ -79,10 +79,10 @@ class CRM_Membership_SynchroniseLogic {
       $AND_CONTRIBUTION_STATUS = 'AND civicrm_contribution.contribution_status_id IN'
         . " ({$eligible_contribution_state_list})";
     }
-    if ($minimum_date) {
+    if ($minimum_date !== NULL) {
       $AND_CONTRIBUTION_MIN_DATE = "AND DATE(civicrm_contribution.receive_date) >= DATE('{$minimum_date}') ";
     }
-    if ($maximum_date) {
+    if ($maximum_date !== NULL) {
       $AND_CONTRIBUTION_MAX_DATE = "AND DATE(civicrm_contribution.receive_date) <= DATE('{$maximum_date}') ";
     }
 
@@ -192,7 +192,7 @@ class CRM_Membership_SynchroniseLogic {
       }
 
       // adjust memberships if wanted
-      if ($rangeback) {
+      if ((int) $rangeback !== 0) {
         $contribution_date = $contribution_receive_date[$contribution_id];
         $start_date = $membership_start_date[$membership_id];
         $join_date = $membership_join_date[$membership_id];

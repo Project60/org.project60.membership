@@ -97,7 +97,8 @@ function civicrm_api3_membership_generate($params) {
   if (isset($params['extra']) && $params['extra'] !== '' && $params['extra'] !== '0') {
     // first: try json
     $extra = json_decode($params['extra'], TRUE);
-    if ($extra) {
+    if ($extra !== NULL && $extra !== FALSE && $extra !== 0 && $extra !== 0.0
+      && $extra !== '' && $extra !== '0' && $extra !== []) {
       $parameters = array_merge($parameters, $extra);
     }
     else {

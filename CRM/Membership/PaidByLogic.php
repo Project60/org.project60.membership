@@ -29,6 +29,10 @@ class CRM_Membership_PaidByLogic {
   protected $financial_types = NULL;
 
   /**
+   * caches rendered contact data, indexed by contact ID */
+  protected $_renderedContacts = [];
+
+  /**
    * stores the pre/post hook records */
   protected $monitoring_stack = [];
 
@@ -645,6 +649,7 @@ class CRM_Membership_PaidByLogic {
             1 => [$membership_id, 'Integer'],
           ]
         );
+        $replaceStatusMessage = [];
         $replaceStatusMessage['original'] = E::ts('Membership for %1 has been updated. The membership End Date is %2.',
           [
             1 => $displayName,
@@ -695,7 +700,8 @@ class CRM_Membership_PaidByLogic {
     if (isset($update['status_id']) && $update['status_id'] !== '' && $update['status_id'] !== '0') {
       $settings = CRM_Membership_Settings::getSettings();
       $status_ids = $settings->getSetting('paid_via_end_with_status');
-      if (is_array($status_ids) && in_array($update['status_id'], $status_ids)) {
+      if (is_array($status_ids)
+        && in_array((int) $update['status_id'], array_map('intval', $status_ids), TRUE)) {
         // ok, we should end the connected mandate/recurring contribution
         $this->endContract($membership_id);
       }
@@ -728,7 +734,7 @@ class CRM_Membership_PaidByLogic {
     }
 
     // Check whether this is a new membership
-    if (in_array($membership_id, $this->new_membership_id_stack)) {
+    if (in_array($membership_id, $this->new_membership_id_stack, TRUE)) {
       // This is a new membership no need to recalculate the end date
       return;
     }
@@ -758,6 +764,7 @@ class CRM_Membership_PaidByLogic {
         FALSE,
         $membership['membership_type_id']
       );
+      $membershipParams = [];
       $membershipParams['status_id'] = $membershipStatus['id'];
       $membershipParams['id'] = $membership_id;
       $membershipParams['end_date'] = $newDates['end_date'];

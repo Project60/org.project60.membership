@@ -39,6 +39,12 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
   protected $_customGroupExtends = ['Membership'];
   protected $_customGroupGroupBy = FALSE;
 
+  /**
+   * map of check_period selector values to their per-year factor,
+   *  used to calculate the expected membership dues
+   */
+  protected $period_factors = [];
+
   public function __construct() {
     $this->_options = [
       'membership_fee' => [
@@ -469,12 +475,12 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
         foreach ($row as $colName => $colVal) {
           if (($checkList[$colName] ?? NULL) &&
             is_array($checkList[$colName]) &&
-            in_array($colVal, $checkList[$colName])
+            in_array($colVal, $checkList[$colName], TRUE)
           ) {
             $rows[$rowNum][$colName] = '';
             $repeatFound = TRUE;
           }
-          if (in_array($colName, $this->_noRepeats)) {
+          if (in_array($colName, $this->_noRepeats, TRUE)) {
             $checkList[$colName][] = $colVal;
           }
         }

@@ -508,7 +508,8 @@ class CRM_Membership_CustomData {
           continue;
         }
 
-        if ($customgroups === NULL || $customgroups === [] || in_array($match['group_name'], $customgroups)) {
+        if ($customgroups === NULL || $customgroups === []
+          || in_array($match['group_name'], $customgroups, TRUE)) {
           $customgroups_used[$match['group_name']] = 1;
         }
       }
@@ -520,7 +521,8 @@ class CRM_Membership_CustomData {
     // now: replace stuff
     foreach (array_keys($data) as $key) {
       if (preg_match('/^(?P<group_name>\w+)[.](?P<field_name>\w+)$/', $key, $match)) {
-        if ($customgroups === NULL || $customgroups === [] || in_array($match['group_name'], $customgroups)) {
+        if ($customgroups === NULL || $customgroups === []
+          || in_array($match['group_name'], $customgroups, TRUE)) {
           if (isset(self::$custom_group_cache[$match['group_name']][$match['field_name']])) {
             $custom_field = self::$custom_group_cache[$match['group_name']][$match['field_name']];
             $custom_key = 'custom_' . $custom_field['id'];
@@ -611,7 +613,7 @@ class CRM_Membership_CustomData {
    */
   public static function cacheCustomGroupSpecs($custom_group_ids) {
     // first: check if they are already cached
-    $fields_to_load = [];
+    $groups_to_load = [];
     foreach ($custom_group_ids as $group_id) {
       if (!array_key_exists($group_id, self::$custom_group_spec_cache)) {
         $groups_to_load[] = $group_id;
@@ -619,7 +621,7 @@ class CRM_Membership_CustomData {
     }
 
     // load missing fields
-    if (isset($groups_to_load) && $groups_to_load !== []) {
+    if ($groups_to_load !== []) {
       $loaded_groups = civicrm_api3('CustomGroup', 'get', [
         'id' => ['IN' => $groups_to_load],
         'option.limit' => 0,

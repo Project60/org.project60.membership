@@ -200,7 +200,7 @@ class CRM_Membership_TokenLogic {
     $used_tokens = [];
     foreach ($token_list as $requested_token) {
       if (preg_match('/^(?P<token_name>\w+)_(?P<membership_type>[0-9]+)$/', $requested_token, $match)) {
-        if (in_array($match['token_name'], $our_tokens)) {
+        if (in_array($match['token_name'], $our_tokens, TRUE)) {
           $used_tokens[] = $match['token_name'];
           $membership_types_used[$match['membership_type']] = $match['membership_type'];
         }
@@ -240,7 +240,7 @@ class CRM_Membership_TokenLogic {
     CRM_Core_DAO::executeQuery("CREATE TEMPORARY TABLE {$temp_contact2membership} AS {$contact2membership_sql}");
 
     // now: compile data query
-    $selects[] = 'c2m.contact_id AS contact_id';
+    $selects   = ['c2m.contact_id AS contact_id'];
     $joins     = [];
 
     if ($base_tokens_used) {

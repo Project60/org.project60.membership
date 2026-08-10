@@ -85,7 +85,8 @@ class CRM_Membership_NumberLogic {
       $MEMBERSHIP_TYPE_CONDITION = "AND membership.membership_type_id IN ({$membership_type_id_list})";
     }
 
-    $unprocessed_contact_ids = $contact_ids;
+    // normalise to int, since contact IDs may arrive as strings (e.g. from the DB) or ints (e.g. from hooks)
+    $unprocessed_contact_ids = array_map('intval', $contact_ids);
     $query = "
       SELECT 
         membership.contact_id                                 AS contact_id,
@@ -105,7 +106,7 @@ class CRM_Membership_NumberLogic {
       $contact_id_2_membership_number[$data->contact_id] = $numbers[0];
 
       // remove from $unprocessed_contact_ids
-      $index = array_search($data->contact_id, $unprocessed_contact_ids);
+      $index = array_search((int) $data->contact_id, $unprocessed_contact_ids, TRUE);
       if ($index !== FALSE) {
         unset($unprocessed_contact_ids[$index]);
       }
@@ -136,7 +137,7 @@ class CRM_Membership_NumberLogic {
         }
 
         // remove from $unprocessed_contact_ids
-        $index = array_search($fallback_data->contact_id, $unprocessed_contact_ids);
+        $index = array_search((int) $fallback_data->contact_id, $unprocessed_contact_ids, TRUE);
         if ($index !== FALSE) {
           unset($unprocessed_contact_ids[$index]);
         }
@@ -166,7 +167,7 @@ class CRM_Membership_NumberLogic {
         }
 
         // remove from $unprocessed_contact_ids
-        $index = array_search($fallback_data->contact_id, $unprocessed_contact_ids);
+        $index = array_search((int) $fallback_data->contact_id, $unprocessed_contact_ids, TRUE);
         if ($index !== FALSE) {
           unset($unprocessed_contact_ids[$index]);
         }

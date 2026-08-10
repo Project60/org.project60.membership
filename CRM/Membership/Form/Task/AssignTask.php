@@ -45,6 +45,7 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
                       'contact',
                       E::ts('Contact'),
                       ['class' => 'huge crm-form-contact-reference', 'data-api-entity' => 'Contact']);
+    $customUrls = [];
     $customUrls['contact'] = CRM_Utils_System::url('civicrm/ajax/rest',
       'entity=MembershipPayment&action=getlist&json=1', FALSE, NULL, FALSE);
     $this->assign('customUrls', $customUrls);

@@ -200,7 +200,7 @@ class CRM_Membership_PaidByLogic {
         2 => $ex->getMessage(),
       ]);
       CRM_Core_Session::setStatus($message, ts('Error'), 'error');
-      CRM_Core_Error::debug_log_message('P60Membership: ' . $message);
+      Civi::log()->error('P60Membership: ' . $message);
     }
   }
 

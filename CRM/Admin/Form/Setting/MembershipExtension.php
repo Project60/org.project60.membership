@@ -33,12 +33,18 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     CRM_Utils_System::setTitle(E::ts('Configuration - Project60 Membership Extension'));
 
     // load membership types
-    $membership_types = CRM_Member_BAO_MembershipType::getMembershipTypes(FALSE);
+    $membership_types = [];
+    foreach (CRM_Member_BAO_MembershipType::getAllMembershipTypes() as $membership_type_id => $membership_type) {
+      if ((int) $membership_type['is_active'] !== 0) {
+        $membership_types[$membership_type_id] = $membership_type['name'];
+      }
+    }
 
     $this->assign('membership_types', $membership_types);
 
     // load financial types
-    $financial_types = CRM_Contribute_PseudoConstant::financialType();
+    $financial_type_options = Civi::entity('FinancialType')->getOptions('financial_type_id') ?? [];
+    $financial_types = array_column($financial_type_options, 'label', 'id');
     $this->assign('financial_types', $financial_types);
 
     // load status options

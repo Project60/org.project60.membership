@@ -50,7 +50,7 @@ class CRM_Membership_Generator {
     }
 
     // generate query
-    $restrict_to_membership_id = (int) CRM_Utils_Array::value('membership_id', $params, 0);
+    $restrict_to_membership_id = (int) ($params['membership_id'] ?? 0);
     $AND_RESTRICT_TO_MEMBERSHIP_IDS = $restrict_to_membership_id
       ? "AND entity_id IN ({$restrict_to_membership_id})" : '';
 

@@ -124,7 +124,7 @@ class CRM_Membership_Settings {
    * Write settings to DB
    */
   public function write() {
-    CRM_Core_BAO_Setting::setItem($this->settings_bucket, 'Membership Payments', 'p60_membership_settings');
+    Civi::settings()->set('p60_membership_settings', $this->settings_bucket);
   }
 
   /**

@@ -523,12 +523,12 @@ class CRM_Membership_MembershipFeeLogic {
    */
   public function log($message, $level = 'info') {
     static $levels = ['debug' => 10, 'info' => 20, 'error' => 30, 'off' => 100];
-    $req_level = CRM_Utils_Array::value($level, $levels, 10);
+    $req_level = $levels[$level] ?? 10;
     $min_level = $this->parameters['log_level'];
     if ($req_level >= $min_level) {
       // we want to log this
       if ($this->parameters['log_target'] === 'civicrm') {
-        CRM_Core_Error::debug_log_message('P60.FeeLogic: ' . $message);
+        Civi::log()->log($level, 'P60.FeeLogic: ' . $message);
       }
       else {
         if ($this->log_file === NULL) {

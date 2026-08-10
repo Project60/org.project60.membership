@@ -270,7 +270,7 @@ function membership_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = 
     $contact_ids = $cids;
   }
   else {
-    CRM_Core_Error::debug_log_message('Cannot interpret cids: ' . json_encode($cids));
+    Civi::log()->warning('Cannot interpret cids: ' . json_encode($cids));
     return;
   }
 

@@ -108,7 +108,7 @@ function civicrm_api3_membership_process($params) {
     }
     $processed_counter += 1;
     $last_processed_id = $membership_id;
-    $stats_reply[$result_class] = CRM_Utils_Array::value($result_class, $stats_reply, 0) + 1;
+    $stats_reply[$result_class] = ($stats_reply[$result_class] ?? 0) + 1;
   }
 
   // mark processed

@@ -302,9 +302,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
     foreach ($this->_columns as $tableName => $table) {
       if (array_key_exists('fields', $table)) {
         foreach ($table['fields'] as $fieldName => $field) {
-          if (CRM_Utils_Array::value('required', $field) ||
-            CRM_Utils_Array::value($fieldName, $this->_params['fields'])
-          ) {
+          if (($field['required'] ?? NULL) || ($this->_params['fields'][$fieldName] ?? NULL)) {
             if ($fieldName === 'membership_dues') {
               // 'dues' is a calculated field
               $select[] = $this->getExpectedAmount() . " as {$tableName}_{$fieldName}";
@@ -362,7 +360,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
       if (array_key_exists('filters', $table)) {
         foreach ($table['filters'] as $fieldName => $field) {
           $clause = NULL;
-          if (CRM_Utils_Array::value('operatorType', $field) & CRM_Utils_Type::T_DATE) {
+          if (($field['operatorType'] ?? 0) & CRM_Utils_Type::T_DATE) {
             $relative = $this->_params["{$fieldName}_relative"] ?? NULL;
             $from     = $this->_params["{$fieldName}_from"] ?? NULL;
             $to       = $this->_params["{$fieldName}_to"] ?? NULL;
@@ -469,7 +467,7 @@ class CRM_Membership_Form_Report_OutstandingMembershipFees extends CRM_Report_Fo
         // in previous row
         $repeatFound = FALSE;
         foreach ($row as $colName => $colVal) {
-          if (CRM_Utils_Array::value($colName, $checkList) &&
+          if (($checkList[$colName] ?? NULL) &&
             is_array($checkList[$colName]) &&
             in_array($colVal, $checkList[$colName])
           ) {

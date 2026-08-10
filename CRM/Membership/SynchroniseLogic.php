@@ -24,7 +24,7 @@ class CRM_Membership_SynchroniseLogic {
    * this function will execute the synchronization
    *   for ONE financial_type_id => membership_type_id mapping
    */
-  // phpcs:ignore Generic.Files.LineLength.TooLong, Generic.Metrics.CyclomaticComplexity.TooHigh
+  // phpcs:ignore Generic.Files.LineLength.TooLong, Generic.Metrics.CyclomaticComplexity.MaxExceeded
   public static function synchronizePayments(int $financial_type_id, $membership_type_ids, $settings_override = [], $contribution_ids = []) : array {
     $contribution_receive_date = [];
     $membership_start_date = [];
@@ -34,14 +34,12 @@ class CRM_Membership_SynchroniseLogic {
     $settings = CRM_Membership_Settings::getSettings();
     $results = ['mapped' => [], 'no_membership' => [], 'ambiguous' => [], 'errors' => []];
     $membership_type_id_list = implode(',', $membership_type_ids);
-    $eligible_contribution_states = CRM_Utils_Array::value('eligible_contribution_states', $settings_override, [1]);
-    $rangeback = CRM_Utils_Array::value('sync_range', $settings_override, $settings->getSyncRange());
-    $gracedays = CRM_Utils_Array::value('grace_period', $settings_override, $settings->getSyncGracePeriod());
-    $minimum_date = CRM_Utils_Array::value('sync_minimum_date', $settings_override,
-      $settings->getStrtotimeDate('sync_minimum_date'));
-    $maximum_date = CRM_Utils_Array::value('sync_maximum_date', $settings_override,
-      $settings->getStrtotimeDate('sync_maximum_date'));
-    $membership_status_ids = CRM_Utils_Array::value('live_statuses', $settings_override, $settings->getLiveStatusIDs());
+    $eligible_contribution_states = $settings_override['eligible_contribution_states'] ?? [1];
+    $rangeback = $settings_override['sync_range'] ?? $settings->getSyncRange();
+    $gracedays = $settings_override['grace_period'] ?? $settings->getSyncGracePeriod();
+    $minimum_date = $settings_override['sync_minimum_date'] ?? $settings->getStrtotimeDate('sync_minimum_date');
+    $maximum_date = $settings_override['sync_maximum_date'] ?? $settings->getStrtotimeDate('sync_maximum_date');
+    $membership_status_ids = $settings_override['live_statuses'] ?? $settings->getLiveStatusIDs();
 
     // get a mapping of memberships that are linked to recurring-contributions
     $paid_via_field = $settings->getPaidViaField();

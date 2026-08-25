@@ -176,10 +176,6 @@
 
 {literal}
 <script type="text/javascript">
-cj(function() {
-   cj().crmAccordions();
-});
-
 cj("#adjust").change(function() {
 	if (cj("#adjust").attr('checked')) {
 		cj("#rangeback").parent().parent().show();

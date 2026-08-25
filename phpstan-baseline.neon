@@ -1,0 +1,4025 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '''
+				#^Call to method buildQuickForm\(\) of deprecated class CRM_Admin_Form_Setting\:
+				use CRM_Admin_Form_Generic instead\.$#
+			'''
+			identifier: method.deprecatedClass
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '''
+				#^Call to method setDefaultValues\(\) of deprecated class CRM_Admin_Form_Setting\:
+				use CRM_Admin_Form_Generic instead\.$#
+			'''
+			identifier: method.deprecatedClass
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Cannot access offset ''values'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 9
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '''
+				#^Class CRM_Admin_Form_Setting_MembershipExtension extends deprecated class CRM_Admin_Form_Setting\:
+				use CRM_Admin_Form_Generic instead\.$#
+			'''
+			identifier: class.extendsDeprecatedClass
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:buildQuickForm\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getAllCustomFields\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getAmountFieldOptions\(\) has parameter \$read_only with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getAmountFieldOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getDateFieldOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getEligibleCustomGroups\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getMembershipNumberOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getPaidByOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getPaidViaOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getSelectFieldOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:postProcess\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:setDefaultValues\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Property CRM_Admin_Form_Setting_MembershipExtension\:\:\$_eligibleCustomGroups has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Admin/Form/Setting/MembershipExtension.php
+
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 2
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^BooleanAnd\: Condition between bool and false are always false\.$#'
+			identifier: voku.BooleanAnd
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^BooleanAndNode\: Condition between bool and false are always false\.$#'
+			identifier: voku.BooleanAndNode
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Cannot access offset ''_entities'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Cannot access offset ''count'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Cannot access offset ''entity'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Cannot access offset ''extends'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Cannot access offset ''extends_entity_column_value'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Cannot access offset ''values'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Cannot cast array\|int to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Do not throw the \\Exception base class\.$#'
+			count: 3
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Identical\: Possible insane comparison between null and string\.$#'
+			identifier: voku.Identical
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:__construct\(\) has parameter \$ts_domain with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:cacheCustomFields\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:cacheCustomFields\(\) has parameter \$custom_field_ids with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:cacheCustomGroupSpecs\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:cacheCustomGroupSpecs\(\) has parameter \$custom_group_ids with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:cacheCustomGroups\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:cacheCustomGroups\(\) has parameter \$custom_group_names with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:createEntity\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:createEntity\(\) has parameter \$data with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:createEntity\(\) has parameter \$entity_type with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:createSQLJoin\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:createSQLJoin\(\) has parameter \$group_name with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:createSQLJoin\(\) has parameter \$join_entity_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:createSQLJoin\(\) has parameter \$table_alias with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:generatePreHookCustomDataRecord\(\) has parameter \$field_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:generatePreHookCustomDataRecord\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:generatePreHookCustomDataRecord\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:generatePreHookCustomDataRecord\(\) should return array but returns null\.$#'
+			identifier: return.type
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getCustomField\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getCustomField\(\) has parameter \$custom_field_name with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getCustomField\(\) has parameter \$custom_group_name with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getCustomFieldKey\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getCustomFieldKey\(\) has parameter \$custom_field_name with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getCustomFieldKey\(\) has parameter \$custom_group_name with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getCustomFieldsForGroups\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getCustomFieldsForGroups\(\) has parameter \$custom_group_names with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getEntityID\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getEntityID\(\) has parameter \$entity_type with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getEntityID\(\) has parameter \$selector with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getFieldIdentifier\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getFieldIdentifier\(\) has parameter \$field_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getFieldSpecs\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getFieldSpecs\(\) should return array but returns null\.$#'
+			identifier: return.type
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getGroup2Name\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getGroup2TableName\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getGroupID\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getGroupID\(\) has parameter \$group_name with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getGroupName\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getGroupName\(\) has parameter \$custom_group_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getGroupSpecs\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getGroupSpecs\(\) should return array but returns null\.$#'
+			identifier: return.type
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getGroupTable\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getGroupTable\(\) has parameter \$group_name with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getOptionValue\(\) has parameter \$label with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getOptionValue\(\) should return string but returns null\.$#'
+			identifier: return.type
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getPreHookCustomDataValue\(\) has parameter \$field_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:getPreHookCustomDataValue\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:identifyEntity\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:identifyEntity\(\) has parameter \$data with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:identifyEntity\(\) has parameter \$entity_type with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:labelCustomFields\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:labelCustomFields\(\) has parameter \$data with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:labelCustomFields\(\) has parameter \$depth with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:loadGroups\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:log\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:log\(\) has parameter \$level with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:log\(\) has parameter \$message with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:resolveCustomFields\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:resolveCustomFields\(\) has parameter \$customgroups with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:resolveCustomFields\(\) has parameter \$data with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:setPreHookCustomDataValue\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:setPreHookCustomDataValue\(\) has parameter \$field_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:setPreHookCustomDataValue\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:setPreHookCustomDataValue\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:syncCustomGroup\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:syncCustomGroup\(\) has parameter \$source_file with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:syncEntities\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:syncEntities\(\) has parameter \$source_file with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:syncOptionGroup\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:syncOptionGroup\(\) has parameter \$source_file with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:translateStrings\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:translateStrings\(\) has parameter \$data with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:unREST\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:unREST\(\) has parameter \$group_names with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:unREST\(\) has parameter \$params with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:updateEntity\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:updateEntity\(\) has parameter \$current_data with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:updateEntity\(\) has parameter \$entity_type with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:updateEntity\(\) has parameter \$force with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:updateEntity\(\) has parameter \$requested_data with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Method CRM_Membership_CustomData\:\:updateEntity\(\) has parameter \$required_fields with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, float\|int\|string given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, int\|false given\.$#'
+			identifier: if.condNotBoolean
+			count: 4
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Parameter \#1 \$json of function json_decode expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 3
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Parameter \#1 \$string of function substr expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Parameter \#2 \$subject of function preg_match expects string, int\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Part \$data\[''entity''\] \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Possibly invalid array key type mixed\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 2
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Property CRM_Membership_CustomData\:\:\$custom_field_cache has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Property CRM_Membership_CustomData\:\:\$custom_group2name has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Property CRM_Membership_CustomData\:\:\$custom_group2table_name has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Property CRM_Membership_CustomData\:\:\$custom_group_cache has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Property CRM_Membership_CustomData\:\:\$custom_group_spec_cache has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Property CRM_Membership_CustomData\:\:\$ts_domain has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Property CRM_Membership_CustomData\:\:\$version has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-empty\-array\<mixed, mixed\> and array\{\} will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
+			message: '#^Call to an undefined method object\:\:fetch\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Call to an undefined method object\:\:toArray\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Cannot access offset ''count'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Do not throw the \\Exception base class\.$#'
+			count: 2
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_FeeChangeLogic\:\:getMembershipFeeRecord\(\) has parameter \$contribution_recur_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_FeeChangeLogic\:\:getMembershipFeeRecord\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_FeeChangeLogic\:\:getMembershipFeeRecord\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_FeeChangeLogic\:\:getSingleton\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_FeeChangeLogic\:\:markMembershipNew\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_FeeChangeLogic\:\:membershipFeeUpdatePOST\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_FeeChangeLogic\:\:membershipFeeUpdatePOST\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_FeeChangeLogic\:\:membershipFeeUpdatePRE\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_FeeChangeLogic\:\:membershipFeeUpdatePRE\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_FeeChangeLogic\:\:processChange\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_FeeChangeLogic\:\:processChange\(\) has parameter \$after_record with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_FeeChangeLogic\:\:processChange\(\) has parameter \$before_record with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_FeeChangeLogic\:\:processChange\(\) has parameter \$date with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, \(float\|int\) given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_push expects array, array\|Countable given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Parameter \#2 \$timestamp of function date expects int\|null, int\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Property CRM_Membership_FeeChangeLogic\:\:\$_activity_type_id has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Property CRM_Membership_FeeChangeLogic\:\:\$monitoring_stack has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Property CRM_Membership_FeeChangeLogic\:\:\$new_memberships has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Property CRM_Membership_FeeChangeLogic\:\:\$singleton has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/FeeChangeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_Form_PaidBy\:\:buildQuickForm\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/PaidBy.php
+
+		-
+			message: '#^Method CRM_Membership_Form_PaidBy\:\:postProcess\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/PaidBy.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, int given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: CRM/Membership/Form/PaidBy.php
+
+		-
+			message: '#^Parameter \#3 \$label of method CRM_Core_Form\:\:add\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Membership/Form/PaidBy.php
+
+		-
+			message: '#^Binary operation "\." between non\-falsy\-string and array results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '''
+				#^Call to deprecated method buildACLClause\(\) of class CRM_Report_Form\:
+				in favor of buildPermissionClause
+
+				Note that if the buildPermissionClause function is called \(which most reports do from
+				buildQuery then the results of this function are re\-calculated and overwritten\.$#
+			'''
+			identifier: method.deprecated
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Cannot access offset ''count'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Cannot access offset ''values'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Concat\: string \(non\-falsy\-string\) in combination with non\-string \(array\) is not allowed\.$#'
+			identifier: voku.Concat
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Report_OutstandingMembershipFees\:\:addOptions\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Report_OutstandingMembershipFees\:\:alterDisplay\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Report_OutstandingMembershipFees\:\:alterDisplay\(\) has parameter \$rows with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Report_OutstandingMembershipFees\:\:from\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Report_OutstandingMembershipFees\:\:getCheckPeriodFrom\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Report_OutstandingMembershipFees\:\:getExpectedAmount\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Report_OutstandingMembershipFees\:\:getSuitableMembershipFeeCustomFields\(\) has invalid return type an\.$#'
+			identifier: class.notFound
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Report_OutstandingMembershipFees\:\:getSuitableMembershipFeeCustomFields\(\) should return an but returns array\<string, string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Report_OutstandingMembershipFees\:\:groupBy\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Report_OutstandingMembershipFees\:\:orderBy\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Report_OutstandingMembershipFees\:\:postProcess\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Report_OutstandingMembershipFees\:\:preProcess\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Report_OutstandingMembershipFees\:\:select\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Report_OutstandingMembershipFees\:\:where\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Only booleans are allowed in &&, list\|null given on the left side\.$#'
+			identifier: booleanAnd.leftNotBoolean
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, int\<0, 4\> given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Plus\: Do not compare objects directly, an and array\{type\: string, spec\: string\} found\.$#'
+			identifier: voku.Plus
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Property CRM_Membership_Form_Report_OutstandingMembershipFees\:\:\$_customGroupExtends \(null\) does not accept default value of type array\<int, string\>\.$#'
+			identifier: property.defaultValue
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Property CRM_Membership_Form_Report_OutstandingMembershipFees\:\:\$_customGroupGroupBy has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Property CRM_Membership_Form_Report_OutstandingMembershipFees\:\:\$_summary has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Property CRM_Membership_Form_Report_OutstandingMembershipFees\:\:\$period_factors has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^SmallerOrEqual\: string \(numeric\-string\) in combination with non\-string \(0\) is not allowed\.$#'
+			identifier: voku.SmallerOrEqual
+			count: 1
+			path: CRM/Membership/Form/Report/OutstandingMembershipFees.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contact_count\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/Form/Task/AssignTask.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contact_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: CRM/Membership/Form/Task/AssignTask.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$sort_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/Form/Task/AssignTask.php
+
+		-
+			message: '#^Call to an undefined method object\:\:fetch\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: CRM/Membership/Form/Task/AssignTask.php
+
+		-
+			message: '#^Cannot access offset ''values'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: CRM/Membership/Form/Task/AssignTask.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Task_AssignTask\:\:buildQuickForm\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Task/AssignTask.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Task_AssignTask\:\:getDefaultContact\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Task/AssignTask.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Task_AssignTask\:\:getFullList\(\) has parameter \$entity with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Form/Task/AssignTask.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Task_AssignTask\:\:getFullList\(\) has parameter \$label_field with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Form/Task/AssignTask.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Task_AssignTask\:\:getFullList\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/Form/Task/AssignTask.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Task_AssignTask\:\:postProcess\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Task/AssignTask.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Task_AssignTask\:\:setDefaultValues\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/Form/Task/AssignTask.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, int given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: CRM/Membership/Form/Task/AssignTask.php
+
+		-
+			message: '#^Property CRM_Membership_Form_Task_AssignTask\:\:\$default_contact has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/Form/Task/AssignTask.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Task_DetachTask\:\:buildQuickForm\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Task/DetachTask.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Task_DetachTask\:\:getAssignedCount\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Task/DetachTask.php
+
+		-
+			message: '#^Method CRM_Membership_Form_Task_DetachTask\:\:postProcess\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Form/Task/DetachTask.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$log_date\.$#'
+			identifier: property.notFound
+			count: 2
+			path: CRM/Membership/Generator.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$membership_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: CRM/Membership/Generator.php
+
+		-
+			message: '#^Call to an undefined method object\:\:fetch\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: CRM/Membership/Generator.php
+
+		-
+			message: '#^Casting to int something that''s already int\.$#'
+			identifier: cast.useless
+			count: 1
+			path: CRM/Membership/Generator.php
+
+		-
+			message: '#^Method CRM_Membership_Generator\:\:generateFeeUpdateActivities\(\) has parameter \$from_date with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Generator.php
+
+		-
+			message: '#^Method CRM_Membership_Generator\:\:generateFeeUpdateActivities\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Generator.php
+
+		-
+			message: '#^Method CRM_Membership_Generator\:\:generateFeeUpdateActivities\(\) has parameter \$to_date with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Generator.php
+
+		-
+			message: '#^Method CRM_Membership_Generator\:\:generateFeeUpdateActivities\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/Generator.php
+
+		-
+			message: '#^Method CRM_Membership_Generator\:\:writeFeeUpdateRecords\(\) has parameter \$fee_data_points with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Generator.php
+
+		-
+			message: '#^Method CRM_Membership_Generator\:\:writeFeeUpdateRecords\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Generator.php
+
+		-
+			message: '#^Method CRM_Membership_Generator\:\:writeFeeUpdateRecords\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Generator.php
+
+		-
+			message: '#^Only booleans are allowed in a ternary operator condition, int given\.$#'
+			identifier: ternary.condNotBoolean
+			count: 1
+			path: CRM/Membership/Generator.php
+
+		-
+			message: '#^Only numeric types are allowed in \-, int\|false given on the left side\.$#'
+			identifier: minus.leftNonNumeric
+			count: 1
+			path: CRM/Membership/Generator.php
+
+		-
+			message: '#^Parameter \#1 \$values of function civicrm_api3_create_success expects array\|int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Membership/Generator.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, null given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: CRM/Membership/Legacycode/Core/DAO.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$amount_after\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$amount_before\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$change_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Binary operation "\+\=" between string\|null and string\|null results in an error\.$#'
+			identifier: assignOp.invalid
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Call to an undefined method object\:\:fetch\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Cannot access offset ''contribution_status_id'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Cannot access offset ''id'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Cannot access offset ''total_amount'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Cannot access offset ''values'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:__construct\(\) has parameter \$parameters with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:alignDate\(\) has parameter \$date with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:alignDate\(\) has parameter \$forward with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:alignDate\(\) has parameter \$one_more_day with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:calculateExpectedFeeForCurrentPeriod\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:extendMembership\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:extendMembership\(\) has parameter \$dry_run with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:extendMembership\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:getAnnualAmount\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:getAnnualAmount\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:getCurrentPeriod\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:getCurrentPeriod\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:getDateUnitDiff\(\) has parameter \$from_date with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:getDateUnitDiff\(\) has parameter \$to_date with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:getMembership\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:getMembership\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:getMembership\(\) should return array\|null but returns array\|int\.$#'
+			identifier: return.type
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:getMembershipType\(\) has parameter \$membership_type_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:getMembershipType\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:getOutstandingPaymentIdentifier\(\) has parameter \$end_date with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:getOutstandingPaymentIdentifier\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:getPayingContactID\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:log\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:log\(\) has parameter \$message with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:process\(\) has parameter \$dry_run with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:process\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:receivedFeeForCurrentPeriod\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:updatedMissingFeeContribution\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:updatedMissingFeeContribution\(\) has parameter \$dry_run with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:updatedMissingFeeContribution\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Method CRM_Membership_MembershipFeeLogic\:\:updatedMissingFeeContribution\(\) has parameter \$missing_amount with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Offset ''contact_id'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 3
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Offset ''contribution_type_id'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Offset ''duration_interval'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 2
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Offset ''duration_unit'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 2
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Offset ''end_date'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 6
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Offset ''id'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Offset ''join_date'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Offset ''membership_type_id'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 4
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Offset ''start_date'' might not exist on array\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 2
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, string\|null given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Parameter \#1 \$stream of function fwrite expects resource, resource\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Parameter \#2 \$baseTimestamp of function strtotime expects int\|null, int\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Property CRM_Membership_MembershipFeeLogic\:\:\$cached_membership has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Property CRM_Membership_MembershipFeeLogic\:\:\$log_file has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Property CRM_Membership_MembershipFeeLogic\:\:\$membership_types has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Property CRM_Membership_MembershipFeeLogic\:\:\$parameters has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/MembershipFeeLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contact_id\.$#'
+			identifier: property.notFound
+			count: 8
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$membership_numbers\.$#'
+			identifier: property.notFound
+			count: 3
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Binary operation "\+" between string\|null and 1 results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Call to an undefined method object\:\:fetch\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Cannot access offset ''column_name'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Cannot access offset ''custom_group_id'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Cannot access offset ''table_name'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 2
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Method CRM_Membership_NumberLogic\:\:adjustSummaryView\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Method CRM_Membership_NumberLogic\:\:adjustSummaryView\(\) has parameter \$contact_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Method CRM_Membership_NumberLogic\:\:generateNewNumber\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Method CRM_Membership_NumberLogic\:\:generateNewNumber\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Method CRM_Membership_NumberLogic\:\:generateNumber\(\) has parameter \$generator with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Method CRM_Membership_NumberLogic\:\:generateNumber\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Method CRM_Membership_NumberLogic\:\:getCurrentMembershipNumbers\(\) has parameter \$contact_ids with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Method CRM_Membership_NumberLogic\:\:getCurrentMembershipNumbers\(\) has parameter \$membership_type_ids with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Method CRM_Membership_NumberLogic\:\:getCurrentMembershipNumbers\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Only booleans are allowed in &&, mixed given on the left side\.$#'
+			identifier: booleanAnd.leftNotBoolean
+			count: 1
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Only booleans are allowed in &&, mixed given on the right side\.$#'
+			identifier: booleanAnd.rightNotBoolean
+			count: 1
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, int\|false given\.$#'
+			identifier: if.condNotBoolean
+			count: 2
+			path: CRM/Membership/NumberLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contact_id\.$#'
+			identifier: property.notFound
+			count: 4
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contact_name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contact_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contribution_amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contribution_currency\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contribution_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contribution_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contribution_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$membership_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Call to an undefined method object\:\:fetch\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Call to an undefined method object\:\:free\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '''
+				#^Call to deprecated function civicrm_api\(\)\:
+				Not recommended for new code but ok for existing code to continue using\.
+
+				Calling `civicrm_api\(\)` is functionally identical to `civicrm_api3\(\)` or `civicrm_api4\(\)` except\:
+				  1\. It requires `\$params\['version'\]`\.
+				  2\. It catches exceptions and returns an array like `\['is_error' \=\> 1, 'error_message' \=\> \.\.\.\]`\.
+				This is disfavored for typical business\-logic/hooks/forms/etc\.
+				However, if an existing caller handles `civicrm_api\(\)`\-style errors, then there is no functional benefit to reworking it\.$#
+			'''
+			identifier: function.deprecated
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Cannot access offset ''ambiguous'' on array\|Civi\\Api4\\Generic\\Result\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Cannot access offset ''no_membership'' on array\|Civi\\Api4\\Generic\\Result\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Cannot access offset ''values'' on array\|Civi\\Api4\\Generic\\Result\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^In method "CRM_Membership_Page_MembershipPayments\:\:run", you should not use the \$_REQUEST superglobal\. You should instead rely on your framework that provides you with a "request" object \(for instance a PSR\-7 RequestInterface or a Symfony Request\)\. More info\: http\://bit\.ly/nosuperglobals$#'
+			count: 7
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Method CRM_Membership_Page_MembershipPayments\:\:getData\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Method CRM_Membership_Page_MembershipPayments\:\:getData\(\) has parameter \$add_membership with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Method CRM_Membership_Page_MembershipPayments\:\:getData\(\) has parameter \$contribution_ids with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Method CRM_Membership_Page_MembershipPayments\:\:getData\(\) has parameter \$list_name with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Method CRM_Membership_Page_MembershipPayments\:\:run\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Parameter \#2 \$format of static method CRM_Utils_Date\:\:customFormat\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Membership/Page/MembershipPayments.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contribution_recur_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$membership_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Call to an undefined method object\:\:fetch\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Call to static method terminateMandate\(\) on an unknown class CRM_Sepa_BAO_SEPAMandate\.$#'
+			identifier: class.notFound
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Cannot access offset ''contribution_status_id'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Cannot access offset ''count'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Cannot access offset ''end_date'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Cannot access offset ''id'' on non\-empty\-array\|int\<min, \-1\>\|int\<1, max\>\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Cannot access offset ''join_date'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Cannot access offset ''membership_type_id'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Cannot access offset ''receive_date'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Cannot access offset ''start_date'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Cannot access offset ''values'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Cannot access offset non\-falsy\-string on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^If_\: Non\-empty array is never empty\.$#'
+			identifier: voku.If
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^If_\: Use a function e\.g\. `count\(\$foo\) \> 0` instead of `\$foo`\.$#'
+			identifier: voku.If
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:assignSepaInstallment\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:assignSepaInstallment\(\) has parameter \$contribution_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:assignSepaInstallment\(\) has parameter \$contribution_recur_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:assignSepaInstallment\(\) has parameter \$mandate_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:calculateAnnual\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:calculateAnnual\(\) has parameter \$contribution_recur with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:calculateAnnualTotal\(\) has parameter \$contribution_recur with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:changeContract\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:changeContract\(\) has parameter \$contribution_recur_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:changeContract\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:contributionUpdatePOST\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:contributionUpdatePOST\(\) has parameter \$contribution_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:contributionUpdatePOST\(\) has parameter \$object with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:contributionUpdatePRE\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:contributionUpdatePRE\(\) has parameter \$contribution_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:contributionUpdatePRE\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:createMembershipUpdatePOST\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:createMembershipUpdatePOST\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:createMembershipUpdatePOST\(\) has parameter \$object with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:endContract\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:endContract\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:extendForm\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:extendForm\(\) has parameter \$form with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:extendForm\(\) has parameter \$formName with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:getFinancialType\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:getFinancialType\(\) has parameter \$financial_type_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:getMembershipIDs\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:getPaidViaUseCount\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:getPaidViaUseCount\(\) has parameter \$contribution_recur_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:getPaidViaUseCount\(\) has parameter \$exclude_membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:getRecurringContribution\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:getRecurringContribution\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:getRecurringContributions\(\) has parameter \$membership_ids with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:getRecurringContributions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:getSingleton\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:membershipPaymentCreatePOST\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:membershipUpdatePOST\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:membershipUpdatePOST\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:membershipUpdatePOST\(\) has parameter \$object with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:membershipUpdatePre\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:membershipUpdatePre\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:membershipUpdatePre\(\) has parameter \$update with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:renderContact\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:renderContact\(\) has parameter \$contact_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:renderRecurringContribution\(\) has invalid return type textual\.$#'
+			identifier: class.notFound
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:renderRecurringContribution\(\) has parameter \$contribution_recur with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:renderRecurringContribution\(\) has parameter \$membership_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:renderRecurringContribution\(\) should return textual but returns string\.$#'
+			identifier: return.type
+			count: 2
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:renderRecurringContributionCycle\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:renderRecurringContributionCycle\(\) has parameter \$contribution_recur with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:renderRecurringContributionReference\(\) has parameter \$contribution_recur with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:renderRecurringContributionReference\(\) should return string but returns array\|int\.$#'
+			identifier: return.type
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:renderRecurringContributionType\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:renderRecurringContributionType\(\) has parameter \$contribution_recur with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:replaceStatusMessages\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:updateDerivedFields\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Method CRM_Membership_PaidByLogic\:\:updateDerivedFields\(\) has parameter \$membership_ids with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Only booleans are allowed in &&, int given on the left side\.$#'
+			identifier: booleanAnd.leftNotBoolean
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Only booleans are allowed in &&, int given on the right side\.$#'
+			identifier: booleanAnd.rightNotBoolean
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Only booleans are allowed in a negated boolean, mixed given\.$#'
+			identifier: booleanNot.exprNotBoolean
+			count: 3
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, array\|int\|null given\.$#'
+			identifier: if.condNotBoolean
+			count: 2
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, int\<0, max\>\|false given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, list\<int, string\> given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, list\<string\> given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, ''intval'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Parameter \#2 \$format of static method CRM_Utils_Date\:\:customFormat\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Parameter \#2 \$string of function explode expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Part \$membership_id \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Property CRM_Membership_PaidByLogic\:\:\$_renderedContacts has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Property CRM_Membership_PaidByLogic\:\:\$contribution_status_monitoring_stack has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Property CRM_Membership_PaidByLogic\:\:\$financial_types has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Property CRM_Membership_PaidByLogic\:\:\$monitoring_stack has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Property CRM_Membership_PaidByLogic\:\:\$new_membership_id_stack has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Property CRM_Membership_PaidByLogic\:\:\$renewed_memberships type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Property CRM_Membership_PaidByLogic\:\:\$replacementStatusMessages type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Property CRM_Membership_PaidByLogic\:\:\$singleton has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Variable \$mode might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: CRM/Membership/PaidByLogic.php
+
+		-
+			message: '#^Cannot access offset ''error_message'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Cannot access offset ''is_error'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Cannot access offset ''key'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Cannot access offset ''table_name'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Cannot access offset ''values'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 5
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:_getDefaultSyncmap\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:cacheFields\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:cacheFields\(\) has parameter \$field_ids with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getAllSettings\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getDerivedFields\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getFieldInfo\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getFieldInfo\(\) has parameter \$field_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getFields\(\) has parameter \$field_keys with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getFields\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getLiveStatusIDs\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getMissingAmountField\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getMissingAmountFieldID\(\) should return int but returns null\.$#'
+			identifier: return.type
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getPaidByField\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getPaidByFieldID\(\) should return int but returns null\.$#'
+			identifier: return.type
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getPaidViaField\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getPaidViaFieldID\(\) should return int but returns null\.$#'
+			identifier: return.type
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getSetting\(\) has parameter \$key with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getStrtotimeDate\(\) has parameter \$key with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getStrtotimeDate\(\) has parameter \$warn with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:getSyncMapping\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:setLastProcessedMembershipID\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:setLastProcessedMembershipID\(\) has parameter \$id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:setSetting\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:setSetting\(\) has parameter \$key with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:setSetting\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Method CRM_Membership_Settings\:\:write\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^PHPDoc tag @return has invalid value \(array\(\[financial_type_id\] \=\> array\(membership_type_id\)\)\)\: Unexpected token "\(", expected TOKEN_HORIZONTAL_WS at offset 144 on line 5$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of function strtotime expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Property CRM_Membership_Settings\:\:\$field_cache has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Property CRM_Membership_Settings\:\:\$paid_by_field has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Property CRM_Membership_Settings\:\:\$paid_via_field has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Property CRM_Membership_Settings\:\:\$settings_bucket has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Property CRM_Membership_Settings\:\:\$singleton has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/Settings.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contact_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contribution_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contribution_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contribution_recur_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$entity_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$membership_count\.$#'
+			identifier: property.notFound
+			count: 2
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$membership_id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$membership_join_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$membership_start_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Call to an undefined method object\:\:fetch\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Call to an undefined method object\:\:free\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '''
+				#^Call to deprecated function civicrm_api\(\)\:
+				Not recommended for new code but ok for existing code to continue using\.
+
+				Calling `civicrm_api\(\)` is functionally identical to `civicrm_api3\(\)` or `civicrm_api4\(\)` except\:
+				  1\. It requires `\$params\['version'\]`\.
+				  2\. It catches exceptions and returns an array like `\['is_error' \=\> 1, 'error_message' \=\> \.\.\.\]`\.
+				This is disfavored for typical business\-logic/hooks/forms/etc\.
+				However, if an existing caller handles `civicrm_api\(\)`\-style errors, then there is no functional benefit to reworking it\.$#
+			'''
+			identifier: function.deprecated
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Cannot access offset ''is_error'' on array\|Civi\\Api4\\Generic\\Result\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Casting to int something that''s already int\.$#'
+			identifier: cast.useless
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Method CRM_Membership_SynchroniseLogic\:\:resetPayments\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Method CRM_Membership_SynchroniseLogic\:\:resetPayments\(\) has parameter \$contribution_ids with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Method CRM_Membership_SynchroniseLogic\:\:resetPayments\(\) has parameter \$financial_type_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Method CRM_Membership_SynchroniseLogic\:\:resetPayments\(\) has parameter \$membership_type_ids with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Method CRM_Membership_SynchroniseLogic\:\:synchronizePayments\(\) has parameter \$contribution_ids with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Method CRM_Membership_SynchroniseLogic\:\:synchronizePayments\(\) has parameter \$membership_type_ids with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Method CRM_Membership_SynchroniseLogic\:\:synchronizePayments\(\) has parameter \$settings_override with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Method CRM_Membership_SynchroniseLogic\:\:synchronizePayments\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Variable property access on object\.$#'
+			identifier: property.dynamicName
+			count: 1
+			path: CRM/Membership/SynchroniseLogic.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contact_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Argument of an invalid type null supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 3
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Call to an undefined method object\:\:fetch\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Cannot access offset ''values'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 3
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Identical\: Possible insane comparison between null and array\{\}\.$#'
+			identifier: voku.Identical
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:formatTokenValue\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:formatTokenValue\(\) has parameter \$token_name with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:formatTokenValue\(\) has parameter \$token_value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:getBaseTokens\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:getCustomTokenFields\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:getCustomTokens\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:getMembershipTokenValues\(\) has parameter \$base_tokens_used with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:getMembershipTokenValues\(\) has parameter \$cids with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:getMembershipTokenValues\(\) has parameter \$custom_tokens_used with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:getMembershipTokenValues\(\) has parameter \$membership_type_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:getMembershipTokenValues\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:getSingleton\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:getTokensUsed\(\) has parameter \$membership_types_used with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:getTokensUsed\(\) has parameter \$our_tokens with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:getTokensUsed\(\) has parameter \$token_list with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:getTokensUsed\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:tokenValues\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:tokenValues\(\) has parameter \$cids with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:tokenValues\(\) has parameter \$context with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:tokenValues\(\) has parameter \$job with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:tokenValues\(\) has parameter \$tokens with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:tokenValues\(\) has parameter \$values with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:tokens\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Method CRM_Membership_TokenLogic\:\:tokens\(\) has parameter \$tokens with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Only booleans are allowed in an elseif condition, int\|false given\.$#'
+			identifier: elseif.condNotBoolean
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, int given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, int\|false given\.$#'
+			identifier: if.condNotBoolean
+			count: 3
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Parameter \#2 \$format of static method CRM_Utils_Date\:\:customFormat\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Property CRM_Membership_TokenLogic\:\:\$_customTokenFields has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Property CRM_Membership_TokenLogic\:\:\$_membershipTypes has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Property CRM_Membership_TokenLogic\:\:\$singleton has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Variable property access on object\.$#'
+			identifier: property.dynamicName
+			count: 2
+			path: CRM/Membership/TokenLogic.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: CRM/Membership/UiMods.php
+
+		-
+			message: '#^Method CRM_Membership_UiMods\:\:adjustForm\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/UiMods.php
+
+		-
+			message: '#^Method CRM_Membership_UiMods\:\:adjustForm\(\) has parameter \$form with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/UiMods.php
+
+		-
+			message: '#^Method CRM_Membership_UiMods\:\:adjustForm\(\) has parameter \$formName with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/UiMods.php
+
+		-
+			message: '#^Method CRM_Membership_UiMods\:\:adjustList\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: CRM/Membership/UiMods.php
+
+		-
+			message: '#^Method CRM_Membership_UiMods\:\:adjustList\(\) has parameter \$headers with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/UiMods.php
+
+		-
+			message: '#^Method CRM_Membership_UiMods\:\:adjustList\(\) has parameter \$rows with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/UiMods.php
+
+		-
+			message: '#^Method CRM_Membership_UiMods\:\:adjustList\(\) has parameter \$selector with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: CRM/Membership/UiMods.php
+
+		-
+			message: '#^Only booleans are allowed in &&, mixed given on the right side\.$#'
+			identifier: booleanAnd.rightNotBoolean
+			count: 1
+			path: CRM/Membership/UiMods.php
+
+		-
+			message: '#^Only booleans are allowed in a negated boolean, mixed given\.$#'
+			identifier: booleanNot.exprNotBoolean
+			count: 1
+			path: CRM/Membership/Upgrader.php
+
+		-
+			message: '#^Cannot access offset ''values'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: api/v3/ContributionRecur/Render.php
+
+		-
+			message: '#^Function civicrm_api3_contribution_recur_render\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: api/v3/ContributionRecur/Render.php
+
+		-
+			message: '#^Function civicrm_api3_contribution_recur_render\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: api/v3/ContributionRecur/Render.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contribution_amount\.$#'
+			identifier: property.notFound
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contribution_currency\.$#'
+			identifier: property.notFound
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contribution_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contribution_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$end_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$membership_id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$minimum_fee\.$#'
+			identifier: property.notFound
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$p_interval\.$#'
+			identifier: property.notFound
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$p_rollover_day\.$#'
+			identifier: property.notFound
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$p_start_day\.$#'
+			identifier: property.notFound
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$p_type\.$#'
+			identifier: property.notFound
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$p_unit\.$#'
+			identifier: property.notFound
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$start_date\.$#'
+			identifier: property.notFound
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Call to an undefined method object\:\:fetch\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Call to an undefined method object\:\:free\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Cannot access offset ''id'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Cannot access offset mixed on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Casting to float something that''s already float\.$#'
+			identifier: cast.useless
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Function _civicrm_api3_membership_extend_spec\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Function _civicrm_api3_membership_extend_spec\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Function _mebership_extend_helper_extract_intlist\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Function _mebership_extend_helper_extract_intlist\(\) has parameter \$raw_value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Function civicrm_api3_membership_extend\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Function civicrm_api3_membership_extend\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Only booleans are allowed in a negated boolean, int given\.$#'
+			identifier: booleanNot.exprNotBoolean
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, int given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, int\|false\|null given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Only numeric types are allowed in \-, int\|false given on the left side\.$#'
+			identifier: minus.leftNonNumeric
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '''
+				#^PHPDoc tag @param has invalid value \(change_status    if "1" update the membership status when extending the membership
+				                          DEFAULT is 1\)\: Unexpected token "if", expected variable at offset 2081 on line 32$#
+			'''
+			identifier: phpDoc.parseError
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '''
+				#^PHPDoc tag @param has invalid value \(custom_fee       if set, this should be a custom field of the membership
+				                          containing a yearly\(\!\) fee override\. If not set or not present with
+				                          one particular membership, the default will still be used\)\: Unexpected token "if", expected variable at offset 1283 on line 22$#
+			'''
+			identifier: phpDoc.parseError
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '''
+				#^PHPDoc tag @param has invalid value \(custom_interval  if set, this should be a custom field of the membership
+				                          containing a payemnt interval override\)\: Unexpected token "if", expected variable at offset 1930 on line 30$#
+			'''
+			identifier: phpDoc.parseError
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '''
+				#^PHPDoc tag @param has invalid value \(horizon          if set, this represents the backward horizon in days
+				                          in which to check the membership payment,
+				                          e\.g\. "365" will only check the last year\)\: Unexpected token "if", expected variable at offset 1550 on line 25$#
+			'''
+			identifier: phpDoc.parseError
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '''
+				#^PHPDoc tag @param has invalid value \(look_ahead       only check memberships with an end_date up to look_ahead
+				                          days in the future\. This value can be negative\.
+				                          DEFAULT is 14\)\: Unexpected token "only", expected variable at offset 1079 on line 19$#
+			'''
+			identifier: phpDoc.parseError
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '''
+				#^PHPDoc tag @param has invalid value \(membership_ids   a comma\-separated list of memebership IDs
+				                          THIS OVERRIDES ALL ABOVE PARAMETERS, this is a debug feature\)\: Unexpected token "a", expected variable at offset 1771 on line 28$#
+			'''
+			identifier: phpDoc.parseError
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '''
+				#^PHPDoc tag @param has invalid value \(membership_type_ids      only check memberships with the given membership types
+				                          default is ALL\)\: Unexpected token "only", expected variable at offset 358 on line 9$#
+			'''
+			identifier: phpDoc.parseError
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '''
+				#^PHPDoc tag @param has invalid value \(precision        precision in which to accept membership payments
+				                          a value of '1\.0' means 100%% of the cycle period, i\.e\.
+				                          only payments on the exact date will be accepted\.
+				                          a precision of 0\.9 \(90%%\) would allow for monthly payments
+				                          to be off by up to 3 days \(10%% of 31 days\)\.
+				                          DEFAULT is 0\.8\)\: Unexpected token "precision", expected variable at offset 484 on line 11$#
+			'''
+			identifier: phpDoc.parseError
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '''
+				#^PHPDoc tag @param has invalid value \(status_ids       define the membership status IDs that will be considered\.
+				                          DEFAULT is 1,2,3 \(new, current, grace\)\)\: Unexpected token "define", expected variable at offset 926 on line 17$#
+			'''
+			identifier: phpDoc.parseError
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^PHPDoc tag @param has invalid value \(test_run         if "1" no actual changes are performed\. DEFAULT is 0\)\: Unexpected token "if", expected variable at offset 2216 on line 34$#'
+			identifier: phpDoc.parseError
+			count: 1
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Parameter \#2 \$baseTimestamp of function strtotime expects int\|null, int\|false given\.$#'
+			identifier: argument.type
+			count: 3
+			path: api/v3/Membership/Extend.php
+
+		-
+			message: '#^Function _civicrm_api3_membership_generate_spec\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: api/v3/Membership/Generate.php
+
+		-
+			message: '#^Function _civicrm_api3_membership_generate_spec\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: api/v3/Membership/Generate.php
+
+		-
+			message: '#^Function civicrm_api3_membership_generate\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: api/v3/Membership/Generate.php
+
+		-
+			message: '#^Function civicrm_api3_membership_generate\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: api/v3/Membership/Generate.php
+
+		-
+			message: '#^Parameter \#2 \.\.\.\$arrays of function array_merge expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: api/v3/Membership/Generate.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$membership_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: api/v3/Membership/Process.php
+
+		-
+			message: '#^Binary operation "\." between mixed and ''P60Membership…'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: api/v3/Membership/Process.php
+
+		-
+			message: '#^Call to an undefined method object\:\:fetch\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: api/v3/Membership/Process.php
+
+		-
+			message: '#^Dead catch \- Exception is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			count: 1
+			path: api/v3/Membership/Process.php
+
+		-
+			message: '#^Function _civicrm_api3_membership_process_spec\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: api/v3/Membership/Process.php
+
+		-
+			message: '#^Function _civicrm_api3_membership_process_spec\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: api/v3/Membership/Process.php
+
+		-
+			message: '#^Function civicrm_api3_membership_process\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: api/v3/Membership/Process.php
+
+		-
+			message: '#^Function civicrm_api3_membership_process\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: api/v3/Membership/Process.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, int given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: api/v3/Membership/Process.php
+
+		-
+			message: '#^Function _civicrm_api3_membership_payment_assign_all_spec\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: api/v3/MembershipPayment/AssignAll.php
+
+		-
+			message: '#^Function _civicrm_api3_membership_payment_assign_all_spec\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: api/v3/MembershipPayment/AssignAll.php
+
+		-
+			message: '#^Function civicrm_api3_membership_payment_assign_all\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: api/v3/MembershipPayment/AssignAll.php
+
+		-
+			message: '#^Function civicrm_api3_membership_payment_assign_all\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: api/v3/MembershipPayment/AssignAll.php
+
+		-
+			message: '#^Access to an undefined property object\:\:\$contact_id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: api/v3/MembershipPayment/Getlist.php
+
+		-
+			message: '#^Call to an undefined method object\:\:fetch\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: api/v3/MembershipPayment/Getlist.php
+
+		-
+			message: '#^Cannot access offset ''values'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: api/v3/MembershipPayment/Getlist.php
+
+		-
+			message: '#^Function civicrm_api3_membership_payment_getlist\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: api/v3/MembershipPayment/Getlist.php
+
+		-
+			message: '#^Function civicrm_api3_membership_payment_getlist\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: api/v3/MembershipPayment/Getlist.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: api/v3/MembershipPayment/Synchronize.php
+
+		-
+			message: '#^Function _civicrm_api3_membership_payment_synchronize_spec\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: api/v3/MembershipPayment/Synchronize.php
+
+		-
+			message: '#^Function _civicrm_api3_membership_payment_synchronize_spec\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: api/v3/MembershipPayment/Synchronize.php
+
+		-
+			message: '#^Function civicrm_api3_membership_payment_synchronize\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: api/v3/MembershipPayment/Synchronize.php
+
+		-
+			message: '#^Function civicrm_api3_membership_payment_synchronize\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: api/v3/MembershipPayment/Synchronize.php
+
+		-
+			message: '#^Function membership_civicrm_buildForm\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_buildForm\(\) has parameter \$form with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_buildForm\(\) has parameter \$formName with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_config\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_config\(\) has parameter \$config with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_enable\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_install\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_installment_created\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_installment_created\(\) has parameter \$contribution_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_installment_created\(\) has parameter \$contribution_recur_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_installment_created\(\) has parameter \$mandate_id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_navigationMenu\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_navigationMenu\(\) has parameter \$menu with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_post\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_post\(\) has parameter \$objectId with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_post\(\) has parameter \$objectName with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_post\(\) has parameter \$objectRef with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_post\(\) has parameter \$op with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_postProcess\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_postProcess\(\) has parameter \$form with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_postProcess\(\) has parameter \$formName with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_pre\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_pre\(\) has parameter \$id with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_pre\(\) has parameter \$objectName with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_pre\(\) has parameter \$op with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_pre\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_searchColumns\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_searchColumns\(\) has parameter \$headers with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_searchColumns\(\) has parameter \$objectName with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_searchColumns\(\) has parameter \$rows with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_searchColumns\(\) has parameter \$selector with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_searchTasks\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_searchTasks\(\) has parameter \$objectType with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_searchTasks\(\) has parameter \$tasks with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_summary\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_summary\(\) has parameter \$contactID with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_summary\(\) has parameter \$content with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_summary\(\) has parameter \$contentPlacement with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_tokenValues\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_tokenValues\(\) has parameter \$cids with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_tokenValues\(\) has parameter \$context with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_tokenValues\(\) has parameter \$job with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_tokenValues\(\) has parameter \$tokens with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_tokenValues\(\) has parameter \$values with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_tokens\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Function membership_civicrm_tokens\(\) has parameter \$tokens with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Only booleans are allowed in an if condition, int\|null given\.$#'
+			identifier: if.condNotBoolean
+			count: 1
+			path: membership.php
+
+		-
+			message: '#^Method MembershipFeeLogicTest\:\:_testCalculateExpectedAmount\(\) has parameter \$annual_amount with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: tests/phpunit/MembershipFeeLogicTest.php
+
+		-
+			message: '#^Method MembershipFeeLogicTest\:\:_testCalculateExpectedAmount\(\) has parameter \$changes with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: tests/phpunit/MembershipFeeLogicTest.php
+
+		-
+			message: '#^Method MembershipFeeLogicTest\:\:_testCalculateExpectedAmount\(\) has parameter \$expected_amount with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: tests/phpunit/MembershipFeeLogicTest.php
+
+		-
+			message: '#^Method MembershipFeeLogicTest\:\:_testCalculateExpectedAmount\(\) has parameter \$logic with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: tests/phpunit/MembershipFeeLogicTest.php
+
+		-
+			message: '#^Method MembershipFeeLogicTest\:\:_testCalculateExpectedAmount\(\) has parameter \$membership_data with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: tests/phpunit/MembershipFeeLogicTest.php
+
+		-
+			message: '#^Method MembershipFeeLogicTest\:\:_testCalculateExpectedAmount\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/phpunit/MembershipFeeLogicTest.php
+
+		-
+			message: '#^Method MembershipFeeLogicTest\:\:testAlignDate\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/phpunit/MembershipFeeLogicTest.php
+
+		-
+			message: '#^Method MembershipFeeLogicTest\:\:testCalculateExpectedAmount\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/phpunit/MembershipFeeLogicTest.php
+
+		-
+			message: '#^Method MembershipFeeLogicTest\:\:testUnitDateDiff\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/phpunit/MembershipFeeLogicTest.php
+
+		-
+			message: '#^Cannot access offset ''count'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Cannot access offset ''id'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 6
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Cannot access offset ''values'' on array\|int\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Method MembershipTestBase\:\:createChangeActivity\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Method MembershipTestBase\:\:createChangeActivity\(\) has parameter \$change_date with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Method MembershipTestBase\:\:createChangeActivity\(\) has parameter \$membership with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Method MembershipTestBase\:\:createChangeActivity\(\) has parameter \$new_amount with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Method MembershipTestBase\:\:createChangeActivity\(\) has parameter \$old_amount with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Method MembershipTestBase\:\:createMembership\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Method MembershipTestBase\:\:createMembership\(\) has parameter \$params with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Method MembershipTestBase\:\:createRandomContact\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Method MembershipTestBase\:\:getAnnualAmountField\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Method MembershipTestBase\:\:getMembershipCustomGroupID\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Method MembershipTestBase\:\:getRandomMembershipType\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Method MembershipTestBase\:\:makeSureThereIsALoggedInContact\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php
+
+		-
+			message: '#^Method MembershipTestBase\:\:setUpHeadless\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: tests/phpunit/MembershipTestBase.php

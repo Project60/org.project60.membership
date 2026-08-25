@@ -13,7 +13,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
-
+declare(strict_types = 1);
 
 /**
  * API command: ContributionRecur.render

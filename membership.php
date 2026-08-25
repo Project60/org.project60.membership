@@ -13,15 +13,14 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
+// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 
 require_once 'membership.civix.php';
 use CRM_Membership_ExtensionUtil as E;
 
 /**
  * Implements hook_civicrm_postProcess().
- *
- * @param string $formName
- * @param CRM_Core_Form $form
  */
 function membership_civicrm_postProcess($formName, &$form) {
   if ($form instanceof CRM_Contribute_Form_Contribution) {
@@ -32,7 +31,8 @@ function membership_civicrm_postProcess($formName, &$form) {
     $paidByLogic = CRM_Membership_PaidByLogic::getSingleton();
     $paidByLogic->replaceStatusMessages();
 
-  } elseif ($form instanceof CRM_Member_Form_Membership) {
+  }
+  elseif ($form instanceof CRM_Member_Form_Membership) {
     // update derived fields
     $membership_id = $form->getEntityId();
     if ($membership_id) {
@@ -43,44 +43,46 @@ function membership_civicrm_postProcess($formName, &$form) {
 }
 
 /**
-* Add an action for creating donation receipts after doing a search
-*
-* @access public
-*/
+ * Add an action for creating donation receipts after doing a search
+ *
+ * @access public
+ */
 function membership_civicrm_searchTasks($objectType, &$tasks) {
-  if ($objectType == 'contribution') {
+  if ($objectType === 'contribution') {
     if (CRM_Core_Permission::check('access CiviMember')) {
-      $tasks[] = array(
-          'title' => E::ts('Assign to Membership'),
-          'class' => 'CRM_Membership_Form_Task_AssignTask',
-          'result' => false);
-      $tasks[] = array(
-          'title' => E::ts('Detach from Membership'),
-          'class' => 'CRM_Membership_Form_Task_DetachTask',
-          'result' => false);
+      $tasks[] = [
+        'title' => E::ts('Assign to Membership'),
+        'class' => 'CRM_Membership_Form_Task_AssignTask',
+        'result' => FALSE,
+      ];
+      $tasks[] = [
+        'title' => E::ts('Detach from Membership'),
+        'class' => 'CRM_Membership_Form_Task_DetachTask',
+        'result' => FALSE,
+      ];
     }
   }
 }
 
 /**
- * Implementation of hook_civicrm_config
+ * Implements hook_civicrm_config().
  */
 function membership_civicrm_config(&$config) {
   _membership_civix_civicrm_config($config);
 }
 
 /**
- * Implementation of hook_civicrm_install
+ * Implements hook_civicrm_install().
  */
 function membership_civicrm_install() {
   return _membership_civix_civicrm_install();
 }
 
 /**
- * Implementation of hook_civicrm_enable
+ * Implements hook_civicrm_enable().
  */
 function membership_civicrm_enable() {
-  return _membership_civix_civicrm_enable();
+  _membership_civix_civicrm_enable();
 }
 
 /**
@@ -91,7 +93,7 @@ function membership_civicrm_enable() {
 function membership_civicrm_installment_created($mandate_id, $contribution_recur_id, $contribution_id) {
   //see if this installment should be assigned to a membership
   $paid_by_logic = CRM_Membership_PaidByLogic::getSingleton();
-  $paid_by_logic->assignSepaInstallment($mandate_id, $contribution_recur_id,$contribution_id);
+  $paid_by_logic->assignSepaInstallment($mandate_id, $contribution_recur_id, $contribution_id);
 }
 
 /**
@@ -99,8 +101,8 @@ function membership_civicrm_installment_created($mandate_id, $contribution_recur
  *
  * @access public
  */
-function membership_civicrm_searchColumns( $objectName, &$headers, &$rows, &$selector ) {
-  if ($objectName == 'membership') {
+function membership_civicrm_searchColumns($objectName, &$headers, &$rows, &$selector) {
+  if ($objectName === 'membership') {
     CRM_Membership_UiMods::adjustList($headers, $rows, $selector);
   }
 }
@@ -111,33 +113,34 @@ function membership_civicrm_searchColumns( $objectName, &$headers, &$rows, &$sel
  * @access public
  */
 function membership_civicrm_pre($op, $objectName, $id, &$params) {
-  // CRM_Core_Error::debug_log_message("civicrm_pre $op, $objectName, $id");
-  if ($objectName == 'Membership') {
+  if ($objectName === 'Membership') {
     // generate new membership number when new membership is created
-    if ($op == 'create' && empty($id)) {
+    if ($op === 'create' && (int) $id === 0) {
       // this might be one for us
       CRM_Membership_NumberLogic::generateNewNumber($params);
     }
 
     // catch if a membership is created/edited
-    if ($op == 'create' || $op == 'edit') {
+    if ($op === 'create' || $op === 'edit') {
       $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
-      $fee_logic->membershipFeeUpdatePRE($id, null);
+      $fee_logic->membershipFeeUpdatePRE($id, NULL);
     }
 
     // catch if a membership is set to a certain status
-    if (!empty($id) && ($op == 'create' || $op == 'edit')) {
+    if ((int) $id !== 0 && ($op === 'create' || $op === 'edit')) {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->membershipUpdatePre($id, $params);
     }
 
-  } elseif ($objectName == 'Contribution' && $op == 'edit') {
+  }
+  elseif ($objectName === 'Contribution' && $op === 'edit') {
     $logic = CRM_Membership_PaidByLogic::getSingleton();
     $logic->contributionUpdatePRE($id, $params);
 
-  } elseif ($objectName == 'ContributionRecur') {
+  }
+  elseif ($objectName === 'ContributionRecur') {
     // catch if a recurring contribution is created/edited
-    if ($op == 'edit') {
+    if ($op === 'edit') {
       $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
       $fee_logic->membershipFeeUpdatePRE(NULL, $id);
     }
@@ -149,10 +152,10 @@ function membership_civicrm_pre($op, $objectName, $id, &$params) {
  *
  * @access public
  */
+// phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
-  //CRM_Core_Error::debug_log_message("civicrm_post $op, $objectName, $objectId");
-  if ($objectName == 'Membership') {
-    if (!empty($objectId) && $op == 'create') {
+  if ($objectName === 'Membership') {
+    if ((int) $objectId !== 0 && $op === 'create') {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->createMembershipUpdatePOST($objectId, $objectRef);
       $logic->membershipUpdatePOST($objectId, $objectRef);
@@ -160,35 +163,37 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
       $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
       $fee_logic->markMembershipNew($objectId);
 
-    } elseif (!empty($objectId) && $op == 'edit') {
+    }
+    elseif ((int) $objectId !== 0 && $op === 'edit') {
       $logic = CRM_Membership_PaidByLogic::getSingleton();
       $logic->membershipUpdatePOST($objectId, $objectRef);
     }
 
     // catch if a membership is created/edited
-    if ($op == 'create' || $op == 'edit') {
+    if ($op === 'create' || $op === 'edit') {
       $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
-      $fee_logic->membershipFeeUpdatePOST($objectId, null);
+      $fee_logic->membershipFeeUpdatePOST($objectId, NULL);
     }
   }
 
-  if ($objectName == 'MembershipPayment' && $op == 'create') {
+  if ($objectName === 'MembershipPayment' && $op === 'create') {
     $logic = CRM_Membership_PaidByLogic::getSingleton();
-    $logic->membershipPaymentCreatePOST($objectRef->contribution_id, $objectRef->membership_id);
+    $logic->membershipPaymentCreatePOST((int) $objectRef->contribution_id, (int) $objectRef->membership_id);
   }
-  if ($objectName == 'Contribution' && $op == 'edit') {
+  if ($objectName === 'Contribution' && $op === 'edit') {
     $logic = CRM_Membership_PaidByLogic::getSingleton();
     $logic->contributionUpdatePOST($objectId, $objectRef);
   }
 
   // update derived fields:
-  if (!empty($objectId) && ($op == 'create' || $op == 'edit')) {
+  if ((int) $objectId !== 0 && ($op === 'create' || $op === 'edit')) {
     switch ($objectName) {
       case 'Membership':
         // update membership
         $logic = CRM_Membership_PaidByLogic::getSingleton();
         $logic->updateDerivedFields($objectId);
         break;
+
       case 'ContributionRecur':
         // update
         $logic = CRM_Membership_PaidByLogic::getSingleton();
@@ -198,7 +203,7 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
         }
 
         // see if this was a fee adjustment
-        if ($op == 'edit') {
+        if ($op === 'edit') {
           $fee_logic = CRM_Membership_FeeChangeLogic::getSingleton();
           $fee_logic->membershipFeeUpdatePOST(NULL, $objectId);
         }
@@ -214,16 +219,13 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
  * Implements hook_civicrm_buildForm().
  *
  * Insert
- *
- * @param string $formName
- * @param CRM_Core_Form $form
  */
 function membership_civicrm_buildForm($formName, &$form) {
   // first: general UI mods
   CRM_Membership_UiMods::adjustForm($formName, $form);
 
   // then inject paid-via stuff - if enabled
-  if ($formName == 'CRM_Member_Form_MembershipView') {
+  if ($formName === 'CRM_Member_Form_MembershipView') {
     $paid_by_logic = CRM_Membership_PaidByLogic::getSingleton();
     $paid_by_logic->extendForm($formName, $form);
   }
@@ -235,37 +237,40 @@ function membership_civicrm_buildForm($formName, &$form) {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
  */
 function membership_civicrm_navigationMenu(&$menu) {
-  _membership_civix_insert_navigation_menu($menu, 'Memberships', array(
+  _membership_civix_insert_navigation_menu($menu, 'Memberships', [
     'label'      => E::ts('Synchronise Payments'),
     'name'       => 'p60_payment_sync',
     'url'        => 'civicrm/membership/payments',
     'permission' => 'access CiviContribute',
     'operator'   => 'OR',
     'separator'  => 0,
-  ));
+  ]);
   _membership_civix_navigationMenu($menu);
 }
 
 /**
  * Hook implementation: New Tokens
  */
-function membership_civicrm_tokens( &$tokens ) {
+function membership_civicrm_tokens(&$tokens) {
   CRM_Membership_TokenLogic::getSingleton()->tokens($tokens);
 }
 
 /**
  * Hook implementation: New Tokens
  */
-function membership_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = array(), $context = null) {
+function membership_civicrm_tokenValues(&$values, $cids, $job = NULL, $tokens = [], $context = NULL) {
   // compatibility: extract contact_ids
   if (is_string($cids)) {
     $contact_ids = explode(',', $cids);
-  } elseif (isset($cids['contact_id'])) {
-    $contact_ids = array($cids['contact_id']);
-  } elseif (is_array($cids)) {
+  }
+  elseif (isset($cids['contact_id'])) {
+    $contact_ids = [$cids['contact_id']];
+  }
+  elseif (is_array($cids)) {
     $contact_ids = $cids;
-  } else {
-    CRM_Core_Error::debug_log_message("Cannot interpret cids: " . json_encode($cids));
+  }
+  else {
+    Civi::log()->warning('Cannot interpret cids: ' . json_encode($cids));
     return;
   }
 
@@ -275,6 +280,6 @@ function membership_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = 
 /**
  * Hook implementation: New Tokens
  */
-function membership_civicrm_summary( $contactID, &$content, &$contentPlacement ) {
+function membership_civicrm_summary($contactID, &$content, &$contentPlacement) {
   CRM_Membership_NumberLogic::adjustSummaryView($contactID);
 }

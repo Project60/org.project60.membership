@@ -13,6 +13,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
 
 use CRM_Membership_ExtensionUtil as E;
 
@@ -21,21 +22,27 @@ use CRM_Membership_ExtensionUtil as E;
  * to memberships
  * @see https://github.com/Project60/org.project60.membership/issues/10
  */
-class CRM_Membership_PaidByLogic
-{
+class CRM_Membership_PaidByLogic {
 
   protected static $singleton = NULL;
 
   protected $financial_types = NULL;
 
-  /** stores the pre/post hook records */
-  protected $monitoring_stack = array();
+  /**
+   * caches rendered contact data, indexed by contact ID */
+  protected $_renderedContacts = [];
 
-  /** stores the pre/post hook records for contribution status changed */
-  protected $contribution_status_monitoring_stack = array();
+  /**
+   * stores the pre/post hook records */
+  protected $monitoring_stack = [];
 
-  /** stores the ids of new memberships */
-  protected $new_membership_id_stack = array();
+  /**
+   * stores the pre/post hook records for contribution status changed */
+  protected $contribution_status_monitoring_stack = [];
+
+  /**
+   * stores the ids of new memberships */
+  protected $new_membership_id_stack = [];
 
   /**
    * Contains a list of memberships which have been renewed by
@@ -43,16 +50,17 @@ class CRM_Membership_PaidByLogic
    *
    * Why do we need this? If one updates a contribution related to a membership and puts the status
    * to completed we want the membership to be renewed. However if one does this through the UI
-   * civicrm core does handle the renewal, but if the renewal is done through the api (e.g. with civi banking or sepa). then
-   * the renewal is not handled.
-   * This class contains functionality to cater for the latter but the side effect is that if you set a membership contribution to completed through
-   * the ui the membership is renewed twice (e.g. for two periods instead of one).
-   * So the solution is as soon as this extension renews a membership store the end date in this array and use the membership_pre hook to reset the end date
-   * to our date.
+   * civicrm core does handle the renewal, but if the renewal is done through the api (e.g. with civi
+   * banking or sepa). then the renewal is not handled.
+   * This class contains functionality to cater for the latter but the side effect is that if you set
+   * a membership contribution to completed through the ui the membership is renewed twice (e.g. for
+   * two periods instead of one).
+   * So the solution is as soon as this extension renews a membership store the end date in this array
+   * and use the membership_pre hook to reset the end date to our date.
    *
    * @var array
    */
-  protected $renewed_memberships = array();
+  protected $renewed_memberships = [];
 
   /**
    * Contains a list with strings which should be replaced in the status messages.
@@ -69,10 +77,9 @@ class CRM_Membership_PaidByLogic
    *
    * @var array
    */
-  protected $replacementStatusMessages = array();
+  protected $replacementStatusMessages = [];
 
-  public static function getSingleton()
-  {
+  public static function getSingleton() {
     if (self::$singleton === NULL) {
       self::$singleton = new CRM_Membership_PaidByLogic();
     }
@@ -87,19 +94,19 @@ class CRM_Membership_PaidByLogic
     $session = CRM_Core_Session::singleton();
     // Get the message buffer and clear it. That is ok as we are going to readd the
     // messages anyway.
-    $statusMsgs = $session->getStatus(true);
+    $statusMsgs = $session->getStatus(TRUE);
     // Check for replacements and replace the text in the messages.
-    foreach($this->replacementStatusMessages as $replacement) {
-      foreach($statusMsgs as $key => $statusMsg) {
+    foreach ($this->replacementStatusMessages as $replacement) {
+      foreach ($statusMsgs as $key => $statusMsg) {
         if (stripos($statusMsg['text'], $replacement['original'])) {
           $statusMsgs[$key]['text'] = str_replace($replacement['original'], $replacement['new'], $statusMsg['text']);
         }
       }
     }
     // Readd the messages.
-    foreach($statusMsgs as $statusMsg) {
+    foreach ($statusMsgs as $statusMsg) {
       if (!is_array($statusMsg['options'])) {
-        $statusMsg['options'] = array();
+        $statusMsg['options'] = [];
       }
       CRM_Core_Session::setStatus($statusMsg['text'], $statusMsg['title'], $statusMsg['type'], $statusMsg['options']);
     }
@@ -108,9 +115,8 @@ class CRM_Membership_PaidByLogic
   /**
    * Change the payment contract for a membership
    */
-  public function changeContract($membership_id, $contribution_recur_id)
-  {
-    if (empty($membership_id)) {
+  public function changeContract($membership_id, $contribution_recur_id) {
+    if ((int) $membership_id === 0) {
       // no membership given
       return;
     }
@@ -118,27 +124,28 @@ class CRM_Membership_PaidByLogic
     $settings = CRM_Membership_Settings::getSettings();
     $field_id = $settings->getPaidViaFieldID();
     $field_name = "custom_{$field_id}";
-    if (empty($field_id)) {
+    if ((int) $field_id === 0) {
       // paid via field not set
       return;
     }
 
     // load membership to compare
-    $membership = civicrm_api3('Membership', 'getsingle', array(
-        'id' => $membership_id,
-        'return' => $field_name,
-    ));
+    $membership = civicrm_api3('Membership', 'getsingle', [
+      'id' => $membership_id,
+      'return' => $field_name,
+    ]);
 
-    if ($membership[$field_name] == $contribution_recur_id) {
+    if ((int) $membership[$field_name] === (int) $contribution_recur_id) {
       // nothing changed, but update fields for what it's worth
       $this->updateDerivedFields($membership_id);
       return;
     }
 
     // now: set the new ID
-    civicrm_api3('Membership', 'create', array(
-        'id' => $membership_id,
-        $field_name => (int)$contribution_recur_id));
+    civicrm_api3('Membership', 'create', [
+      'id' => $membership_id,
+      $field_name => (int) $contribution_recur_id,
+    ]);
 
     // update derived fields
     $this->updateDerivedFields($membership_id);
@@ -152,67 +159,83 @@ class CRM_Membership_PaidByLogic
    */
   public function endContract($membership_id) {
     $contribution_recur = $this->getRecurringContribution($membership_id);
-    if (empty($contribution_recur)) return; // nothing to do
+    // nothing to do
+    if ($contribution_recur === NULL || $contribution_recur === []) {
+      return;
+    }
 
     try {
-      if (function_exists('sepa_civicrm_install')) { // if CiviSEPA is present
+      // if CiviSEPA is present
+      if (function_exists('sepa_civicrm_install')) {
         // check if it's a SEPA Mandate
         $mandate = NULL;
         try {
-          $mandate = civicrm_api3('SepaMandate', 'getsingle', array(
-              'entity_id'    => $contribution_recur['id'],
-              'entity_table' => 'civicrm_contribution_recur'));
-        } catch (Exception $ex) {
+          $mandate = civicrm_api3('SepaMandate', 'getsingle', [
+            'entity_id'    => $contribution_recur['id'],
+            'entity_table' => 'civicrm_contribution_recur',
+          ]);
+        }
+        catch (Exception $ex) {
+          // @ignoreException
           // seems it's no (valid) mandate after all...
         }
         if ($mandate) {
-          CRM_Sepa_BAO_SEPAMandate::terminateMandate($mandate['id'], date('Ymd'), // no seconds due to SEPA-Bug
-              E::ts("Connected membership [%1] was ended.", array(1 => $membership_id)));
-          return; // our work here is done
+          // no seconds due to SEPA-Bug
+          CRM_Sepa_BAO_SEPAMandate::terminateMandate($mandate['id'], date('Ymd'),
+              E::ts('Connected membership [%1] was ended.', [1 => $membership_id]));
+          // our work here is done
+          return;
         }
       }
 
       // if we get here, it should be a simple recurring contribution.
       // we just want to end it.
-      civicrm_api3('ContributionRecur', 'create', array(
-          'id'                     => $contribution_recur['id'],
-          'contribution_status_id' => '1'  // "completed"
-      ));
-      CRM_Core_Session::setStatus(E::ts("Connected contribution [%1] was terminated.", array(1 => $contribution_recur['id'])), E::ts("Payment terminated."), 'info');
-    } catch (Exception $ex) {
+      civicrm_api3('ContributionRecur', 'create', [
+        'id'                     => $contribution_recur['id'],
+      // "completed"
+        'contribution_status_id' => '1',
+      ]);
+      CRM_Core_Session::setStatus(E::ts('Connected contribution [%1] was terminated.',
+        [1 => $contribution_recur['id']]), E::ts('Payment terminated.'), 'info');
+    }
+    catch (Exception $ex) {
+      // @ignoreException
       // if there's any problem: make sure the user is warned
-      $message = E::ts("The connected recurring contribution [%1] couldn't be ended: %2.", array(
-          1 => $contribution_recur['id'], 2 => $ex->getMessage()));
+      $message = E::ts("The connected recurring contribution [%1] couldn't be ended: %2.", [
+        1 => $contribution_recur['id'],
+        2 => $ex->getMessage(),
+      ]);
       CRM_Core_Session::setStatus($message, ts('Error'), 'error');
-      CRM_Core_Error::debug_log_message("P60Membership: " . $message);
+      Civi::log()->error('P60Membership: ' . $message);
     }
   }
 
   /**
    * Render a nice representation of the
    */
-  public function extendForm($formName, &$form)
-  {
+  public function extendForm($formName, &$form) {
     // see if there is a paid_via field
     $settings = CRM_Membership_Settings::getSettings();
     $paid_via = $settings->getPaidViaField();
-    if (!$paid_via) return;
+    if (!$paid_via) {
+      return;
+    }
 
     // get some IDs
     $membership_id = CRM_Utils_Request::retrieve('id', 'Integer');
     $contact_id = CRM_Utils_Request::retrieve('cid', 'Integer');
 
-    if ($formName == 'CRM_Member_Form_MembershipView') {
+    if ($formName === 'CRM_Member_Form_MembershipView') {
       // render the current
       $contribution_recur = $this->getRecurringContribution($membership_id);
       $current_display = $this->renderRecurringContribution($contribution_recur, $membership_id);
-      $edit_link = CRM_Utils_System::url("civicrm/membership/paidby", "reset=1&mid={$membership_id}&action=update");
+      $edit_link = CRM_Utils_System::url('civicrm/membership/paidby', "reset=1&mid={$membership_id}&action=update");
       $form->assign('p60paid_via_current', $current_display);
       $form->assign('p60paid_via_label', $paid_via['label']);
       $form->assign('p60paid_via_edit', $edit_link);
-      CRM_Core_Region::instance('page-body')->add(array(
-          'template' => 'CRM/Membership/Snippets/PaidByField.tpl',
-      ));
+      CRM_Core_Region::instance('page-body')->add([
+        'template' => 'CRM/Membership/Snippets/PaidByField.tpl',
+      ]);
 
       // also, add some styling
       CRM_Core_Resources::singleton()->addStyleFile('org.project60.membership', 'css/p60mem.css');
@@ -225,17 +248,20 @@ class CRM_Membership_PaidByLogic
    * @param $contribution_recur_id
    * @param $contribution_id
    */
-  public function assignSepaInstallment($mandate_id, $contribution_recur_id, $contribution_id)
-  {
+  public function assignSepaInstallment($mandate_id, $contribution_recur_id, $contribution_id) {
     // see if there is a paid_via field
     $settings = CRM_Membership_Settings::getSettings();
     $paid_via = $settings->getPaidViaField();
-    if (!$paid_via) return;
+    if (!$paid_via) {
+      return;
+    }
 
     // Create membership payment with the api. So that the pre and post hooks are invoked.
-    $membership_dao = CRM_Core_DAO::executeQuery("SELECT entity_id AS membership_id FROM {$paid_via['table_name']} WHERE {$paid_via['column_name']} = {$contribution_recur_id}");
-    while($membership_dao->fetch()) {
-      civicrm_api3('MembershipPayment', 'create', array('membership_id' => $membership_dao->membership_id, 'contribution_id' => $contribution_id));
+    $membership_dao = CRM_Core_DAO::executeQuery("SELECT entity_id AS membership_id FROM {$paid_via['table_name']}"
+      . " WHERE {$paid_via['column_name']} = {$contribution_recur_id}");
+    while ($membership_dao->fetch()) {
+      civicrm_api3('MembershipPayment', 'create',
+        ['membership_id' => $membership_dao->membership_id, 'contribution_id' => $contribution_id]);
     }
   }
 
@@ -248,8 +274,8 @@ class CRM_Membership_PaidByLogic
    */
   public function getMembershipIDs($recurring_contribution_id) {
     $recurring_contribution_id = (int) $recurring_contribution_id;
-    $result = array();
-    if (empty($recurring_contribution_id)) {
+    $result = [];
+    if ($recurring_contribution_id === 0) {
       return $result;
     }
 
@@ -265,7 +291,7 @@ class CRM_Membership_PaidByLogic
       FROM {$paid_via_field['table_name']} payment_info
       WHERE payment_info.{$paid_via_field['column_name']} = {$recurring_contribution_id};");
     while ($query->fetch()) {
-      if (!empty($query->membership_id)) {
+      if (isset($query->membership_id) && (int) $query->membership_id !== 0) {
         $result[] = (int) $query->membership_id;
       }
     }
@@ -275,26 +301,29 @@ class CRM_Membership_PaidByLogic
   /**
    * render a textual representation of the field value
    */
-  public function getRecurringContribution($membership_id)
-  {
+  public function getRecurringContribution($membership_id) {
     $settings = CRM_Membership_Settings::getSettings();
     $paid_via_field = $settings->getPaidViaField();
     $paid_via_key = $paid_via_field['key'];
-    $membership = civicrm_api3('Membership', 'getsingle', array(
-        'id'     => $membership_id,
-        'return' => $paid_via_key));
+    $membership = civicrm_api3('Membership', 'getsingle', [
+      'id'     => $membership_id,
+      'return' => $paid_via_key,
+    ]);
 
-    if (empty($membership[$paid_via_key])) {
+    if (!isset($membership[$paid_via_key]) || $membership[$paid_via_key] === ''
+      || $membership[$paid_via_key] === '0') {
       return NULL;
     }
 
     try {
       // load the recurring contribution
-      $contribution_recur = civicrm_api3('ContributionRecur', 'getsingle', array(
-          'id' => $membership[$paid_via_key]
-      ));
+      $contribution_recur = civicrm_api3('ContributionRecur', 'getsingle', [
+        'id' => $membership[$paid_via_key],
+      ]);
       return $contribution_recur;
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
+      // @ignoreException
       CRM_Core_Session::setStatus(E::ts("Couldn't load 'paid via' data."), ts('Error'), 'error');
       return NULL;
     }
@@ -307,8 +336,8 @@ class CRM_Membership_PaidByLogic
    * @return array membership id => recurring contribution ID
    */
   public function getRecurringContributions($membership_ids) {
-    $result = array();
-    if (empty($membership_ids)) {
+    $result = [];
+    if ($membership_ids === []) {
       return $result;
     }
 
@@ -336,9 +365,8 @@ class CRM_Membership_PaidByLogic
    *
    * @return textual representation of the field value
    */
-  public function renderRecurringContribution(&$contribution_recur, $membership_id)
-  {
-    if (empty($contribution_recur)) {
+  public function renderRecurringContribution(&$contribution_recur, $membership_id) {
+    if ($contribution_recur === NULL || $contribution_recur === []) {
       return E::ts('<i>None</i>');
     }
 
@@ -348,7 +376,7 @@ class CRM_Membership_PaidByLogic
     $reference = $this->renderRecurringContributionReference($contribution_recur);
     $in_use = $this->getPaidViaUseCount($contribution_recur['id'], $membership_id);
     $annual = $this->calculateAnnual($contribution_recur);
-    $text = E::ts("%1: %2", array(1 => $type, 2 => $cycle));
+    $text = E::ts('%1: %2', [1 => $type, 2 => $cycle]);
 
     // get contact
     $contact = $this->renderContact($contribution_recur['contact_id']);
@@ -362,24 +390,30 @@ class CRM_Membership_PaidByLogic
     $contribution_recur['display_type'] = $type;
     $contribution_recur['contact'] = $contact;
     $contribution_recur['financial_type'] = $this->getFinancialType($contribution_recur['financial_type_id']);
-    $contribution_recur['classes'] = "p60-paid-via-row-not-eligible"; // overwrite below
+    // overwrite below
+    $contribution_recur['classes'] = 'p60-paid-via-row-not-eligible';
 
     if ($in_use) {
-      $contribution_recur['display_status'] = E::ts("In Use!");
+      $contribution_recur['display_status'] = E::ts('In Use!');
 
-    } elseif ($contribution_recur['contribution_status_id'] == '5'
-        || $contribution_recur['contribution_status_id'] == '2') {
-      $contribution_recur['classes'] = "p60-paid-via-row-eligible";
-      $contribution_recur['display_status'] = E::ts("Active");
+    }
+    elseif ($contribution_recur['contribution_status_id'] === '5'
+        || $contribution_recur['contribution_status_id'] === '2') {
+      $contribution_recur['classes'] = 'p60-paid-via-row-eligible';
+      $contribution_recur['display_status'] = E::ts('Active');
 
       // check for end dates
-      if (!empty($contribution_recur['end_date'])) {
-        $contribution_recur['display_status'] .= ' ' . E::ts("(ends&nbsp;%1)",
-            array(1 => CRM_Utils_Date::customFormat($contribution_recur['end_date'], CRM_Core_Config::singleton()->dateformatFull)));
+      if (isset($contribution_recur['end_date']) && $contribution_recur['end_date'] !== ''
+        && $contribution_recur['end_date'] !== '0') {
+        $contribution_recur['display_status'] .= ' ' . E::ts('(ends&nbsp;%1)', [
+          1 => CRM_Utils_Date::customFormat($contribution_recur['end_date'],
+            CRM_Core_Config::singleton()->dateformatFull),
+        ]);
       }
 
-    } else {
-      $contribution_recur['display_status'] = E::ts("Terminated");
+    }
+    else {
+      $contribution_recur['display_status'] = E::ts('Terminated');
     }
 
     return $text;
@@ -388,15 +422,14 @@ class CRM_Membership_PaidByLogic
   /**
    * render a string to represent the type of recurring contribution
    */
-  protected function renderRecurringContributionType($contribution_recur)
-  {
+  protected function renderRecurringContributionType($contribution_recur) {
     if (function_exists('sepa_civicrm_install')) {
       // check if it is a SEPA mandate
-      $mandates = civicrm_api3('SepaMandate', 'get', array(
-          'entity_id' => $contribution_recur['id'],
-          'entity_table' => 'civicrm_contribution_recur',
-          'return' => 'id'
-      ));
+      $mandates = civicrm_api3('SepaMandate', 'get', [
+        'entity_id' => $contribution_recur['id'],
+        'entity_table' => 'civicrm_contribution_recur',
+        'return' => 'id',
+      ]);
 
       if ($mandates['count'] > 0) {
         return E::ts('SEPA');
@@ -404,18 +437,19 @@ class CRM_Membership_PaidByLogic
     }
 
     // no type yet? try payment instrument...
-    if (!empty($contribution_recur['payment_instrument_id'])) {
-      $label = civicrm_api3('OptionValue', 'getvalue', array(
-          'return' => 'label',
-          'value' => $contribution_recur['payment_instrument_id'],
-          'option_group_id' => 'payment_instrument'
-      ));
+    if (isset($contribution_recur['payment_instrument_id']) && $contribution_recur['payment_instrument_id'] !== ''
+      && $contribution_recur['payment_instrument_id'] !== '0') {
+      $label = civicrm_api3('OptionValue', 'getvalue', [
+        'return' => 'label',
+        'value' => $contribution_recur['payment_instrument_id'],
+        'option_group_id' => 'payment_instrument',
+      ]);
 
-      return E::ts("Recurring %1", array(1 => $label));
+      return E::ts('Recurring %1', [1 => $label]);
     }
 
     // fallback
-    return E::ts("Recurring", array(1 => 'Contribution'));
+    return E::ts('Recurring', [1 => 'Contribution']);
   }
 
   /**
@@ -425,17 +459,22 @@ class CRM_Membership_PaidByLogic
    */
   protected function renderRecurringContributionReference($contribution_recur) {
     try {
-      return civicrm_api3('SepaMandate', 'getvalue', array(
-          'entity_id'    => $contribution_recur['id'],
-          'entity_table' => 'civicrm_contribution_recur',
-          'return'       => 'reference'));
-    } catch (Exception $ex) {
+      return civicrm_api3('SepaMandate', 'getvalue', [
+        'entity_id'    => $contribution_recur['id'],
+        'entity_table' => 'civicrm_contribution_recur',
+        'return'       => 'reference',
+      ]);
+    }
+    catch (Exception $ex) {
+      // @ignoreException
       // no harm done: either SEPA not installed, or no SEPA mandate present.
     }
 
-    if (!empty($contribution_recur['trxn_id'])) {
+    if (isset($contribution_recur['trxn_id']) && $contribution_recur['trxn_id'] !== ''
+      && $contribution_recur['trxn_id'] !== '0') {
       return "TX {$contribution_recur['trxn_id']}";
-    } else {
+    }
+    else {
       return "ID {$contribution_recur['id']}";
     }
   }
@@ -443,8 +482,7 @@ class CRM_Membership_PaidByLogic
   /**
    * render a string to represent the type of recurring contribution
    */
-  protected function renderRecurringContributionCycle($contribution_recur)
-  {
+  protected function renderRecurringContributionCycle($contribution_recur) {
     // render amount
     $money = CRM_Utils_Money::format($contribution_recur['amount'], $contribution_recur['currency']);
 
@@ -455,11 +493,13 @@ class CRM_Membership_PaidByLogic
           case 12:
             $mode = E::ts('annually');
             break 2;
+
           case 1:
             $mode = E::ts('monthly');
             break 2;
+
           default:
-            $mode = E::ts('every %1 months', array(1 => $contribution_recur['frequency_interval']));
+            $mode = E::ts('every %1 months', [1 => $contribution_recur['frequency_interval']]);
             break 2;
         }
       case 'year':
@@ -467,8 +507,9 @@ class CRM_Membership_PaidByLogic
           case 1:
             $mode = E::ts('annually');
             break 2;
+
           default:
-            $mode = E::ts('every %1 years', array(1 => $contribution_recur['frequency_interval']));
+            $mode = E::ts('every %1 years', [1 => $contribution_recur['frequency_interval']]);
             break 2;
         }
       default:
@@ -478,11 +519,12 @@ class CRM_Membership_PaidByLogic
 
     // render collection day
     if (isset($contribution_recur['cycle_day'])) {
-      $collection = E::ts("on the %1.", array(1 => $contribution_recur['cycle_day']));
-    } else {
+      $collection = E::ts('on the %1.', [1 => $contribution_recur['cycle_day']]);
+    }
+    else {
       $collection = '';
     }
-    return ts("%1 %2 %3", array(1 => $money, 2 => $mode, 3 => $collection));
+    return ts('%1 %2 %3', [1 => $money, 2 => $mode, 3 => $collection]);
   }
 
   /**
@@ -503,26 +545,27 @@ class CRM_Membership_PaidByLogic
           FROM {$field['table_name']}
           WHERE {$field['column_name']} = {$contribution_recur_id}
             AND entity_id <> {$exclude_membership_id}");
-    } else {
+    }
+    else {
       return 0;
     }
   }
+
   /**
    * Get a simple reduced attribute set of the given contact
    */
-  protected function renderContact($contact_id)
-  {
-    if (empty($contact_id)) {
-      return array(
-          'display_name' => E::ts('Error'),
-      );
+  protected function renderContact($contact_id) {
+    if ((int) $contact_id === 0) {
+      return [
+        'display_name' => E::ts('Error'),
+      ];
     }
 
     if (!isset($this->_renderedContacts[$contact_id])) {
-      $this->_renderedContacts[$contact_id] = civicrm_api3('Contact', 'getsingle', array(
-          'id' => $contact_id,
-          'return' => 'contact_type,display_name'
-      ));
+      $this->_renderedContacts[$contact_id] = civicrm_api3('Contact', 'getsingle', [
+        'id' => $contact_id,
+        'return' => 'contact_type,display_name',
+      ]);
     }
     return $this->_renderedContacts[$contact_id];
   }
@@ -555,29 +598,29 @@ class CRM_Membership_PaidByLogic
     }
 
     $multiplier = 0;
-    if ($contribution_recur['frequency_unit'] == 'month') {
+    if ($contribution_recur['frequency_unit'] === 'month') {
       $multiplier = 12.0;
-    } elseif ($contribution_recur['frequency_unit'] == 'year') {
+    }
+    elseif ($contribution_recur['frequency_unit'] === 'year') {
       $multiplier = 1.0;
     }
-    return (float)$contribution_recur['amount'] * (float)$multiplier / (float)$contribution_recur['frequency_interval'];
+    return (float) $contribution_recur['amount'] * (float) $multiplier
+      / (float) $contribution_recur['frequency_interval'];
   }
 
   /**
    * get the name of the financial type
    */
-  protected function getFinancialType($financial_type_id)
-  {
+  protected function getFinancialType($financial_type_id) {
     if ($this->financial_types === NULL) {
-      $query = civicrm_api3('FinancialType', 'get', array(
-          'return' => 'id,name',
-          'sequential' => 0
-      ));
+      $query = civicrm_api3('FinancialType', 'get', [
+        'return' => 'id,name',
+        'sequential' => 0,
+      ]);
       $this->financial_types = $query['values'];
     }
     return $this->financial_types[$financial_type_id]['name'];
   }
-
 
   /**
    * MEMBERSHIP STATUS MONITORING
@@ -588,7 +631,8 @@ class CRM_Membership_PaidByLogic
   public function membershipUpdatePre($membership_id, &$update) {
     // simply store the update params on the stack, will be evaluated in membershipUpdatePOST
     $membershipParams = $update;
-    $membershipParams['membership_id'] = $membership_id; // just to be on the save side :)
+    // just to be on the save side :)
+    $membershipParams['membership_id'] = $membership_id;
     array_push($this->monitoring_stack, $membershipParams);
 
     // Check whether we have need to reset the end date after we have done a renewal.
@@ -597,28 +641,30 @@ class CRM_Membership_PaidByLogic
       if (isset($membershipParams['end_date'])) {
         // Create a replament for the status messages.
         $formattedOriginalEndDate = CRM_Utils_Date::customFormat($membershipParams['end_date'], '%B %E%f, %Y');
-        $formattedNewEndDate = CRM_Utils_Date::customFormat($this->renewed_memberships[$membership_id]['end_date'],'%B %E%f, %Y');
+        $formattedNewEndDate = CRM_Utils_Date::customFormat(
+          $this->renewed_memberships[$membership_id]['end_date'], '%B %E%f, %Y');
         // Retrieve displayNamne
-        $displayName = CRM_Core_DAO::singleValueQuery("
+        $displayName = CRM_Core_DAO::singleValueQuery('
           SELECT display_name
           FROM civicrm_membership
           INNER JOIN civicrm_contact ON civicrm_membership.contact_id = civicrm_contact.id
-          WHERE civicrm_membership.id = %1",
-          array (
-              1=>array($membership_id, 'Integer')
-          )
+          WHERE civicrm_membership.id = %1',
+          [
+            1 => [$membership_id, 'Integer'],
+          ]
         );
-        $replaceStatusMessage['original'] = E::ts("Membership for %1 has been updated. The membership End Date is %2.",
-          array(
+        $replaceStatusMessage = [];
+        $replaceStatusMessage['original'] = E::ts('Membership for %1 has been updated. The membership End Date is %2.',
+          [
             1 => $displayName,
             2 => $formattedOriginalEndDate,
-          )
+          ]
         );
-        $replaceStatusMessage['new'] = E::ts("Membership for %1 has been updated. The membership End Date is %2.",
-          array(
+        $replaceStatusMessage['new'] = E::ts('Membership for %1 has been updated. The membership End Date is %2.',
+          [
             1 => $displayName,
             2 => $formattedNewEndDate,
-          )
+          ]
         );
         $this->replacementStatusMessages[] = $replaceStatusMessage;
 
@@ -636,9 +682,8 @@ class CRM_Membership_PaidByLogic
    * @throws Exception     only if something's wrong with the pre/post call sequence - shouldn't happen
    */
   public function createMembershipUpdatePOST($membership_id, $object) {
-    $this->new_membership_id_stack[] = $membership_id;
+    $this->new_membership_id_stack[] = (int) $membership_id;
   }
-
 
   /**
    * MEMBERSHIP STATUS MONITORING
@@ -649,22 +694,23 @@ class CRM_Membership_PaidByLogic
    */
   public function membershipUpdatePOST($membership_id, $object) {
     $update = array_pop($this->monitoring_stack);
-    if (!empty($update['membership_id']) && $update['membership_id'] != $membership_id) {
+    if ((isset($update['membership_id']) && $update['membership_id'] !== '' && $update['membership_id'] !== '0')
+      && (int) $update['membership_id'] !== (int) $membership_id) {
       error_log("P60 Memberships: Illegal pre/post sequence: membership IDs don't match!");
       return;
     }
 
     // now check if we are supposed to do anything about this
-    if (!empty($update['status_id'])) {
+    if (isset($update['status_id']) && $update['status_id'] !== '' && $update['status_id'] !== '0') {
       $settings = CRM_Membership_Settings::getSettings();
       $status_ids = $settings->getSetting('paid_via_end_with_status');
-      if (is_array($status_ids) && in_array($update['status_id'], $status_ids)) {
+      if (is_array($status_ids)
+        && in_array((int) $update['status_id'], array_map('intval', $status_ids), TRUE)) {
         // ok, we should end the connected mandate/recurring contribution
         $this->endContract($membership_id);
       }
     }
   }
-
 
   /**
    * MEMBERSHIP PAYMENT STATUS MONITORING
@@ -683,19 +729,24 @@ class CRM_Membership_PaidByLogic
       return;
     }
 
-    $completed_status = civicrm_api3('OptionValue', 'getvalue', array('name' => 'Completed', 'option_group_id' => 'contribution_status', 'return' => 'value'));
-    $contribution = civicrm_api3('Contribution', 'getsingle', array('id' => $contribution_id));
-    if ($contribution['contribution_status_id'] != $completed_status) {
-      return; // Do not calculate the new end date as the contribution is not yet completed.
+    $completed_status = civicrm_api3('OptionValue', 'getvalue',
+      ['name' => 'Completed', 'option_group_id' => 'contribution_status', 'return' => 'value']);
+    $contribution = civicrm_api3('Contribution', 'getsingle', ['id' => $contribution_id]);
+    if ((int) $contribution['contribution_status_id'] !== (int) $completed_status) {
+      // Do not calculate the new end date as the contribution is not yet completed.
+      return;
     }
 
     // Check whether this is a new membership
-    if (in_array($membership_id, $this->new_membership_id_stack)) {
-      return; // This is a new membership no need to recalculate the end date
+    if (in_array($membership_id, $this->new_membership_id_stack, TRUE)) {
+      // This is a new membership no need to recalculate the end date
+      return;
     }
 
     //Check whether this is the first contribution of the membership
-    $contributionCount = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM civicrm_membership_payment WHERE membership_id = %1", array(1=>array($membership_id, 'Integer')));
+    $contributionCount = CRM_Core_DAO::singleValueQuery(
+      'SELECT COUNT(*) FROM civicrm_membership_payment WHERE membership_id = %1',
+      [1 => [$membership_id, 'Integer']]);
     if ($contributionCount <= 1) {
       // This is the first contribution of the membership do not update
       // status and end date.
@@ -703,9 +754,10 @@ class CRM_Membership_PaidByLogic
     }
 
     // Calculate new end date and set this as the new membership end date.
-    $membership = civicrm_api3('Membership', 'getsingle', array('id' => $membership_id));
+    $membership = civicrm_api3('Membership', 'getsingle', ['id' => $membership_id]);
     $currentEndDate = new DateTime($membership['end_date']);
-    $newDates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType($membership_id, $contribution['receive_date']);
+    $newDates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType($membership_id,
+      $contribution['receive_date']);
     $newEndDate = new DateTime($newDates['end_date']);
     if ($newEndDate > $currentEndDate) {
       $membershipStatus = CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate(
@@ -716,7 +768,8 @@ class CRM_Membership_PaidByLogic
         FALSE,
         $membership['membership_type_id']
       );
-      $membershipParams['status_id'] = $membershipStatus['id'];
+      $membershipParams = [];
+      $membershipParams['status_id'] = $membershipStatus['id'] ?? NULL;
       $membershipParams['id'] = $membership_id;
       $membershipParams['end_date'] = $newDates['end_date'];
       civicrm_api3('Membership', 'create', $membershipParams);
@@ -739,12 +792,13 @@ class CRM_Membership_PaidByLogic
       return;
     }
 
-    $completed_status = civicrm_api3('OptionValue', 'getvalue', array('name' => 'Completed', 'option_group_id' => 'contribution_status', 'return' => 'value'));
-    $contribution = civicrm_api3('Contribution', 'getsingle', array('id' => $contribution_id));
-    if ($params['contribution_status_id'] != $completed_status) {
+    $completed_status = civicrm_api3('OptionValue', 'getvalue',
+      ['name' => 'Completed', 'option_group_id' => 'contribution_status', 'return' => 'value']);
+    $contribution = civicrm_api3('Contribution', 'getsingle', ['id' => $contribution_id]);
+    if ((int) $params['contribution_status_id'] !== (int) $completed_status) {
       return;
     }
-    if ($params['contribution_status_id'] == $contribution['contribution_status_id']) {
+    if ((int) $params['contribution_status_id'] === (int) $contribution['contribution_status_id']) {
       return;
     }
 
@@ -760,8 +814,7 @@ class CRM_Membership_PaidByLogic
    * @param $object
    * @throws Exception     only if something's wrong with the pre/post call sequence - shouldn't happen
    */
-  public function contributionUpdatePOST($contribution_id, $object)
-  {
+  public function contributionUpdatePOST($contribution_id, $object) {
     $settings = CRM_Membership_Settings::getSettings();
     if (!$settings->getSetting('update_membership_status')) {
       return;
@@ -771,9 +824,10 @@ class CRM_Membership_PaidByLogic
       return;
     }
 
-    $membershipPayments = civicrm_api3('MembershipPayment', 'get', array('contribution_id' => $contribution_id, 'options' => array('limit' => 0)));
+    $membershipPayments = civicrm_api3('MembershipPayment', 'get',
+      ['contribution_id' => $contribution_id, 'options' => ['limit' => 0]]);
     foreach ($membershipPayments['values'] as $membershipPayment) {
-      $this->membershipPaymentCreatePOST($contribution_id, $membershipPayment['membership_id']);
+      $this->membershipPaymentCreatePOST((int) $contribution_id, (int) $membershipPayment['membership_id']);
     }
 
     unset($this->contribution_status_monitoring_stack[$contribution_id]);
@@ -786,26 +840,32 @@ class CRM_Membership_PaidByLogic
    *
    * @param array|int $membership_ids
    */
+  // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
   public function updateDerivedFields($membership_ids = NULL) {
     $settings = CRM_Membership_Settings::getSettings();
     $derived_fields = $settings->getDerivedFields();
-    if (empty($derived_fields) || empty($derived_fields['paid_via_field'])) return;
+    if ($derived_fields === [] || !isset($derived_fields['paid_via_field'])) {
+      return;
+    }
 
     // start building the query
-    $joins = $updates = $wheres = array();
+    $joins = $updates = $wheres = [];
 
     // are we doing this for some memberships only?
     if ($membership_ids) {
       if (is_array($membership_ids)) {
-        $wheres[] = "membership.id IN (" . implode(',', $membership_ids) . ')';
-      } elseif (is_numeric($membership_ids)) {
-        $wheres[] = "membership.id = " . (int) $membership_ids;
+        $wheres[] = 'membership.id IN (' . implode(',', $membership_ids) . ')';
+      }
+      elseif (is_numeric($membership_ids)) {
+        $wheres[] = 'membership.id = ' . (int) $membership_ids;
       }
     }
 
     // join contribution recur
-    $joins[] = "LEFT JOIN {$derived_fields['paid_via_field']['table_name']} paid_via ON paid_via.entity_id = membership.id";
-    $joins[] = "LEFT JOIN civicrm_contribution_recur recur ON recur.id = paid_via.{$derived_fields['paid_via_field']['column_name']}";
+    $joins[] = "LEFT JOIN {$derived_fields['paid_via_field']['table_name']} paid_via"
+      . ' ON paid_via.entity_id = membership.id';
+    $joins[] = 'LEFT JOIN civicrm_contribution_recur recur ON recur.id = paid_via.'
+      . "{$derived_fields['paid_via_field']['column_name']}";
 
     // calculate recurring annual amount
     $unit_year  = "IF(recur.frequency_unit = 'year', (recur.amount / recur.frequency_interval), 0.0)";
@@ -814,32 +874,38 @@ class CRM_Membership_PaidByLogic
 
     // UPDATE installment_amount_field
     if (isset($derived_fields['installment_amount_field'])) {
-      $joins[] = "LEFT JOIN {$derived_fields['installment_amount_field']['table_name']} installment_amount ON installment_amount.entity_id = membership.id";
-      $updates[] = "installment_amount.{$derived_fields['installment_amount_field']['column_name']} = IF(recur.amount IS NULL, 0.00, recur.amount)";
+      $joins[] = "LEFT JOIN {$derived_fields['installment_amount_field']['table_name']} installment_amount"
+        . ' ON installment_amount.entity_id = membership.id';
+      $updates[] = "installment_amount.{$derived_fields['installment_amount_field']['column_name']}"
+        . ' = IF(recur.amount IS NULL, 0.00, recur.amount)';
     }
 
     // UPDATE diff_amount_field
     if (isset($derived_fields['diff_amount_field']) && isset($derived_fields['annual_amount_field'])) {
-      $joins[] = "LEFT JOIN {$derived_fields['diff_amount_field']['table_name']} diff_amount ON diff_amount.entity_id = membership.id";
-      $joins[] = "LEFT JOIN {$derived_fields['annual_amount_field']['table_name']} annual_amount ON annual_amount.entity_id = membership.id";
-      $updates[] = "diff_amount.{$derived_fields['diff_amount_field']['column_name']} = annual_amount.{$derived_fields['annual_amount_field']['column_name']} - {$current_annual}";
+      $joins[] = "LEFT JOIN {$derived_fields['diff_amount_field']['table_name']} diff_amount"
+        . ' ON diff_amount.entity_id = membership.id';
+      $joins[] = "LEFT JOIN {$derived_fields['annual_amount_field']['table_name']} annual_amount"
+        . ' ON annual_amount.entity_id = membership.id';
+      $updates[] = "diff_amount.{$derived_fields['diff_amount_field']['column_name']} ="
+        . " annual_amount.{$derived_fields['annual_amount_field']['column_name']} - {$current_annual}";
     }
 
     // UPDATE payment_frequency_field
     if (isset($derived_fields['payment_frequency_field'])) {
       $intv_year  = "IF(recur.frequency_unit = 'year', recur.frequency_interval * 12, 0)";
       $interval = "IF(recur.frequency_unit = 'month', recur.frequency_interval, {$intv_year})";
-      $joins[] = "LEFT JOIN {$derived_fields['payment_frequency_field']['table_name']} payment_frequency ON payment_frequency.entity_id = membership.id";
+      $joins[] = "LEFT JOIN {$derived_fields['payment_frequency_field']['table_name']} payment_frequency"
+        . ' ON payment_frequency.entity_id = membership.id';
       $updates[] = "payment_frequency.{$derived_fields['payment_frequency_field']['column_name']} = {$interval}";
     }
 
     // UPDATE payment_type_field
     if (isset($derived_fields['payment_type_field'])) {
-      $payment_type_value = "recur.payment_instrument_id";
+      $payment_type_value = 'recur.payment_instrument_id';
 
       // apply mapping
       $mapping_raw = $settings->getSetting('payment_type_field_mapping');
-      if (!empty($mapping_raw)) {
+      if (isset($mapping_raw) && $mapping_raw !== '' && $mapping_raw !== '0') {
         $mappings = explode(',', $mapping_raw);
         foreach ($mappings as $mapping) {
           $from_to = explode(':', $mapping);
@@ -851,12 +917,13 @@ class CRM_Membership_PaidByLogic
         }
       }
 
-      $joins[] = "LEFT JOIN {$derived_fields['payment_type_field']['table_name']} payment_type ON payment_type.entity_id = membership.id";
+      $joins[] = "LEFT JOIN {$derived_fields['payment_type_field']['table_name']} payment_type"
+        . ' ON payment_type.entity_id = membership.id';
       $updates[] = "payment_type.{$derived_fields['payment_type_field']['column_name']} = {$payment_type_value}";
     }
 
     // check if there's anything to do
-    if (empty($updates)) {
+    if ($updates === []) {
       return;
     }
 
@@ -875,7 +942,7 @@ class CRM_Membership_PaidByLogic
     }
 
     // execute!
-    //CRM_Core_Error::debug_log_message($update_query);
     CRM_Core_DAO::executeQuery($update_query);
   }
+
 }

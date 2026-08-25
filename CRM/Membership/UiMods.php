@@ -13,6 +13,7 @@
 | copyright header is strictly prohibited without        |
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
+declare(strict_types = 1);
 
 use CRM_Membership_ExtensionUtil as E;
 
@@ -28,12 +29,12 @@ class CRM_Membership_UiMods {
    */
   public static function adjustList(&$headers, &$rows, &$selector) {
     $settings = CRM_Membership_Settings::getSettings();
-    if ($settings->getSetting('hide_auto_renewal')) {
+    if ((int) $settings->getSetting('hide_auto_renewal') !== 0) {
       // set header
-      $headers[8] = array('name' => E::ts("Contract"));
+      $headers[8] = ['name' => E::ts('Contract')];
 
       // extract memberhship IDs
-      $membership_ids = array();
+      $membership_ids = [];
       foreach ($rows as $index => $row) {
         $membership_ids[] = $row['membership_id'];
       }
@@ -45,7 +46,8 @@ class CRM_Membership_UiMods {
       // set to data
       foreach ($rows as $index => &$row) {
         $membership_id = $row['membership_id'];
-        $row['auto_renew'] = !empty($membership2rcontribution[$membership_id]);
+        // recurring contribution IDs are never 0/empty, so a plain isset() suffices here
+        $row['auto_renew'] = isset($membership2rcontribution[$membership_id]);
       }
     }
   }
@@ -54,15 +56,16 @@ class CRM_Membership_UiMods {
    * Adjust a form
    */
   public static function adjustForm($formName, $form) {
-    if ($formName == 'CRM_Member_Form_MembershipView') {
+    if ($formName === 'CRM_Member_Form_MembershipView') {
       $settings = CRM_Membership_Settings::getSettings();
       $paid_via_field = $settings->getPaidViaField();
       if ($paid_via_field && $settings->getSetting('hide_auto_renewal')) {
         CRM_Core_Smarty::singleton()->assign('auto_renewal_label', E::ts('Auto Renew'));
-        CRM_Core_Region::instance('page-body')->add(array(
-            'template' => 'CRM/Membership/Snippets/HideAutoRenewal.tpl',
-        ));
+        CRM_Core_Region::instance('page-body')->add([
+          'template' => 'CRM/Membership/Snippets/HideAutoRenewal.tpl',
+        ]);
       }
     }
   }
+
 }

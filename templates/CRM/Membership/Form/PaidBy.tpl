@@ -63,7 +63,7 @@
   </thead>
   <tbody id='p60_paid_via_options'>
     <tr class="p60-paid-via-row p60-paid-via-row-eligible sticky" id="p60_paid_via_0">
-      <td><img class="p60-paid-via-checkmark" src="{$config->resourceBase}i/check.gif" alt="{ts domain="org.project60.membership"}Selected{/ts}"/></td>
+      <td><i class="crm-i fa-check p60-paid-via-checkmark" aria-hidden="true" title="{ts escape='htmlattribute' domain="org.project60.membership"}Selected{/ts}"></i></td>
       <td></td>
       <td>?</td>
       <td><strong>{ts domain="org.project60.membership"}manual{/ts}</strong></td>
@@ -81,7 +81,7 @@
 var owner_id  = "{$membership.contact_id}";
 var membership_id  = "{$membership.id}";
 var paid_by   = "{$membership.paid_by}"; // TODO
-var checkmark = '<img class="p60-paid-via-checkmark" src="{$config->resourceBase}i/check.gif" alt="{ts domain="org.project60.membership"}Selected{/ts}"/>';
+var checkmark = '<i class="crm-i fa-check p60-paid-via-checkmark" aria-hidden="true" title="{ts escape='htmlattribute' domain="org.project60.membership"}Selected{/ts}"></i>';
 
 {literal}
 function p60m_updateSelection() {
@@ -92,7 +92,7 @@ function p60m_updateSelection() {
 
   // hide all checkmarks
   cj("table.p60-paid-via")
-    .find("img.p60-paid-via-checkmark")
+    .find(".p60-paid-via-checkmark")
     .hide();
 
   // select current
@@ -100,7 +100,7 @@ function p60m_updateSelection() {
   if (current =='') current = 0;
   cj("tr[id=p60_paid_via_" + current + "]")
     .addClass("p60-paid-via-row-selected")
-    .find("img.p60-paid-via-checkmark")
+    .find(".p60-paid-via-checkmark")
     .show();
 }
 

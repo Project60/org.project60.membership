@@ -33,10 +33,16 @@ function civicrm_api3_membership_payment_assign_all($params) {
   $settings = CRM_Membership_Settings::getSettings();
   $mapping  = $settings->getSyncMapping();
 
+  $date_from = strtotime((string) $params['date_from']);
+  $date_to = strtotime((string) $params['date_to']);
+  if ($date_from === FALSE || $date_to === FALSE) {
+    return civicrm_api3_create_error("The parameters 'date_from' and 'date_to' must be parsable dates.");
+  }
+
   // build parameters
   $settings_override = [
-    'sync_minimum_date'            => date('Y-m-d H:i:s', strtotime($params['date_from'])),
-    'sync_maximum_date'            => date('Y-m-d H:i:s', strtotime($params['date_to'])),
+    'sync_minimum_date'            => date('Y-m-d H:i:s', $date_from),
+    'sync_maximum_date'            => date('Y-m-d H:i:s', $date_to),
     'sync_range'                   => 0,
     'grace_period'                 => 0,
     'eligible_contribution_states' => [],
@@ -46,10 +52,10 @@ function civicrm_api3_membership_payment_assign_all($params) {
   // add contribution / membership status IDs
   if (isset($params['contribution_status_ids']) && $params['contribution_status_ids'] !== '') {
     $settings_override['eligible_contribution_states'] = array_map('intval',
-      explode(',', $params['contribution_status_ids']));
+      explode(',', (string) $params['contribution_status_ids']));
   }
   if (isset($params['membership_status_ids']) && $params['membership_status_ids'] !== '') {
-    $settings_override['live_statuses'] = array_map('intval', explode(',', $params['membership_status_ids']));
+    $settings_override['live_statuses'] = array_map('intval', explode(',', (string) $params['membership_status_ids']));
   }
 
   // start synchronization

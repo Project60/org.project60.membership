@@ -178,7 +178,7 @@ function membership_civicrm_post($op, $objectName, $objectId, &$objectRef) {
 
   if ($objectName === 'MembershipPayment' && $op === 'create') {
     $logic = CRM_Membership_PaidByLogic::getSingleton();
-    $logic->membershipPaymentCreatePOST($objectRef->contribution_id, $objectRef->membership_id);
+    $logic->membershipPaymentCreatePOST((int) $objectRef->contribution_id, (int) $objectRef->membership_id);
   }
   if ($objectName === 'Contribution' && $op === 'edit') {
     $logic = CRM_Membership_PaidByLogic::getSingleton();

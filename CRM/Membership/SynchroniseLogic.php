@@ -43,9 +43,9 @@ class CRM_Membership_SynchroniseLogic {
 
     // get a mapping of memberships that are linked to recurring-contributions
     $paid_via_field = $settings->getPaidViaField();
-    $paid_via_column = $paid_via_field['column_name'];
     $paid_via_mapping = [];
     if ($paid_via_field) {
+      $paid_via_column = $paid_via_field['column_name'];
       $paid_via_mapping_sql = "
       SELECT entity_id, {$paid_via_field['column_name']}
       FROM {$paid_via_field['table_name']}

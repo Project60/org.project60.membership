@@ -316,16 +316,33 @@ class CRM_Membership_Settings {
    * get the syncmap property
    * default is the mapping that is defined by the membership_types' financial type id
    *
-   * @return array([financial_type_id] => array(membership_type_id))
+   * @return array<int,list<int>>
    */
-  public function getSyncMapping() {
+  public function getSyncMapping(): array {
     $mapping = $this->getSetting('sync_mapping');
     if (!is_array($mapping) || $mapping === []) {
-      return CRM_Membership_Settings::_getDefaultSyncmap();
+      $mapping = CRM_Membership_Settings::_getDefaultSyncmap();
     }
-    else {
-      return $mapping;
+
+    $normalised = [];
+    foreach ($mapping as $financial_type_id => $membership_type_ids) {
+      if (is_string($membership_type_ids)) {
+        $membership_type_ids = $membership_type_ids === '' ? [] : explode(',', $membership_type_ids);
+      }
+      elseif (!is_array($membership_type_ids)) {
+        $membership_type_ids = is_scalar($membership_type_ids) ? [$membership_type_ids] : [];
+      }
+
+      $ids = [];
+      foreach ($membership_type_ids as $membership_type_id) {
+        if (is_scalar($membership_type_id) && (int) $membership_type_id !== 0) {
+          $ids[] = (int) $membership_type_id;
+        }
+      }
+      $normalised[(int) $financial_type_id] = $ids;
     }
+
+    return $normalised;
   }
 
   /**

@@ -62,7 +62,7 @@ function civicrm_api3_membership_extend($params) {
   ];
 
   // 0. Sanitize parameters
-  $membership_type_ids = _mebership_extend_helper_extract_intlist($params['membership_type_ids']);
+  $membership_type_ids = _mebership_extend_helper_extract_intlist($params['membership_type_ids'] ?? NULL);
   if (!isset($membership_type_ids) || $membership_type_ids === '') {
     $membership_clause = 'civicrm_membership_type.is_active = 1';
   }
@@ -70,7 +70,7 @@ function civicrm_api3_membership_extend($params) {
     $membership_clause = "civicrm_membership.membership_type_id IN ($membership_type_ids)";
   }
 
-  $membership_status_ids = _mebership_extend_helper_extract_intlist($params['status_ids']);
+  $membership_status_ids = _mebership_extend_helper_extract_intlist($params['status_ids'] ?? NULL);
   if (!isset($membership_status_ids) || $membership_status_ids === '') {
     $membership_status_ids = '1,2,3';
   }
@@ -222,26 +222,41 @@ function civicrm_api3_membership_extend($params) {
 
     // 4. find the starting time
     $date = strtotime($membership['start_date']);
+    if ($date === FALSE) {
+      continue;
+    }
     // the next lines implement support for membership period type "fixed"
     // TODO: This currently works only for membership periods of type "year" and starting Jan-01 with duration 1 year.
     // TODO: Should be enhanced for other duration unit / duration interval and differing fixed period start days.
     if ($payment_type === 'fixed') {
       // sanitize the content of these fields (they might have no leading zero and are only 3 characters long)
-      $payment_start_day = str_pad($payment_start_day, 4, '0', STR_PAD_LEFT);
-      $payment_rollover_day = str_pad($payment_rollover_day, 4, '0', STR_PAD_LEFT);
+      $payment_start_day = str_pad((string) $payment_start_day, 4, '0', STR_PAD_LEFT);
+      $payment_rollover_day = str_pad((string) $payment_rollover_day, 4, '0', STR_PAD_LEFT);
       // Check if rollover date was reached when the membership started:
       // In this case, no additional payment is needed in the following membership period (year),
       // and we add 1 year to the membership start date:
-      $rollover = strtotime("$date-substr($payment_rollover_day, 0, 2)-substr($payment_rollover_day, 2, 2)");
-      if ($rollover < $date) {
-        $date = strtotime('+1 year', $date);
+      $rollover = strtotime(date('Y', $date) . '-' . substr($payment_rollover_day, 0, 2)
+        . '-' . substr($payment_rollover_day, 2, 2));
+      if (is_int($rollover) && $rollover < $date) {
+        $next_year = strtotime('+1 year', $date);
+        if (is_int($next_year)) {
+          $date = $next_year;
+        }
       }
       // Move $date back to the start of the payment period
-      $date = strtotime("$date-substr($payment_start_day, 0, 2)-substr($payment_start_day, 2, 2)");
+      $period_start = strtotime(date('Y', $date) . '-' . substr($payment_start_day, 0, 2)
+        . '-' . substr($payment_start_day, 2, 2));
+      if (is_int($period_start)) {
+        $date = $period_start;
+      }
     }
     if ($horizon) {
       while ($date < $horizon) {
-        $date = strtotime("+$payment_interval $payment_unit", $date);
+        $next_date = strtotime("+$payment_interval $payment_unit", $date);
+        if (!is_int($next_date) || $next_date <= $date) {
+          break;
+        }
+        $date = $next_date;
       }
     }
 
@@ -276,7 +291,11 @@ function civicrm_api3_membership_extend($params) {
       else {
         // everything checks out => advance to next due date
         // error_log("sum is enough, moving on...");
-        $date = strtotime("+$payment_interval $payment_unit", $date);
+        $next_date = strtotime("+$payment_interval $payment_unit", $date);
+        if (!is_int($next_date) || $next_date <= $date) {
+          break;
+        }
+        $date = $next_date;
       }
     }
 
@@ -353,7 +372,7 @@ function _mebership_extend_helper_extract_intlist($raw_value) {
   if (!isset($raw_value) || $raw_value === '' || $raw_value === '0') {
     return '';
   }
-  $bits = explode(',', $raw_value);
+  $bits = explode(',', (string) $raw_value);
   $elements = [];
   foreach ($bits as $value) {
     if ((int) $value) {

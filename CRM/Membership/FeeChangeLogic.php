@@ -88,7 +88,7 @@ class CRM_Membership_FeeChangeLogic {
       // this is the outer call, here we want to act (if there is a change)
       case 1:
         $before_record = array_pop($this->monitoring_stack);
-        if (in_array($membership_id, $this->new_memberships, TRUE)
+        if (in_array((int) $membership_id, $this->new_memberships, TRUE)
           || $before_record === NULL || $before_record === []) {
           // we won't record any change activities for new memberships
           return;
@@ -108,7 +108,7 @@ class CRM_Membership_FeeChangeLogic {
    *   Membership ID to be marked as 'new'
    */
   public function markMembershipNew($membership_id) {
-    $this->new_memberships[] = $membership_id;
+    $this->new_memberships[] = (int) $membership_id;
   }
 
   /**

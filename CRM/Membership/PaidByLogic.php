@@ -682,7 +682,7 @@ class CRM_Membership_PaidByLogic {
    * @throws Exception     only if something's wrong with the pre/post call sequence - shouldn't happen
    */
   public function createMembershipUpdatePOST($membership_id, $object) {
-    $this->new_membership_id_stack[] = $membership_id;
+    $this->new_membership_id_stack[] = (int) $membership_id;
   }
 
   /**
@@ -769,7 +769,7 @@ class CRM_Membership_PaidByLogic {
         $membership['membership_type_id']
       );
       $membershipParams = [];
-      $membershipParams['status_id'] = $membershipStatus['id'];
+      $membershipParams['status_id'] = $membershipStatus['id'] ?? NULL;
       $membershipParams['id'] = $membership_id;
       $membershipParams['end_date'] = $newDates['end_date'];
       civicrm_api3('Membership', 'create', $membershipParams);
@@ -827,7 +827,7 @@ class CRM_Membership_PaidByLogic {
     $membershipPayments = civicrm_api3('MembershipPayment', 'get',
       ['contribution_id' => $contribution_id, 'options' => ['limit' => 0]]);
     foreach ($membershipPayments['values'] as $membershipPayment) {
-      $this->membershipPaymentCreatePOST($contribution_id, $membershipPayment['membership_id']);
+      $this->membershipPaymentCreatePOST((int) $contribution_id, (int) $membershipPayment['membership_id']);
     }
 
     unset($this->contribution_status_monitoring_stack[$contribution_id]);

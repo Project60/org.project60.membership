@@ -36,7 +36,8 @@ class CRM_Membership_Form_PaidBy extends CRM_Core_Form {
     }
 
     // get some IDs
-    $membership_id = CRM_Utils_Request::retrieve('mid', 'Integer');
+    $membership_id = CRM_Utils_Request::retrieve('mid', 'Integer')
+      ?? CRM_Utils_Request::retrieve('membership_id', 'Integer');
     $membership = civicrm_api3('Membership', 'getsingle', ['id' => $membership_id]);
     $contribution_recur = $logic->getRecurringContribution($membership_id);
 

@@ -18,6 +18,7 @@ declare(strict_types = 1);
 
 require_once 'CRM/Admin/Form/Setting.php';
 
+use Civi\Api4\FinancialType;
 use CRM_Membership_ExtensionUtil as E;
 
 /**
@@ -43,8 +44,13 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     $this->assign('membership_types', $membership_types);
 
     // load financial types
-    $financial_type_options = Civi::entity('FinancialType')->getOptions('financial_type_id') ?? [];
-    $financial_types = array_column($financial_type_options, 'label', 'id');
+    /** @var array<int,string> $financial_types */
+    $financial_types = FinancialType::get(FALSE)
+      ->addSelect('id', 'name')
+      ->addWhere('is_active', '=', TRUE)
+      ->addOrderBy('name')
+      ->execute()
+      ->column('name', 'id');
     $this->assign('financial_types', $financial_types);
 
     // load status options
@@ -250,7 +256,9 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
 
     // save new settings
     $settings = CRM_Membership_Settings::getSettings();
-    $settings->setSetting('sync_mapping', $sync_mapping, FALSE);
+    if ($sync_mapping !== []) {
+      $settings->setSetting('sync_mapping', $sync_mapping, FALSE);
+    }
     $settings->setSetting('sync_range', $values['sync_range'], FALSE);
     $settings->setSetting('grace_period', $values['grace_period'], FALSE);
     $settings->setSetting('sync_minimum_date', $values['sync_minimum_date'], FALSE);

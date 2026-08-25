@@ -24,6 +24,8 @@ require_once 'MembershipTestBase.php';
  * Test MembershipFeeLogic class
  *
  * @group headless
+ *
+ * @covers \CRM_Membership_MembershipFeeLogic
  */
 class MembershipFeeLogicTest extends MembershipTestBase {
 

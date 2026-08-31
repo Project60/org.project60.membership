@@ -46,11 +46,11 @@ class CRM_Admin_Form_Setting_MembershipExtension extends CRM_Admin_Form_Setting 
     // load financial types
     /** @var array<int,string> $financial_types */
     $financial_types = FinancialType::get(FALSE)
-      ->addSelect('id', 'name')
+      ->addSelect('id', 'label')
       ->addWhere('is_active', '=', TRUE)
-      ->addOrderBy('name')
+      ->addOrderBy('label')
       ->execute()
-      ->column('name', 'id');
+      ->column('label', 'id');
     $this->assign('financial_types', $financial_types);
 
     // load status options

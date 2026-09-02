@@ -1,5 +1,5 @@
 {
-    "name": "systopia/org.project60.membership",
+    "name": "project60/org.project60.membership",
     "description": "Project60 extension to make CiviMember more flexible.",
     "type": "civicrm-ext",
     "license": "AGPL-3.0-or-later",

@@ -40,6 +40,15 @@ function membership_civicrm_postProcess($formName, &$form) {
       $logic->updateDerivedFields($membership_id);
     }
   }
+  elseif ($form instanceof CRM_Admin_Form_Generic) {
+    CRM_Membership_SettingsPage::postProcess($form);
+  }
+}
+
+function membership_civicrm_preProcess(string $formName, mixed &$form): void {
+  if ($form instanceof CRM_Admin_Form_Generic) {
+    CRM_Membership_SettingsPage::preProcess($form);
+  }
 }
 
 /**
@@ -228,6 +237,10 @@ function membership_civicrm_buildForm($formName, &$form) {
   if ($formName === 'CRM_Member_Form_MembershipView') {
     $paid_by_logic = CRM_Membership_PaidByLogic::getSingleton();
     $paid_by_logic->extendForm($formName, $form);
+  }
+
+  if ($form instanceof CRM_Admin_Form_Generic) {
+    CRM_Membership_SettingsPage::buildForm($form);
   }
 }
 

@@ -1,117 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '''
-				#^Call to method buildQuickForm\(\) of deprecated class CRM_Admin_Form_Setting\:
-				use CRM_Admin_Form_Generic instead\.$#
-			'''
-			identifier: method.deprecatedClass
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '''
-				#^Call to method setDefaultValues\(\) of deprecated class CRM_Admin_Form_Setting\:
-				use CRM_Admin_Form_Generic instead\.$#
-			'''
-			identifier: method.deprecatedClass
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '#^Cannot access offset ''values'' on array\|int\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 9
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '''
-				#^Class CRM_Admin_Form_Setting_MembershipExtension extends deprecated class CRM_Admin_Form_Setting\:
-				use CRM_Admin_Form_Generic instead\.$#
-			'''
-			identifier: class.extendsDeprecatedClass
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:buildQuickForm\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getAllCustomFields\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getAmountFieldOptions\(\) has parameter \$read_only with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getAmountFieldOptions\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getDateFieldOptions\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getEligibleCustomGroups\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getMembershipNumberOptions\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getPaidByOptions\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getPaidViaOptions\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:getSelectFieldOptions\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:postProcess\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '#^Method CRM_Admin_Form_Setting_MembershipExtension\:\:setDefaultValues\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
-			message: '#^Property CRM_Admin_Form_Setting_MembershipExtension\:\:\$_eligibleCustomGroups has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: CRM/Admin/Form/Setting/MembershipExtension.php
-
-		-
 			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
 			identifier: foreach.nonIterable
 			count: 2
@@ -926,12 +815,6 @@ parameters:
 			path: CRM/Membership/Form/PaidBy.php
 
 		-
-			message: '#^Only booleans are allowed in an if condition, int given\.$#'
-			identifier: if.condNotBoolean
-			count: 1
-			path: CRM/Membership/Form/PaidBy.php
-
-		-
 			message: '#^Parameter \#3 \$label of method CRM_Core_Form\:\:add\(\) expects string, mixed given\.$#'
 			identifier: argument.type
 			count: 1
@@ -1174,12 +1057,6 @@ parameters:
 		-
 			message: '#^Method CRM_Membership_Form_Task_AssignTask\:\:setDefaultValues\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Membership/Form/Task/AssignTask.php
-
-		-
-			message: '#^Only booleans are allowed in an if condition, int given\.$#'
-			identifier: if.condNotBoolean
 			count: 1
 			path: CRM/Membership/Form/Task/AssignTask.php
 
@@ -2518,12 +2395,6 @@ parameters:
 			path: CRM/Membership/Settings.php
 
 		-
-			message: '#^Method CRM_Membership_Settings\:\:getAllSettings\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: CRM/Membership/Settings.php
-
-		-
 			message: '#^Method CRM_Membership_Settings\:\:getDerivedFields\(\) return type has no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
@@ -2566,38 +2437,14 @@ parameters:
 			path: CRM/Membership/Settings.php
 
 		-
-			message: '#^Method CRM_Membership_Settings\:\:getMissingAmountFieldID\(\) should return int but returns null\.$#'
-			identifier: return.type
-			count: 1
-			path: CRM/Membership/Settings.php
-
-		-
 			message: '#^Method CRM_Membership_Settings\:\:getPaidByField\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
 			path: CRM/Membership/Settings.php
 
 		-
-			message: '#^Method CRM_Membership_Settings\:\:getPaidByFieldID\(\) should return int but returns null\.$#'
-			identifier: return.type
-			count: 1
-			path: CRM/Membership/Settings.php
-
-		-
 			message: '#^Method CRM_Membership_Settings\:\:getPaidViaField\(\) has no return type specified\.$#'
 			identifier: missingType.return
-			count: 1
-			path: CRM/Membership/Settings.php
-
-		-
-			message: '#^Method CRM_Membership_Settings\:\:getPaidViaFieldID\(\) should return int but returns null\.$#'
-			identifier: return.type
-			count: 1
-			path: CRM/Membership/Settings.php
-
-		-
-			message: '#^Method CRM_Membership_Settings\:\:getSetting\(\) has parameter \$key with no type specified\.$#'
-			identifier: missingType.parameter
 			count: 1
 			path: CRM/Membership/Settings.php
 
@@ -2614,12 +2461,6 @@ parameters:
 			path: CRM/Membership/Settings.php
 
 		-
-			message: '#^Method CRM_Membership_Settings\:\:getSyncMapping\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Membership/Settings.php
-
-		-
 			message: '#^Method CRM_Membership_Settings\:\:setLastProcessedMembershipID\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -2628,36 +2469,6 @@ parameters:
 		-
 			message: '#^Method CRM_Membership_Settings\:\:setLastProcessedMembershipID\(\) has parameter \$id with no type specified\.$#'
 			identifier: missingType.parameter
-			count: 1
-			path: CRM/Membership/Settings.php
-
-		-
-			message: '#^Method CRM_Membership_Settings\:\:setSetting\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Membership/Settings.php
-
-		-
-			message: '#^Method CRM_Membership_Settings\:\:setSetting\(\) has parameter \$key with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Membership/Settings.php
-
-		-
-			message: '#^Method CRM_Membership_Settings\:\:setSetting\(\) has parameter \$value with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: CRM/Membership/Settings.php
-
-		-
-			message: '#^Method CRM_Membership_Settings\:\:write\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
-			path: CRM/Membership/Settings.php
-
-		-
-			message: '#^PHPDoc tag @return has invalid value \(array\(\[financial_type_id\] \=\> array\(membership_type_id\)\)\)\: Unexpected token "\(", expected TOKEN_HORIZONTAL_WS at offset 144 on line 5$#'
-			identifier: phpDoc.parseError
 			count: 1
 			path: CRM/Membership/Settings.php
 
@@ -2681,12 +2492,6 @@ parameters:
 
 		-
 			message: '#^Property CRM_Membership_Settings\:\:\$paid_via_field has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: CRM/Membership/Settings.php
-
-		-
-			message: '#^Property CRM_Membership_Settings\:\:\$settings_bucket has no type specified\.$#'
 			identifier: missingType.property
 			count: 1
 			path: CRM/Membership/Settings.php

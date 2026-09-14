@@ -353,7 +353,7 @@ class CRM_Membership_TokenLogic {
       // first: get from the settings
       $custom_field_ids = [];
       $settings = CRM_Membership_Settings::getSettings();
-      for ($i = 1; $i <= CRM_Admin_Form_Setting_MembershipExtension::CUSTOM_MEMBERSHIP_TOKEN_COUNT; $i++) {
+      for ($i = 1; $i <= CRM_Membership_Settings::CUSTOM_MEMBERSHIP_TOKEN_COUNT; $i++) {
         $potential_field_id = (int) $settings->getSetting("custom_token_{$i}");
         if ($potential_field_id) {
           $custom_field_ids[] = $potential_field_id;

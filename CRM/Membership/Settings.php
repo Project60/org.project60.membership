@@ -15,6 +15,7 @@
 +--------------------------------------------------------*/
 declare(strict_types = 1);
 
+use Civi\Core\SettingsMetadata;
 use CRM_Membership_ExtensionUtil as E;
 
 /**
@@ -22,13 +23,47 @@ use CRM_Membership_ExtensionUtil as E;
  */
 class CRM_Membership_Settings {
 
+  public const CUSTOM_MEMBERSHIP_TOKEN_COUNT = 5;
+
+  public const SETTING_PREFIX = 'p60_membership_';
+
+  public const LEGACY_SETTING = 'p60_membership_settings';
+
+  public const KEYS = [
+    'sync_mapping',
+    'sync_range',
+    'grace_period',
+    'live_statuses',
+    'sync_minimum_date',
+    'sync_maximum_date',
+    'membership_number_field',
+    'membership_number_generator',
+    'membership_number_show',
+    'hide_auto_renewal',
+    'paid_via_field',
+    'record_fee_updates',
+    'update_membership_status',
+    'paid_by_field',
+    'annual_amount_field',
+    'installment_amount_field',
+    'diff_amount_field',
+    'payment_frequency_field',
+    'payment_type_field',
+    'payment_type_field_mapping',
+    'membership_cancellation_date_field',
+    'membership_cancellation_reason_field',
+    'missing_period_amount_field',
+    'paid_via_end_with_status',
+    'custom_token_1',
+    'custom_token_2',
+    'custom_token_3',
+    'custom_token_4',
+    'custom_token_5',
+  ];
+
   /**
    * singleton object */
   protected static $singleton = NULL;
-
-  /**
-   * the current settings blob */
-  protected $settings_bucket = NULL;
 
   /**
    * cached data on the paid_via field */
@@ -40,10 +75,6 @@ class CRM_Membership_Settings {
    * CRM_Membership_Settings constructor.
    */
   protected function __construct() {
-    $this->settings_bucket = CRM_Core_BAO_Setting::getItem('Membership Payments', 'p60_membership_settings');
-    if (!is_array($this->settings_bucket)) {
-      $this->settings_bucket = [];
-    }
   }
 
   /**
@@ -59,29 +90,37 @@ class CRM_Membership_Settings {
 
   /**
    * Set a named setting to the given value
-   * @param $key   string name
-   * @param $value mixed value
-   * @param bool $write_through  write to DB right away
+   * @param string $key name
+   * @param mixed $value value
+   * @throws \CRM_Core_Exception
    */
-  public function setSetting($key, $value, $write_through = TRUE) {
-    $this->settings_bucket[$key] = $value;
-    if ($write_through) {
-      $this->write();
+  public function setSetting(string $key, $value): void {
+    if (!in_array($key, self::KEYS, TRUE)) {
+      throw new CRM_Core_Exception(sprintf('Unknown membership setting "%s".', $key));
     }
+    Civi::settings()->set(self::SETTING_PREFIX . $key, $value);
   }
 
   /**
    * Get a named setting
-   * @param $key
+   * @param string $key
    * @return mixed|null
    */
-  public function getSetting($key) {
-    if (isset($this->settings_bucket[$key])) {
-      return $this->settings_bucket[$key];
-    }
-    else {
+  public function getSetting(string $key): mixed {
+    if (!in_array($key, self::KEYS, TRUE)) {
       return NULL;
     }
+
+    $name = self::SETTING_PREFIX . $key;
+    $settings = Civi::settings();
+    if (!$settings->hasExplicit($name)) {
+      $legacy = $settings->get(self::LEGACY_SETTING);
+      if (is_array($legacy) && array_key_exists($key, $legacy)) {
+        return $legacy[$key];
+      }
+    }
+
+    return $settings->get($name);
   }
 
   /**
@@ -113,31 +152,11 @@ class CRM_Membership_Settings {
   }
 
   /**
-   * Get all settings
-   * @return array
-   */
-  public function getAllSettings() {
-    return $this->settings_bucket;
-  }
-
-  /**
-   * Write settings to DB
-   */
-  public function write() {
-    Civi::settings()->set('p60_membership_settings', $this->settings_bucket);
-  }
-
-  /**
    * Get the field ID of the selected paid_by field
-   * @return int
+   * @return int|null
    */
   public function getPaidByFieldID() {
-    if (isset($this->settings_bucket['paid_by_field']) && (int) $this->settings_bucket['paid_by_field'] !== 0) {
-      return (int) $this->settings_bucket['paid_by_field'];
-    }
-    else {
-      return NULL;
-    }
+    return $this->getFieldIdSetting('paid_by_field');
   }
 
   /**
@@ -151,16 +170,10 @@ class CRM_Membership_Settings {
 
   /**
    * Get the field ID of the selected paid_by field
-   * @return int
+   * @return int|null
    */
   public function getMissingAmountFieldID() {
-    if (isset($this->settings_bucket['missing_period_amount_field'])
-      && (int) $this->settings_bucket['missing_period_amount_field'] !== 0) {
-      return (int) $this->settings_bucket['missing_period_amount_field'];
-    }
-    else {
-      return NULL;
-    }
+    return $this->getFieldIdSetting('missing_period_amount_field');
   }
 
   /**
@@ -174,15 +187,10 @@ class CRM_Membership_Settings {
 
   /**
    * Get the field ID of the selected paid_via field
-   * @return int
+   * @return int|null
    */
   public function getPaidViaFieldID() {
-    if (isset($this->settings_bucket['paid_via_field']) && (int) $this->settings_bucket['paid_via_field'] !== 0) {
-      return (int) $this->settings_bucket['paid_via_field'];
-    }
-    else {
-      return NULL;
-    }
+    return $this->getFieldIdSetting('paid_via_field');
   }
 
   /**
@@ -427,6 +435,53 @@ class CRM_Membership_Settings {
    */
   public function setLastProcessedMembershipID($id) {
     Civi::settings()->set('p60_membership_last_processed_id', (int) $id);
+  }
+
+  public static function migrateLegacySettings(): void {
+    /** @var \Civi\Core\SettingsManager $manager */
+    $manager = Civi::service('settings_manager');
+    $manager->flush();
+
+    $settings = Civi::settings();
+    $legacy = $settings->get(self::LEGACY_SETTING);
+    if (is_array($legacy)) {
+      /** @var array<string,array{type?: string}> $metadata */
+      $metadata = SettingsMetadata::getMetadata();
+      foreach (self::KEYS as $key) {
+        $name = self::SETTING_PREFIX . $key;
+        if (!array_key_exists($key, $legacy) || $settings->hasExplicit($name)) {
+          continue;
+        }
+        $value = self::normaliseLegacyValue($legacy[$key], $metadata[$name]['type'] ?? 'String');
+        if ($value !== NULL) {
+          $settings->set($name, $value);
+        }
+      }
+    }
+
+    if ($settings->hasExplicit(self::LEGACY_SETTING)) {
+      $settings->revert(self::LEGACY_SETTING);
+    }
+    self::$singleton = NULL;
+  }
+
+  private static function normaliseLegacyValue(mixed $value, string $type): mixed {
+    if ($value === NULL || $value === '' || $value === []) {
+      return NULL;
+    }
+
+    return match ($type) {
+      'Integer' => is_numeric($value) && (int) $value !== 0 ? (int) $value : NULL,
+      'Boolean' => (bool) $value ? TRUE : NULL,
+      'Array' => is_array($value) ? $value : NULL,
+      default => is_scalar($value) ? (string) $value : NULL,
+    };
+  }
+
+  private function getFieldIdSetting(string $key): ?int {
+    $value = $this->getSetting($key);
+
+    return is_numeric($value) && (int) $value !== 0 ? (int) $value : NULL;
   }
 
 }

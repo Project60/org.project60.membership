@@ -199,7 +199,7 @@ The mapping of contributions to memberships can be done in two ways: Via the UI 
 
 ### General
 
-- **Only Synchronise between**: This defines which contributions will be considered for synchronisation by defining a time frame. This is optional. You can enter any [valid `strtotime()`](https://www.php.net/manual/en/datetime.formats.php) string like `2017-01-01` or `now - 2 days`.
+- **Only Synchronise From** / **Only Synchronise Until**: This defines which contributions will be considered for synchronisation by defining a time frame. This is optional. You can enter any [valid `strtotime()`](https://www.php.net/manual/en/datetime.formats.php) string like `2017-01-01` or `now - 2 days`. Invalid expressions are rejected when saving the settings.
 - **Backward horizon (in days)**: If a membership payment is received within this number of days before the current starting date, the start and the join date will be extended to the payment's received date.
 - **Grace period (in days)**: In order to associate contributions with expired memberships, you will first have to manually extend those memberships.
 - **Paid by Field**: Sometimes the member is not paying the membership fee themselves but somebody else is undertaking the payments. To integrate these cases into CiviCRM, you can configure a custom field. If the field is empty, it is assumed that the member and paying contact are identical.

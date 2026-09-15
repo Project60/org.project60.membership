@@ -600,6 +600,12 @@ parameters:
 			path: CRM/Membership/CustomData.php
 
 		-
+			message: '#^Possibly invalid array key type string\|null\.$#'
+			identifier: offsetAccess.invalidOffset
+			count: 1
+			path: CRM/Membership/CustomData.php
+
+		-
 			message: '#^Property CRM_Membership_CustomData\:\:\$custom_field_cache has no type specified\.$#'
 			identifier: missingType.property
 			count: 1

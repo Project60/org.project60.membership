@@ -64,7 +64,8 @@
     },
     "conflict": {
         "pear/mail_mime": "<1.10.2",
-        "pear/pear-core-minimal": "<1.10.16"
+        "pear/pear-core-minimal": "<1.10.16",
+        "symfony/polyfill-php82": "<1.28"
     },
     "_comment": [
       "PEAR_ErrorStack::singleton() overridden in CRM_Core_Error is static since pear/pear-core v1.10.16"

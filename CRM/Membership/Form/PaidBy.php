@@ -43,7 +43,7 @@ class CRM_Membership_Form_PaidBy extends CRM_Core_Form {
 
     // see if there is a 'paid by'
     $paid_by_id = $settings->getPaidByFieldID();
-    if ($paid_by_id) {
+    if ($paid_by_id !== NULL) {
       $paid_by_field_name = "custom_{$paid_by_id}_id";
       if (isset($membership[$paid_by_field_name]) && $membership[$paid_by_field_name] !== '') {
         $membership['paid_by'] = $membership[$paid_by_field_name];

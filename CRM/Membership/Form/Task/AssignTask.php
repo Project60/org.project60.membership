@@ -66,7 +66,7 @@ class CRM_Membership_Form_Task_AssignTask extends CRM_Contribute_Form_Task {
     // add paid by field
     $settings = CRM_Membership_Settings::getSettings();
     $paid_by_field_id = $settings->getPaidByFieldID();
-    if ($paid_by_field_id) {
+    if ($paid_by_field_id !== NULL) {
       $this->assign('paid_by_field', "custom_{$paid_by_field_id}");
     }
     else {

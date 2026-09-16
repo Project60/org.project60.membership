@@ -8,7 +8,7 @@
   </item>
   <item>
     <path>civicrm/admin/setting/membership</path>
-    <page_callback>CRM_Admin_Form_Setting_MembershipExtension</page_callback>
+    <page_callback>CRM_Admin_Form_Generic</page_callback>
     <title>Project60 Membership Extension</title>
     <desc>Configuration for Project60s extension for making memberships more flexible</desc>
     <access_arguments>administer CiviCRM</access_arguments>

@@ -16,8 +16,6 @@
 declare(strict_types = 1);
 // phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 
-require_once 'CRM/Report/Form.php';
-
 /*
 TODO:
 - memberships that do not span the whole range, exclude?

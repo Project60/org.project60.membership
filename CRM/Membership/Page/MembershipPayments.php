@@ -16,8 +16,6 @@
 declare(strict_types = 1);
 // phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 
-require_once 'CRM/Core/Page.php';
-
 class CRM_Membership_Page_MembershipPayments extends CRM_Core_Page {
 
   public const VIEW_CUTOFF = 2000;

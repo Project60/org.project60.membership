@@ -16,8 +16,6 @@
 declare(strict_types = 1);
 // phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 
-require_once 'CRM/Admin/Form/Setting.php';
-
 use Civi\Api4\FinancialType;
 use CRM_Membership_ExtensionUtil as E;
 

@@ -18,8 +18,6 @@ declare(strict_types = 1);
 
 use CRM_Membership_ExtensionUtil as E;
 
-require_once 'CRM/Core/Form.php';
-
 /**
  * Form controller class
  *

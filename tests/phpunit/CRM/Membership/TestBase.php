@@ -16,6 +16,7 @@
 declare(strict_types = 1);
 
 use CRM_Membership_ExtensionUtil as E;
+use Civi\Api4\FinancialType;
 use Civi\Test\HeadlessInterface;
 use Civi\Core\HookInterface;
 use Civi\Test\TransactionalInterface;
@@ -171,10 +172,11 @@ class CRM_Membership_TestBase extends \PHPUnit\Framework\TestCase implements
     $type_query = civicrm_api3('MembershipType', 'get', ['is_active' => 1]);
     if ((int) $type_query['count'] === 0) {
       error_log('create type');
+      $financialTypeId = $this->getFinancialTypeId();
       $create_query = civicrm_api3('MembershipType', 'create', [
         'name'                 => 'Member Test',
         'member_of_contact_id' => '1',
-        'financial_type_id'    => '2',
+        'financial_type_id'    => $financialTypeId,
         'minimum_fee'          => '10',
         'duration_unit'        => 'year',
         'domain_id'            => '1',
@@ -182,7 +184,7 @@ class CRM_Membership_TestBase extends \PHPUnit\Framework\TestCase implements
         'period_type'          => 'rolling',
         'visibility'           => 'Public',
         'is_active'            => '1',
-        'contribution_type_id' => '2',
+        'contribution_type_id' => $financialTypeId,
       ]);
       self::assertNotEmpty($create_query['id'], "Couldn't create membership type");
       return $create_query['id'];
@@ -192,6 +194,24 @@ class CRM_Membership_TestBase extends \PHPUnit\Framework\TestCase implements
       $first_type = reset($type_query['values']);
       return $first_type['id'];
     }
+  }
+
+  private function getFinancialTypeId(): int {
+    $financialType = FinancialType::get(FALSE)
+      ->addSelect('id')
+      ->addWhere('is_active', '=', TRUE)
+      ->setLimit(1)
+      ->execute()
+      ->first();
+    if ($financialType === NULL) {
+      $financialType = FinancialType::create(FALSE)
+        ->addValue('name', 'Member Test')
+        ->addValue('is_active', TRUE)
+        ->execute()
+        ->single();
+    }
+
+    return (int) $financialType['id'];
   }
 
   /**

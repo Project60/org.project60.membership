@@ -18,65 +18,48 @@ use Civi\Api4\FinancialType;
 use Civi\Api4\MembershipType;
 use CRM_Membership_ExtensionUtil as E;
 
-final class CRM_Membership_SettingsPage {
-
-  private const PAGE = 'membership';
+final class CRM_Membership_Form_Settings extends CRM_Admin_Form_Generic {
 
   private const SYNC_MAPPING_PREFIX = 'syncmap_';
 
   private const SYNCHRONISE_NOW = 'synchronise_payment_now';
 
-  public static function preProcess(CRM_Admin_Form_Generic $form): void {
-    if (!self::isSettingsPage($form)) {
-      return;
-    }
-
-    $form->sections = self::getSections();
-
-    $membershipTypes = self::getMembershipTypes();
-    $weight = 0;
-    foreach (self::getFinancialTypes() as $financialTypeId => $financialTypeLabel) {
-      $name = self::SYNC_MAPPING_PREFIX . $financialTypeId;
-      $form->add('select', $name, $financialTypeLabel, $membershipTypes, FALSE, [
-        'multiple' => 'multiple',
-        'class' => 'crm-select2',
-      ]);
-      $weight += 10;
-      $form->sections['mapping']['fields'][$name] = ['weight' => $weight];
-    }
-
-    $form->add('checkbox', self::SYNCHRONISE_NOW, E::ts('Update Derived Fields on Save'));
-    $form->sections['derived']['fields'][self::SYNCHRONISE_NOW] = [
-      'weight' => 60,
-      'description' => E::ts(
-        'If checked, all derived fields will be re-calculated from the currently linked recurring payment.'
-      ),
-    ];
-  }
-
-  public static function buildForm(CRM_Admin_Form_Generic $form): void {
-    if (!self::isSettingsPage($form)) {
-      return;
-    }
-
-    $defaults = [];
-    foreach (CRM_Membership_Settings::getSettings()->getSyncMapping() as $financialTypeId => $membershipTypeIds) {
-      $defaults[self::SYNC_MAPPING_PREFIX . $financialTypeId] = $membershipTypeIds;
-    }
-    $form->setDefaults($defaults);
-
-    Civi::resources()->addScriptFile(E::LONG_NAME, 'js/settings.js');
+  public function preProcess(): void {
+    $this->sections = self::getSections();
+    parent::preProcess();
   }
 
   /**
    * @throws \CRM_Core_Exception
    */
-  public static function postProcess(CRM_Admin_Form_Generic $form): void {
-    if (!self::isSettingsPage($form)) {
-      return;
+  public function buildQuickForm(): void {
+    $this->addSyncMappingFields();
+    $this->addSynchroniseNowField();
+    parent::buildQuickForm();
+
+    Civi::resources()->addScriptFile(E::LONG_NAME, 'js/settings.js');
+  }
+
+  /**
+   * @return array<string, mixed>
+   */
+  public function setDefaultValues(): array {
+    /** @var array<string, mixed> $defaults */
+    $defaults = parent::setDefaultValues();
+    foreach (CRM_Membership_Settings::getSettings()->getSyncMapping() as $financialTypeId => $membershipTypeIds) {
+      $defaults[self::SYNC_MAPPING_PREFIX . $financialTypeId] = $membershipTypeIds;
     }
 
-    $values = $form->exportValues();
+    return $defaults;
+  }
+
+  /**
+   * @throws \CRM_Core_Exception
+   */
+  public function postProcess(): void {
+    parent::postProcess();
+
+    $values = $this->exportValues();
     $settings = CRM_Membership_Settings::getSettings();
 
     $mapping = $settings->getSetting('sync_mapping');
@@ -93,12 +76,35 @@ final class CRM_Membership_SettingsPage {
     }
 
     CRM_Core_Session::singleton()->replaceUserContext(
-      CRM_Utils_System::url('civicrm/admin/setting/' . self::PAGE, 'reset=1')
+      CRM_Utils_System::url('civicrm/admin/setting/' . $this->getSettingPageFilter(), 'reset=1')
     );
   }
 
-  private static function isSettingsPage(CRM_Admin_Form_Generic $form): bool {
-    return $form->getSettingPageFilter() === self::PAGE;
+  /**
+   * @throws \CRM_Core_Exception
+   */
+  private function addSyncMappingFields(): void {
+    $membershipTypes = self::getMembershipTypes();
+    $weight = 0;
+    foreach (self::getFinancialTypes() as $financialTypeId => $financialTypeLabel) {
+      $name = self::SYNC_MAPPING_PREFIX . $financialTypeId;
+      $this->add('select', $name, $financialTypeLabel, $membershipTypes, FALSE, [
+        'multiple' => 'multiple',
+        'class' => 'crm-select2',
+      ]);
+      $weight += 10;
+      $this->sections['mapping']['fields'][$name] = ['weight' => $weight];
+    }
+  }
+
+  private function addSynchroniseNowField(): void {
+    $this->add('checkbox', self::SYNCHRONISE_NOW, E::ts('Update Derived Fields on Save'));
+    $this->sections['derived']['fields'][self::SYNCHRONISE_NOW] = [
+      'weight' => 60,
+      'description' => E::ts(
+        'If checked, all derived fields will be re-calculated from the currently linked recurring payment.'
+      ),
+    ];
   }
 
   /**
@@ -118,7 +124,7 @@ final class CRM_Membership_SettingsPage {
   }
 
   /**
-   * @return array<string,array{title: string, icon: string, weight: int, description?: string}>
+   * @return array<string, array{title: string, icon: string, weight: int, description?: string}>
    */
   private static function getSections(): array {
     return [
@@ -177,10 +183,12 @@ final class CRM_Membership_SettingsPage {
   }
 
   /**
-   * @return array<int,string>
+   * @return array<int, string>
+   *
+   * @throws \CRM_Core_Exception
    */
   private static function getFinancialTypes(): array {
-    /** @var array<int,string> $financialTypes */
+    /** @var array<int, string> $financialTypes */
     $financialTypes = FinancialType::get(FALSE)
       ->addSelect('id', 'label')
       ->addWhere('is_active', '=', TRUE)
@@ -192,10 +200,12 @@ final class CRM_Membership_SettingsPage {
   }
 
   /**
-   * @return array<int,string>
+   * @return array<int, string>
+   *
+   * @throws \CRM_Core_Exception
    */
   private static function getMembershipTypes(): array {
-    /** @var array<int,string> $membershipTypes */
+    /** @var array<int, string> $membershipTypes */
     $membershipTypes = MembershipType::get(FALSE)
       ->addSelect('id', 'name')
       ->addWhere('is_active', '=', TRUE)

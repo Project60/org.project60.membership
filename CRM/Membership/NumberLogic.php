@@ -41,7 +41,7 @@ class CRM_Membership_NumberLogic {
       }
 
       // inject into summary view
-      CRM_Core_Smarty::singleton()->assign('membership_number_string', $number);
+      CRM_Core_Smarty::singleton()->assignAll(['membership_number_string' => $number]);
       CRM_Core_Region::instance('page-body')->add([
         'template' => 'CRM/Membership/Snippets/MembershipNumber.tpl',
       ]);

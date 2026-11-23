@@ -55,4 +55,9 @@ class CRM_Membership_Upgrader extends CRM_Extension_Upgrader_Base {
     return TRUE;
   }
 
+  public function upgrade_1300(): bool {
+    CRM_Membership_Settings::migrateLegacySettings();
+    return TRUE;
+  }
+
 }

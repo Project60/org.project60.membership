@@ -14,11 +14,8 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 declare(strict_types = 1);
-// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
 
 use CRM_Membership_ExtensionUtil as E;
-
-require_once 'MembershipTestBase.php';
 
 /**
  * Test MembershipFeeLogic class
@@ -27,7 +24,7 @@ require_once 'MembershipTestBase.php';
  *
  * @covers \CRM_Membership_MembershipFeeLogic
  */
-class MembershipFeeLogicTest extends MembershipTestBase {
+class MembershipFeeLogicTest extends CRM_Membership_TestBase {
 
   public function setUp() : void {
     parent::setUp();

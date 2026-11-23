@@ -25,7 +25,7 @@ use Civi\Test\TransactionalInterface;
  *
  * @group headless
  */
-class MembershipTestBase extends \PHPUnit\Framework\TestCase implements
+class CRM_Membership_TestBase extends \PHPUnit\Framework\TestCase implements
     HeadlessInterface,
     HookInterface,
     TransactionalInterface {

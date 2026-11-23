@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: SystopiaMemberships\n"
-"POT-Creation-Date: 2026-09-14 13:54+0200\n"
+"POT-Creation-Date: 2026-11-23 13:43+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Bjoern Endres <Bjoern.Endres@didonai.com>\n"
 "Language-Team: SYSTOPIA <endres@systopia.de>\n"
@@ -143,6 +143,70 @@ msgstr "Bitte geben Sie einen gültigen Betrag ein."
 msgid "View Contact Summary for this Contact."
 msgstr "Kontakt anzeigen."
 
+#: CRM/Membership/Form/Settings.php
+msgid "Update Derived Fields on Save"
+msgstr "Abgeleitete Felder beim Speichern neu berechnen"
+
+#: CRM/Membership/Form/Settings.php
+msgid ""
+"If checked, all derived fields will be re-calculated from the currently "
+"linked recurring payment."
+msgstr ""
+"Wenn ausgewählt, werden alle abgeleiteten Felder anhand der aktuell "
+"verknüpften wiederkehrenden Zahlung neu berechnet."
+
+#: CRM/Membership/Form/Settings.php
+msgid "Membership Number Integration"
+msgstr "Mitgliedsnummer-Integration"
+
+#: CRM/Membership/Form/Settings.php
+msgid "Membership Cancellation"
+msgstr "Kündigung"
+
+#: CRM/Membership/Form/Settings.php
+msgid "Payment Integration"
+msgstr "Zahlungsanbindung"
+
+#: CRM/Membership/Form/Settings.php
+msgid "Derived Fields"
+msgstr "Abgeleitete Felder"
+
+#: CRM/Membership/Form/Settings.php
+msgid "Late Payments"
+msgstr "Zahlungsausstand"
+
+#: CRM/Membership/Form/Settings.php
+msgid "Additional Tokens"
+msgstr "Zusätzliche Tokens"
+
+#: CRM/Membership/Form/Settings.php
+msgid ""
+"You can define arbitrary membership custom fields to be added to the "
+"membership token list."
+msgstr ""
+"Hier kann man ein beliebiges Feld auswählen, das als Mitgliedschafts-Token "
+"verfügbar sein soll."
+
+#: CRM/Membership/Form/Settings.php
+msgid "Payment Synchronisation Tool"
+msgstr "Mitgliedschaftsbeitrags-Zuordnung"
+
+#: CRM/Membership/Form/Settings.php
+msgid "Membership Status"
+msgstr "Mitgliedsstatus"
+
+#: CRM/Membership/Form/Settings.php settings/membership.setting.php
+msgid "Financial Type Mapping"
+msgstr "Zuordnung der Zuwendungsarten"
+
+#: CRM/Membership/Form/Settings.php
+msgid ""
+"Here you can decide which contribution types should be associated with which "
+"membership types."
+msgstr ""
+"Hier können Sie einstellen, welche Zuwendungsart welchem Mitgliedschaftstyp "
+"zugeordnet werden soll."
+
 #: CRM/Membership/Form/Task/AssignTask.php
 msgid "Assign Contributions to Membership"
 msgstr "Zuwendungen zu Mitgliedschaft zuweisen"
@@ -259,7 +323,7 @@ msgstr "alle %1 Jahre"
 
 #: CRM/Membership/PaidByLogic.php
 msgid "(illegal frequency)"
-msgstr "(ungültiger Rythmus)"
+msgstr "(ungültiger Rhythmus)"
 
 #: CRM/Membership/PaidByLogic.php
 msgid "on the %1."
@@ -282,81 +346,17 @@ msgstr "Der Wert '%1' ist ungültig und wird ignoriert."
 msgid "Invalid expression"
 msgstr "Ungültiger Ausdruck"
 
-#: CRM/Membership/SettingsMetadata.php
+#: CRM/Membership/SettingsValidator.php
 msgid "The value '%1' is not a valid date expression."
 msgstr "Der Wert '%1' ist kein gültiger Datumsausdruck."
 
-#: CRM/Membership/SettingsMetadata.php
+#: CRM/Membership/SettingsValidator.php
 msgid ""
 "The mapping has to be a comma separated list of "
 "\"payment_instrument_id:option_value\" pairs, e.g. \"1:3,2:2\"."
 msgstr ""
 "Die Zuordnung muss eine kommagetrennte Liste von "
 "\"payment_instrument_id:option_value\"-Paaren sein, z. B. \"1:3,2:2\"."
-
-#: CRM/Membership/SettingsPage.php
-msgid "Update Derived Fields on Save"
-msgstr "Ablgeleitete Felder neu berechnen"
-
-#: CRM/Membership/SettingsPage.php
-msgid ""
-"If checked, all derived fields will be re-calculated from the currently "
-"linked recurring payment."
-msgstr ""
-"Wenn ausgewählt, werden alle abgeleiteten Felder anhand der aktuell "
-"verknüpften wiederkehrenden Zahlung neu berechnet."
-
-#: CRM/Membership/SettingsPage.php
-msgid "Membership Number Integration"
-msgstr "Mitgliedsnummer-Integration"
-
-#: CRM/Membership/SettingsPage.php
-msgid "Membership Cancellation"
-msgstr "Kündigung"
-
-#: CRM/Membership/SettingsPage.php
-msgid "Payment Integration"
-msgstr "Zahlungsanbindung"
-
-#: CRM/Membership/SettingsPage.php
-msgid "Derived Fields"
-msgstr "Abgeleitete Felder"
-
-#: CRM/Membership/SettingsPage.php
-msgid "Late Payments"
-msgstr "Zahlungsausstand"
-
-#: CRM/Membership/SettingsPage.php
-msgid "Additional Tokens"
-msgstr "Zusätzliche Tokens"
-
-#: CRM/Membership/SettingsPage.php
-msgid ""
-"You can define arbitrary membership custom fields to be added to the "
-"membership token list."
-msgstr ""
-"Hier kann mein ein beliebiges Feld auswählen, das als Mitgliedschafts-Token "
-"verfügbar sein soll."
-
-#: CRM/Membership/SettingsPage.php
-msgid "Payment Synchronisation Tool"
-msgstr "Mitgliedschaftsbeitrags-Zuordnung"
-
-#: CRM/Membership/SettingsPage.php
-msgid "Membership Status"
-msgstr "Mitgliedsstatus"
-
-#: CRM/Membership/SettingsPage.php settings/membership.setting.php
-msgid "Financial Type Mapping"
-msgstr "Zuordnung der Zuwendungsarten"
-
-#: CRM/Membership/SettingsPage.php
-msgid ""
-"Here you can decide which contribution types should be associated with which "
-"membership types."
-msgstr ""
-"Hier können Sie einstellen, welche Zuwendungsart welchem Mitgliedschaftstyp "
-"zugeordnet werden soll."
 
 #: CRM/Membership/TokenLogic.php
 msgid "Start Date (raw)"
@@ -392,7 +392,7 @@ msgstr "Beitrag (unformatiert)"
 
 #: CRM/Membership/TokenLogic.php
 msgid "Payment Frequency"
-msgstr "Zahlungsrhythmus Feld"
+msgstr "Zahlungsrhythmus"
 
 #: CRM/Membership/TokenLogic.php
 msgid "Payment Type"
@@ -437,7 +437,7 @@ msgstr "Mitgliedschaftsbeiträge zuordnen"
 #: settings/membership.setting.php
 msgid ""
 "This defines which contributions will be considered for synchronisation by "
-"defining a time frame. This is optional"
+"defining a time frame. This is optional."
 msgstr ""
 "Hiermit wird über einen Zeitraum festgelegt, welche Zuwendungen bei der "
 "Synchronisation berücksichtigt werden. Die Angabe ist optional."
@@ -456,7 +456,7 @@ msgstr "Zuletzt verarbeitete Mitgliedschafts-ID"
 
 #: settings/membership.setting.php
 msgid "Membership Number Field"
-msgstr "Mitgliedsnummer-Feld"
+msgstr "Feld für Mitgliedsnummer"
 
 #: settings/membership.setting.php
 msgid ""
@@ -519,7 +519,7 @@ msgstr ""
 
 #: settings/membership.setting.php
 msgid "Cancel Date Field"
-msgstr "Kündigungsdatum Feld"
+msgstr "Feld für Kündigungsdatum"
 
 #: settings/membership.setting.php
 msgid ""
@@ -535,7 +535,7 @@ msgstr ""
 
 #: settings/membership.setting.php
 msgid "Cancel Reason Field"
-msgstr "Kündigungsgrund Feld"
+msgstr "Feld für Kündigungsgrund"
 
 #: settings/membership.setting.php
 msgid ""
@@ -550,7 +550,7 @@ msgstr ""
 
 #: settings/membership.setting.php
 msgid "Payment Contract (paid via) Field"
-msgstr "Zahlungsvertrag Feld"
+msgstr "Feld für Zahlungsvertrag"
 
 #: settings/membership.setting.php
 msgid ""
@@ -570,7 +570,7 @@ msgstr ""
 
 #: settings/membership.setting.php
 msgid "Annual Amount Field"
-msgstr "Jahresbeitrag Feld"
+msgstr "Feld für Jahresbeitrag"
 
 #: settings/membership.setting.php
 msgid ""
@@ -609,7 +609,7 @@ msgstr ""
 
 #: settings/membership.setting.php
 msgid "Hide Auto Renewal"
-msgstr "\"Automatische Verlängerung\" verstecken"
+msgstr "Automatische Verlängerung ausblenden"
 
 #: settings/membership.setting.php
 msgid ""
@@ -648,7 +648,7 @@ msgstr ""
 
 #: settings/membership.setting.php
 msgid "Installment Amount Field"
-msgstr "Beitrag Feld"
+msgstr "Feld für Einzelbeitrag"
 
 #: settings/membership.setting.php
 msgid ""
@@ -661,7 +661,7 @@ msgstr ""
 
 #: settings/membership.setting.php
 msgid "Annual Gap Field"
-msgstr "Jahresdifferenz Feld"
+msgstr "Feld für Jahresdifferenz"
 
 #: settings/membership.setting.php
 msgid ""
@@ -674,7 +674,7 @@ msgstr ""
 
 #: settings/membership.setting.php
 msgid "Payment Frequency Field"
-msgstr "Zahlungsrythmus Feld"
+msgstr "Feld für Zahlungsrhythmus"
 
 #: settings/membership.setting.php
 msgid ""
@@ -688,7 +688,7 @@ msgstr ""
 
 #: settings/membership.setting.php
 msgid "Payment Type Field"
-msgstr "Zahlungsart Feld"
+msgstr "Feld für Zahlungsart"
 
 #: settings/membership.setting.php
 msgid ""
@@ -703,7 +703,7 @@ msgstr ""
 
 #: settings/membership.setting.php
 msgid "Payment Type Field Mapping"
-msgstr "Zahlungsart Transformation"
+msgstr "Zahlungsarttransformation"
 
 #: settings/membership.setting.php
 msgid ""
@@ -780,7 +780,7 @@ msgstr ""
 
 #: settings/membership.setting.php
 msgid "Paid by Field"
-msgstr "Fremdzahler Feld"
+msgstr "Feld für Fremdzahler"
 
 #: settings/membership.setting.php
 msgid ""

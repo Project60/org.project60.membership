@@ -91,10 +91,9 @@ class CRM_Membership_Settings {
   /**
    * Set a named setting to the given value
    * @param string $key name
-   * @param mixed $value value
    * @throws \CRM_Core_Exception
    */
-  public function setSetting(string $key, $value): void {
+  public function setSetting(string $key, mixed $value): void {
     if (!in_array($key, self::KEYS, TRUE)) {
       throw new CRM_Core_Exception(sprintf('Unknown membership setting "%s".', $key));
     }
@@ -111,16 +110,7 @@ class CRM_Membership_Settings {
       return NULL;
     }
 
-    $name = self::SETTING_PREFIX . $key;
-    $settings = Civi::settings();
-    if (!$settings->hasExplicit($name)) {
-      $legacy = $settings->get(self::LEGACY_SETTING);
-      if (is_array($legacy) && array_key_exists($key, $legacy)) {
-        return $legacy[$key];
-      }
-    }
-
-    return $settings->get($name);
+    return Civi::settings()->get(self::SETTING_PREFIX . $key);
   }
 
   /**
@@ -155,7 +145,7 @@ class CRM_Membership_Settings {
    * Get the field ID of the selected paid_by field
    * @return int|null
    */
-  public function getPaidByFieldID() {
+  public function getPaidByFieldID(): ?int {
     return $this->getFieldIdSetting('paid_by_field');
   }
 
@@ -172,7 +162,7 @@ class CRM_Membership_Settings {
    * Get the field ID of the selected paid_by field
    * @return int|null
    */
-  public function getMissingAmountFieldID() {
+  public function getMissingAmountFieldID(): ?int {
     return $this->getFieldIdSetting('missing_period_amount_field');
   }
 
@@ -189,7 +179,7 @@ class CRM_Membership_Settings {
    * Get the field ID of the selected paid_via field
    * @return int|null
    */
-  public function getPaidViaFieldID() {
+  public function getPaidViaFieldID(): ?int {
     return $this->getFieldIdSetting('paid_via_field');
   }
 
@@ -324,7 +314,7 @@ class CRM_Membership_Settings {
    * get the syncmap property
    * default is the mapping that is defined by the membership_types' financial type id
    *
-   * @return array<int,list<int>>
+   * @return array<int, list<int>>
    */
   public function getSyncMapping(): array {
     $mapping = $this->getSetting('sync_mapping');
@@ -445,7 +435,7 @@ class CRM_Membership_Settings {
     $settings = Civi::settings();
     $legacy = $settings->get(self::LEGACY_SETTING);
     if (is_array($legacy)) {
-      /** @var array<string,array{type?: string}> $metadata */
+      /** @var array<string, array{type?: string}> $metadata */
       $metadata = SettingsMetadata::getMetadata();
       foreach (self::KEYS as $key) {
         $name = self::SETTING_PREFIX . $key;

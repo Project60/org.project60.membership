@@ -67,7 +67,7 @@ $page = static fn (string $section, int $weight): array => [
 ];
 
 $dateExpressionHelp = [
-  E::ts('This defines which contributions will be considered for synchronisation by defining a time frame. This is optional'),
+  E::ts('This defines which contributions will be considered for synchronisation by defining a time frame. This is optional.'),
   E::ts('You can enter any valid strtotime() expression like "2017-01-01" or "now - 2 days".'),
 ];
 
@@ -76,7 +76,6 @@ $settings = [
     'name' => 'p60_membership_settings',
     'type' => 'Array',
     'default' => NULL,
-    'add' => '4.6',
     'description' => 'P60 Membership settings',
   ] + $common,
 
@@ -227,7 +226,7 @@ $settings = [
   'p60_membership_payment_type_field_mapping' => [
     'name' => 'p60_membership_payment_type_field_mapping',
     'title' => E::ts('Payment Type Field Mapping'),
-    'validate_callback' => 'CRM_Membership_SettingsMetadata::validatePaymentTypeMapping',
+    'validate_callback' => 'CRM_Membership_SettingsValidator::validatePaymentTypeMapping',
     'help_text' => [
       E::ts('You can enter a string to map the payment instrument id of your recurring contribution in the field above to the values of your option group.'),
       E::ts('The format is a comma separated list of "payment_instrument_id:option_group_value" mappings, e.g. "1:3,2:2,5:4,6:4".'),
@@ -246,7 +245,7 @@ $settings = [
   'p60_membership_sync_minimum_date' => [
     'name' => 'p60_membership_sync_minimum_date',
     'title' => E::ts('Only Synchronise From'),
-    'validate_callback' => 'CRM_Membership_SettingsMetadata::validateDateExpression',
+    'validate_callback' => 'CRM_Membership_SettingsValidator::validateDateExpression',
     'help_text' => $dateExpressionHelp,
     'settings_pages' => $page('sync', 10),
   ] + $text,
@@ -254,7 +253,7 @@ $settings = [
   'p60_membership_sync_maximum_date' => [
     'name' => 'p60_membership_sync_maximum_date',
     'title' => E::ts('Only Synchronise Until'),
-    'validate_callback' => 'CRM_Membership_SettingsMetadata::validateDateExpression',
+    'validate_callback' => 'CRM_Membership_SettingsValidator::validateDateExpression',
     'help_text' => $dateExpressionHelp,
     'settings_pages' => $page('sync', 20),
   ] + $text,

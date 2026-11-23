@@ -3737,100 +3737,100 @@ parameters:
 			message: '#^Cannot access offset ''count'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
 			message: '#^Cannot access offset ''id'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 6
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
 			message: '#^Cannot access offset ''values'' on array\|int\.$#'
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
 			message: '#^Cannot cast mixed to int\.$#'
 			identifier: cast.int
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
-			message: '#^Method MembershipTestBase\:\:createChangeActivity\(\) has no return type specified\.$#'
+			message: '#^Method CRM_Membership_TestBase\:\:createChangeActivity\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
-			message: '#^Method MembershipTestBase\:\:createChangeActivity\(\) has parameter \$change_date with no type specified\.$#'
+			message: '#^Method CRM_Membership_TestBase\:\:createChangeActivity\(\) has parameter \$change_date with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
-			message: '#^Method MembershipTestBase\:\:createChangeActivity\(\) has parameter \$membership with no type specified\.$#'
+			message: '#^Method CRM_Membership_TestBase\:\:createChangeActivity\(\) has parameter \$membership with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
-			message: '#^Method MembershipTestBase\:\:createChangeActivity\(\) has parameter \$new_amount with no type specified\.$#'
+			message: '#^Method CRM_Membership_TestBase\:\:createChangeActivity\(\) has parameter \$new_amount with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
-			message: '#^Method MembershipTestBase\:\:createChangeActivity\(\) has parameter \$old_amount with no type specified\.$#'
+			message: '#^Method CRM_Membership_TestBase\:\:createChangeActivity\(\) has parameter \$old_amount with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
-			message: '#^Method MembershipTestBase\:\:createMembership\(\) has no return type specified\.$#'
+			message: '#^Method CRM_Membership_TestBase\:\:createMembership\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
-			message: '#^Method MembershipTestBase\:\:createMembership\(\) has parameter \$params with no type specified\.$#'
+			message: '#^Method CRM_Membership_TestBase\:\:createMembership\(\) has parameter \$params with no type specified\.$#'
 			identifier: missingType.parameter
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
-			message: '#^Method MembershipTestBase\:\:createRandomContact\(\) has no return type specified\.$#'
+			message: '#^Method CRM_Membership_TestBase\:\:createRandomContact\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
-			message: '#^Method MembershipTestBase\:\:getAnnualAmountField\(\) has no return type specified\.$#'
+			message: '#^Method CRM_Membership_TestBase\:\:getAnnualAmountField\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
-			message: '#^Method MembershipTestBase\:\:getMembershipCustomGroupID\(\) has no return type specified\.$#'
+			message: '#^Method CRM_Membership_TestBase\:\:getMembershipCustomGroupID\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
-			message: '#^Method MembershipTestBase\:\:getRandomMembershipType\(\) has no return type specified\.$#'
+			message: '#^Method CRM_Membership_TestBase\:\:getRandomMembershipType\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
-			message: '#^Method MembershipTestBase\:\:makeSureThereIsALoggedInContact\(\) has no return type specified\.$#'
+			message: '#^Method CRM_Membership_TestBase\:\:makeSureThereIsALoggedInContact\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php
 
 		-
-			message: '#^Method MembershipTestBase\:\:setUpHeadless\(\) has no return type specified\.$#'
+			message: '#^Method CRM_Membership_TestBase\:\:setUpHeadless\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
-			path: tests/phpunit/MembershipTestBase.php
+			path: tests/phpunit/CRM/Membership/TestBase.php

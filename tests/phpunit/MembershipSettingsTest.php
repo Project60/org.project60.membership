@@ -13,16 +13,13 @@
 | written permission from the original author(s).        |
 +--------------------------------------------------------*/
 declare(strict_types = 1);
-// phpcs:disable PSR1.Files.SideEffects.FoundWithSymbols
-
-require_once 'MembershipTestBase.php';
 
 /**
  * @group headless
  *
  * @covers \CRM_Membership_Settings
  */
-class MembershipSettingsTest extends MembershipTestBase {
+class MembershipSettingsTest extends CRM_Membership_TestBase {
 
   public function setUp(): void {
     parent::setUp();
@@ -46,19 +43,6 @@ class MembershipSettingsTest extends MembershipTestBase {
   public function testSetUnknownKeyThrows(): void {
     $this->expectException(CRM_Core_Exception::class);
     CRM_Membership_Settings::getSettings()->setSetting('unknown_setting', 1);
-  }
-
-  public function testFallsBackToLegacySettings(): void {
-    Civi::settings()->set(CRM_Membership_Settings::LEGACY_SETTING, ['paid_via_field' => '27']);
-
-    self::assertSame(27, CRM_Membership_Settings::getSettings()->getPaidViaFieldID());
-  }
-
-  public function testIndividualSettingTakesPrecedenceOverLegacySettings(): void {
-    Civi::settings()->set(CRM_Membership_Settings::LEGACY_SETTING, ['paid_via_field' => '27']);
-    Civi::settings()->set('p60_membership_paid_via_field', 42);
-
-    self::assertSame(42, CRM_Membership_Settings::getSettings()->getPaidViaFieldID());
   }
 
   public function testMigrateLegacySettings(): void {
